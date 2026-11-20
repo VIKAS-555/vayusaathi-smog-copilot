@@ -5,6 +5,7 @@ import { CITY_PRESETS } from '@/data/cityPresets';
 import { CitySmogContext, HouseholdProfile, GenAIPlanResponse } from '@/types';
 import { calculateInhaledDose } from '@/lib/environmentMath';
 import { generateDeterministicPlan } from '@/lib/geminiService';
+import { fetchLiveCityData } from '@/lib/liveAirQualityService';
 import { Masthead } from '@/components/Masthead';
 import { SmogContextBar } from '@/components/SmogContextBar';
 import { HouseholdProfiler } from '@/components/HouseholdProfiler';
@@ -127,15 +128,42 @@ export default function Home() {
     }
   }, [profile, currentCity]);
 
-  // When city changes, trigger plan refresh
+  // 8. Live Meteorological Station Feeds
+  const [isFetchingLive, setIsFetchingLive] = useState<boolean>(false);
+
+  const fetchLiveStation = useCallback(async (preset: CitySmogContext) => {
+    setIsFetchingLive(true);
+    try {
+      const liveCity = await fetchLiveCityData(preset);
+      setCurrentCity(liveCity);
+      setPlan(generateDeterministicPlan(profile, liveCity));
+    } catch (err) {
+      console.warn('Live station fetch failed, using baseline snapshot:', err);
+    } finally {
+      setIsFetchingLive(false);
+    }
+  }, [profile]);
+
+  // Initial live telemetry poll on mount
+  useEffect(() => {
+    fetchLiveStation(CITY_PRESETS[0]);
+  }, [fetchLiveStation]);
+
+  // When city changes: 0ms instant preset switch, then background poll live feed
   const handleSelectCity = (newCity: CitySmogContext) => {
     setCurrentCity(newCity);
     setPlan(generateDeterministicPlan(profile, newCity));
+    fetchLiveStation(newCity);
   };
 
   const handleCustomCityUpdate = (updated: Partial<CitySmogContext>) => {
     setCurrentCity((prev) => {
-      const merged = { ...prev, ...updated };
+      const merged: CitySmogContext = { 
+        ...prev, 
+        ...updated,
+        dataSource: 'manual',
+        lastUpdatedText: 'Manual Override',
+      };
       setPlan(generateDeterministicPlan(profile, merged));
       return merged;
     });
@@ -192,6 +220,8 @@ export default function Home() {
               currentCity={currentCity}
               onSelectCity={handleSelectCity}
               onCustomUpdate={handleCustomCityUpdate}
+              onRefreshLive={() => fetchLiveStation(currentCity)}
+              isFetchingLive={isFetchingLive}
             />
 
             {/* GenAI Tailored Action Engine (3 Focused Tabs) */}

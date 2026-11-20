@@ -20,6 +20,8 @@ export interface CitySmogContext {
   id: string;
   name: string;
   state: string;
+  latitude: number;
+  longitude: number;
   currentAQI: number;
   aqiCategory: AQICategory;
   pm25: number; // µg/m³
@@ -41,6 +43,8 @@ export interface CitySmogContext {
   ventilationEndHour: number; // e.g. 15
   highRiskInversionHours: string; // e.g. "05:00 AM - 09:30 AM & 08:00 PM - 02:00 AM"
   diurnalCurve: DiurnalHourPoint[];
+  dataSource?: 'live' | 'preset' | 'manual';
+  lastUpdatedText?: string;
 }
 
 export interface HouseholdMember {

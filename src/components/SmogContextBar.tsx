@@ -15,19 +15,25 @@ import {
   AlertTriangle, 
   Flame, 
   CheckCircle2, 
-  Lock 
+  Lock,
+  RefreshCw,
+  Radio
 } from 'lucide-react';
 
 interface SmogContextBarProps {
   currentCity: CitySmogContext;
   onSelectCity: (city: CitySmogContext) => void;
   onCustomUpdate?: (updated: Partial<CitySmogContext>) => void;
+  onRefreshLive?: () => void;
+  isFetchingLive?: boolean;
 }
 
 export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   currentCity,
   onSelectCity,
   onCustomUpdate,
+  onRefreshLive,
+  isFetchingLive = false,
 }) => {
   const [hoveredHour, setHoveredHour] = useState<number | null>(null);
   const [showCustomInputs, setShowCustomInputs] = useState<boolean>(false);
@@ -41,11 +47,11 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
 
   return (
     <div className="rounded-lg border border-stone-300 bg-white p-5 shadow-xs">
-      {/* City Presets Bar */}
+      {/* City Presets & Live Telemetry Telemetry Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200 pb-3.5">
         <div className="flex items-center gap-2">
           <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
-            Regional Smog Station:
+            Station:
           </span>
           <div className="flex flex-wrap gap-1.5">
             {CITY_PRESETS.map((preset) => {
@@ -67,13 +73,48 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </div>
         </div>
 
-        <button
-          onClick={() => setShowCustomInputs(!showCustomInputs)}
-          className="flex items-center gap-1 text-xs text-ink-muted hover:text-ink font-medium"
-        >
-          <Sliders className="h-3.5 w-3.5" />
-          <span>{showCustomInputs ? 'Hide Custom Inputs' : 'Manual Overrides'}</span>
-        </button>
+        {/* Data Source Badge & Action Controls */}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Status Badge */}
+          {currentCity.dataSource === 'live' ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-sage-300 bg-sage-50 px-2.5 py-0.5 text-[11px] font-medium text-sage-800 shadow-2xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-sage-600 animate-pulse shrink-0" />
+              <span>Live Station Feed</span>
+              <span className="font-mono text-ink-muted font-normal">· {currentCity.lastUpdatedText || 'Live'}</span>
+            </span>
+          ) : currentCity.dataSource === 'manual' ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-800 shadow-2xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-600 shrink-0" />
+              <span>Manual Overrides Active</span>
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-stone-100 px-2.5 py-0.5 text-[11px] font-medium text-ink-muted shadow-2xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-stone-400 shrink-0" />
+              <span>Station Baseline Snapshot</span>
+            </span>
+          )}
+
+          {/* Live Sync Button */}
+          {onRefreshLive && (
+            <button
+              onClick={onRefreshLive}
+              disabled={isFetchingLive}
+              className="flex items-center gap-1 rounded border border-stone-300 bg-stone-50 px-2 py-1 text-[11px] font-medium text-ink hover:bg-stone-100 disabled:opacity-50 transition-colors shadow-2xs"
+              title="Poll live WMO / CPCB satellite & station telemetry"
+            >
+              <RefreshCw className={`h-3 w-3 text-ink-muted ${isFetchingLive ? 'animate-spin text-ink' : ''}`} />
+              <span>{isFetchingLive ? 'Syncing…' : 'Sync Live'}</span>
+            </button>
+          )}
+
+          <button
+            onClick={() => setShowCustomInputs(!showCustomInputs)}
+            className="flex items-center gap-1 rounded border border-stone-300 bg-stone-50 px-2 py-1 text-[11px] font-medium text-ink-muted hover:text-ink hover:bg-stone-100 transition-colors"
+          >
+            <Sliders className="h-3 w-3" />
+            <span>{showCustomInputs ? 'Hide Overrides' : 'Manual Overrides'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Manual Input Slider Panel (When Toggled) */}
@@ -155,7 +196,9 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </div>
           <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5 flex items-center justify-between">
             <span>Dominant: <strong className="text-ink font-semibold">{currentCity.dominantPollutant}</strong></span>
-            <span className="font-mono text-[10px]">Station live</span>
+            <span className="font-mono text-[10px] text-ink-muted">
+              {currentCity.dataSource === 'live' ? 'Live Telemetry' : currentCity.dataSource === 'manual' ? 'Manual Value' : 'Station Preset'}
+            </span>
           </span>
         </div>
 
