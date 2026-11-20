@@ -267,11 +267,11 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             </span>
             {currentCity.currentAQI > 200 ? (
               <span className="inline-flex items-center gap-1 rounded bg-terracotta-50 border border-terracotta-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-terracotta-700 whitespace-nowrap">
-                <ArrowDownToLine className="h-3 w-3 shrink-0" /> Inversion Active
+                <ArrowDownToLine className="h-3 w-3 shrink-0" /> Cold Air Trap Active
               </span>
             ) : (
               <span className="inline-flex items-center gap-1 rounded bg-sage-50 border border-sage-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-sage-700 whitespace-nowrap">
-                <ArrowUpFromLine className="h-3 w-3 shrink-0" /> Convection Open
+                <ArrowUpFromLine className="h-3 w-3 shrink-0" /> Clear Airflow Active
               </span>
             )}
           </div>
@@ -285,8 +285,8 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </div>
           <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
             {currentCity.currentAQI > 200
-              ? 'Thermal ceiling trapping surface emissions (< 250m)'
-              : 'Deep boundary layer height · Clear solar convection'}
+              ? 'Cold air trapping surface smoke & dust below 250m'
+              : 'Warm sun and steady airflow naturally dispersing dust'}
           </span>
         </div>
       </div>

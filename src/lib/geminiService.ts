@@ -28,13 +28,13 @@ export function generateDeterministicPlan(
   // 1. DYNAMIC SUMMARY VERDICT BASED ON AQI TIER
   let summaryVerdict = '';
   if (isGood) {
-    summaryVerdict = `Optimal ambient air quality for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Atmospheric dispersion is active with zero cold-inversion trapping. For your household with ${vulnString}, natural cross-ventilation is recommended throughout the day (${city.safeVentilationWindows}), and outdoor morning activities and school sports are safe.`;
+    summaryVerdict = `Fresh, clean air across ${city.name} today (AQI ${city.currentAQI} · ${city.aqiCategory}). Airflow is steady and clear with no trapped smog. For your household with ${vulnString}, it's a great day to open windows for natural cross-breeze (${city.safeVentilationWindows}) and enjoy outdoor walks and school sports.`;
   } else if (isModerate) {
-    summaryVerdict = `Moderate air quality in ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Maritime winds and steady airflow prevent deep particulate trapping. Vulnerable members (${vulnString}) should take mild precautions during peak traffic hours (08:00–09:30 AM), with full convective ventilation safe between ${city.safeVentilationWindows}.`;
+    summaryVerdict = `Comfortable air quality in ${city.name} today (AQI ${city.currentAQI} · ${city.aqiCategory}). Steady breezes keep the air moving nicely. For ${vulnString}, it is safe to enjoy outdoor time throughout the day, opening windows freely between ${city.safeVentilationWindows}. Take simple precautions only near heavy rush-hour traffic.`;
   } else if (isPoorOrVeryPoor) {
-    summaryVerdict = `Elevated smog conditions in ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Developing thermal boundary trapping requires closing windows during cold early hours and restricting strenuous morning exertion for ${vulnString}. Aerate during the midday window (${city.safeVentilationWindows}).`;
+    summaryVerdict = `Elevated smog conditions in ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Cold air is trapping smoke and dust close to the ground during early mornings and evenings. For ${vulnString}, keep windows closed in the early morning and ventilate during the midday sun (${city.safeVentilationWindows}).`;
   } else {
-    summaryVerdict = `Critical winter smog emergency protocol for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Severe nocturnal temperature inversion traps dangerous fine particles (PM2.5 > ${city.pm25} µg/m³) at ground level. Your household with ${vulnString} must enforce strict window sealing during peak trapping (${city.highRiskInversionHours}) and limit all outdoor exposure.`;
+    summaryVerdict = `Severe winter smog alert for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Cold winter air has trapped heavy smoke and dust (PM2.5 > ${city.pm25} µg/m³) at street level. Your family with ${vulnString} should keep windows and balcony doors sealed tight during peak smog hours (${city.highRiskInversionHours}) and avoid strenuous outdoor exercise.`;
   }
 
   // 2. DYNAMIC ROUTINE SCHEDULE BASED ON AQI TIER
@@ -61,7 +61,7 @@ export function generateDeterministicPlan(
       {
         timeWindow: '12:00 – 16:30',
         phase: 'Afternoon Low Inversion',
-        recommendation: `Optimal convective dispersion window (${city.safeVentilationWindows}). High planetary boundary layer height.`,
+        recommendation: `Warm midday sunshine and gentle breezes clear out indoor air naturally (${city.safeVentilationWindows}). Perfect window to open up the house.`,
         windowAction: 'Safe to cross-ventilate (30-45m)',
         commuteOrOutdoorGuidance: 'Full outdoor mobility with zero atmospheric risk.',
         vulnerableCareNote: 'Sunlight and airflow keep indoor CO₂ levels low without purifier strain.'

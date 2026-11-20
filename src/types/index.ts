@@ -29,7 +29,13 @@ export interface CitySmogContext {
   humidityPercent: number;
   windSpeedKmh: number;
   windDirection: string;
-  inversionStatus: 'Active Ground Inversion' | 'Weakening' | 'Dispersion Window' | 'Developing Evening Trapping' | 'Minimal Inversion / Clear Dispersion';
+  inversionStatus: 
+    | 'Severe Ground Smog Trap' 
+    | 'Smog Trap Clearing' 
+    | 'Fresh Coastal Breeze' 
+    | 'Evening Smog Trap Building' 
+    | 'Clear Natural Airflow' 
+    | string;
   safeVentilationWindows: string; // e.g. "12:30 PM - 03:30 PM"
   ventilationStartHour: number; // e.g. 12
   ventilationEndHour: number; // e.g. 15
