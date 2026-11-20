@@ -42,6 +42,7 @@ Most existing air quality tools merely report a scary, monolithic AQI number wit
 | **2** | Architecture, Design System & Build Log Foundation | Established `BUILD_LOG.md`, locked in "Atmospheric Civic & Environmental Editorial" design principles, and prepared tech stack clarification. | Strictly rejected generic AI aesthetic (neon gradients, glassmorphism) in favor of high-legibility, publication-grade civic public health aesthetics. |
 | **3** | Product Blueprint & Execution Lock-in | Solidified the 4 integrated product modules, mathematical inhalation calculation engine, and screenshot checklist. Prepared 3 targeted architectural choices for user confirmation. | Confirmed hybrid architecture: deterministic environmental physics for metrics + Gemini 2.5 structured JSON for qualitative reasoning. |
 | **4** | End-to-End Application Build & Dev Server Launch ("do it for me") | Scaffolded Next.js 14 (App Router, TypeScript, Tailwind CSS), implemented the complete Environmental Math Inhalation Engine (`src/lib/environmentMath.ts`), dual-mode Gemini structured service (`src/lib/geminiService.ts`), Context Bar with 24h Diurnal Curve, Household Profiler, 3-Tab Action Engine with habit toggles, and RWA WhatsApp Bulletin Modal. Verified zero-error production build (`npm run build`) and launched server on `localhost:3001`. | Port 3000 was in use by another local process, so Next.js gracefully bound to `3001`. All health metrics strictly computed client/server-side with zero LLM hallucinations. |
+| **5** | GitHub Pages Deployment & Automated CI/CD Pipeline | Added GitHub Pages deployment workflow (`.github/workflows/deploy.yml`) using GitHub Actions, configured `next.config.js` with `output: 'export'` and dynamic `basePath` support for GitHub Pages static site hosting. Verified static build generation (`out/`). | Enabled 100% zero-cost static hosting on `github.io` without requiring dedicated Node server infrastructure while preserving local dev dynamic behavior. |
 
 ---
 
@@ -63,6 +64,10 @@ Most existing air quality tools merely report a scary, monolithic AQI number wit
 - **ADR-03: Offline-Resilient Dual-Mode Architecture & Secret Safety**
   - *Context:* Hackathon demos and live judging can be disrupted by expired API keys, rate-limits, or offline review environments.
   - *Decision:* Next.js API routes with a dual-mode provider: if `GEMINI_API_KEY` is present, it uses Gemini with strict JSON schema outputs; if absent or throttled, it seamlessly switches to an intelligent deterministic fallback synthesizer without throwing errors or showing broken skeletons.
+
+- **ADR-04: Static Export Architecture for GitHub Pages (`github.io`)**
+  - *Context:* Deploying full-stack Next.js apps to GitHub Pages requires static HTML/JS export (`output: 'export'`) with repository name subpathing (`basePath: '/vayusaathi-smog-copilot'`).
+  - *Decision:* Wired dynamic static export in `next.config.js` via `GITHUB_PAGES=true` environment flag paired with `.github/workflows/deploy.yml`. When hosted statically on GitHub Pages, the app runs the deterministic environmental physics engine and clinical schedule synthesizer directly in the client browser with zero latency.
 
 ---
 
