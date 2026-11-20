@@ -4,9 +4,10 @@
 
 ---
 
-## 🌐 Live Demo
+## 🌐 Live Demo & Deployment
 
-- **Production URL:** *[Coming Soon / Live Demo URL Placeholder]*
+- **Live Public Web App (GitHub Pages):** [https://vikas-555.github.io/vayusaathi-smog-copilot/](https://vikas-555.github.io/vayusaathi-smog-copilot/)
+- **GitHub Source Repository:** [https://github.com/VIKAS-555/vayusaathi-smog-copilot](https://github.com/VIKAS-555/vayusaathi-smog-copilot)
 
 ---
 

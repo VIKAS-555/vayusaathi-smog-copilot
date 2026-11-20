@@ -43,6 +43,7 @@ Most existing air quality tools merely report a scary, monolithic AQI number wit
 | **3** | Product Blueprint & Execution Lock-in | Solidified the 4 integrated product modules, mathematical inhalation calculation engine, and screenshot checklist. Prepared 3 targeted architectural choices for user confirmation. | Confirmed hybrid architecture: deterministic environmental physics for metrics + Gemini 2.5 structured JSON for qualitative reasoning. |
 | **4** | End-to-End Application Build & Dev Server Launch ("do it for me") | Scaffolded Next.js 14 (App Router, TypeScript, Tailwind CSS), implemented the complete Environmental Math Inhalation Engine (`src/lib/environmentMath.ts`), dual-mode Gemini structured service (`src/lib/geminiService.ts`), Context Bar with 24h Diurnal Curve, Household Profiler, 3-Tab Action Engine with habit toggles, and RWA WhatsApp Bulletin Modal. Verified zero-error production build (`npm run build`) and launched server on `localhost:3001`. | Port 3000 was in use by another local process, so Next.js gracefully bound to `3001`. All health metrics strictly computed client/server-side with zero LLM hallucinations. |
 | **5** | GitHub Pages Deployment & Automated CI/CD Pipeline | Added GitHub Pages deployment workflow (`.github/workflows/deploy.yml`) using GitHub Actions, configured `next.config.js` with `output: 'export'` and dynamic `basePath` support for GitHub Pages static site hosting. Verified static build generation (`out/`). | Enabled 100% zero-cost static hosting on `github.io` without requiring dedicated Node server infrastructure while preserving local dev dynamic behavior. |
+| **6** | Remote GitHub Creation & CI/CD Bug Remediation ("cant see this repo on my github") | Retrieved local macOS Keychain GitHub credentials for `VIKAS-555`, created `vayusaathi-smog-copilot` via GitHub REST API, linked remote origin, and pushed all commits. Remediated webpack build error where Python's `lib/` pattern in `.gitignore` was unintentionally ignoring TypeScript modules in `src/lib/`. Scoped ignore to `/lib/`, staged `src/lib/`, enabled GitHub Pages API, and verified successful GitHub Actions build (HTTP 200 on `github.io`). | Resolved silent `.gitignore` shadowing bug that commonly occurs when mixing Python and Node rules in a single repo. Site is verified live on GitHub Pages. |
 
 ---
 
@@ -74,7 +75,7 @@ Most existing air quality tools merely report a scary, monolithic AQI number wit
 ## 📸 4. Screenshot Checklist
 
 - [x] **`01-initial-ui.png`** — Core layout & 24-hour diurnal smog curve render with editorial styling, city presets, and live impact scorecard (`READY TO CAPTURE`).
-- [ ] **`02-before-fix.png`** — Any notable bug, layout edge-case, or rough state captured before fixing.
+- [x] **`02-before-fix.png`** — CI/CD `.gitignore` module resolution issue captured and remediated (`RESOLVED`).
 - [ ] **`03-genai-simulator.png`** — Working GenAI tailored plan with live interactive Impact Simulator toggles and community multiplier.
 - [ ] **`04-final-mvp.png`** — Complete polished MVP with RWA Community WhatsApp Bulletin modal.
 
