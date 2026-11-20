@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
+import { BreathLineMark } from './BreathLineMark';
 import { ShieldAlert, CheckCircle2, RefreshCw, FileText, Sun, Moon } from 'lucide-react';
 
 interface MastheadProps {
@@ -28,15 +28,8 @@ export const Masthead: React.FC<MastheadProps> = ({
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
         {/* Brand & Editorial Title with Custom Continuous-Line Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-12 items-center justify-center rounded border border-stone-300 bg-white shadow-xs p-1 overflow-hidden">
-            <Image
-              src={isDarkMode ? '/breathline-mark-dark.png' : '/breathline-mark.png'}
-              alt="BreathLine Logo Mark"
-              width={48}
-              height={36}
-              className="h-full w-full object-contain"
-              priority
-            />
+          <div className="flex h-11 w-14 items-center justify-center rounded border border-stone-300 bg-white shadow-xs p-1.5 overflow-hidden">
+            <BreathLineMark className="h-full w-full text-ink transition-colors duration-200" />
           </div>
           <div>
             <div className="flex items-center gap-2">
