@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-stone: #F6F5F0;
+  --panel-white: #FFFFFF;
+  --border-hairline: #DCD9D0;
+  --border-subtle: #EBE8DF;
+  --ink-primary: #18201D;
+  --ink-muted: #52605A;
+  --sage-accent: #236B56;
+  --terracotta-accent: #C4512C;
+}
+
+body {
+  background-color: var(--bg-stone);
+  color: var(--ink-primary);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular numbers for all environmental metrics */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom crisp hairline border utility */
+.border-editorial {
+  border: 1px solid var(--border-hairline);
+}
+
+.border-subtle {
+  border: 1px solid var(--border-subtle);
+}
+
+/* Custom clean scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F0EEE6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C8C4B7;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #AFA998;
+}
+
+/* Clean print & screenshot styles */
+@media print {
+  body {
+    background: white;
+  }
+}
