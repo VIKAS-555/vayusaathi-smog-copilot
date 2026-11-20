@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { DailyRoutineSlot, ActionItem } from '../types';
-import { Clock, Shield, Check, Plus, AlertCircle, Wrench, Leaf, Sparkles, Building, ExternalLink } from 'lucide-react';
+import { Clock, Wrench, Leaf, Sparkles, Building } from 'lucide-react';
 
 interface ActionPlanTabsProps {
   routineSchedule: DailyRoutineSlot[];
@@ -45,64 +45,47 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
         </div>
       </div>
 
-      {/* Prominent Numbered Tab Navigation */}
-      <div className="flex flex-wrap border-b border-stone-200 gap-2 sm:gap-6">
+      {/* Clean Single-Row Editorial Tab Navigation (No Circular Badges, Simple Underline) */}
+      <div className="flex border-b border-stone-200 gap-6 sm:gap-8 overflow-x-auto">
         <button
           onClick={() => setActiveTab('routine')}
-          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-2 ${
+          className={`pb-3 text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === 'routine'
-              ? 'text-ink border-b-2 border-ink'
-              : 'text-ink-muted hover:text-ink'
+              ? 'text-ink font-bold border-ink'
+              : 'text-ink-muted hover:text-ink font-medium border-transparent'
           }`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-200 text-[10px] font-mono text-ink">
-            1
-          </span>
           <Clock className="h-3.5 w-3.5" />
           <span>Low-Emission Daily Routine</span>
         </button>
 
         <button
           onClick={() => setActiveTab('iaq')}
-          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-2 ${
+          className={`pb-3 text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === 'iaq'
-              ? 'text-ink border-b-2 border-ink'
-              : 'text-ink-muted hover:text-ink'
+              ? 'text-ink font-bold border-ink'
+              : 'text-ink-muted hover:text-ink font-medium border-transparent'
           }`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-200 text-[10px] font-mono text-ink">
-            2
-          </span>
           <Wrench className="h-3.5 w-3.5" />
           <span>Indoor Air Quality Hacks</span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-mono font-bold ${
-              iaqAdoptedCount > 0 ? 'bg-sage-100 text-sage-800' : 'bg-stone-200 text-ink-muted'
-            }`}
-          >
-            {iaqAdoptedCount}/{iaqHacks.length} Adopted
+          <span className="font-mono text-[11px] text-ink-muted font-normal">
+            ({iaqAdoptedCount}/{iaqHacks.length})
           </span>
         </button>
 
         <button
           onClick={() => setActiveTab('sustainable')}
-          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-2 ${
+          className={`pb-3 text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === 'sustainable'
-              ? 'text-ink border-b-2 border-ink'
-              : 'text-ink-muted hover:text-ink'
+              ? 'text-ink font-bold border-ink'
+              : 'text-ink-muted hover:text-ink font-medium border-transparent'
           }`}
         >
-          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-200 text-[10px] font-mono text-ink">
-            3
-          </span>
           <Leaf className="h-3.5 w-3.5" />
           <span>Sustainable Alternatives</span>
-          <span
-            className={`rounded-full px-2 py-0.5 text-[10px] font-mono font-bold ${
-              sustainableAdoptedCount > 0 ? 'bg-sage-100 text-sage-800' : 'bg-stone-200 text-ink-muted'
-            }`}
-          >
-            {sustainableAdoptedCount}/{sustainableActions.length} Active
+          <span className="font-mono text-[11px] text-ink-muted font-normal">
+            ({sustainableAdoptedCount}/{sustainableActions.length})
           </span>
         </button>
       </div>
@@ -203,7 +186,7 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       : 'border-stone-200 bg-white hover:border-stone-300'
                   }`}
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="rounded bg-stone-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink">
@@ -218,26 +201,36 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       </h4>
                     </div>
 
-                    {/* Prominent Adopt Habit Button */}
-                    <button
-                      type="button"
+                    {/* True Tactile Interactive Toggle Switch */}
+                    <div
                       onClick={() => onToggleAction(hack.id)}
-                      aria-pressed={isAdopted}
-                      className={`flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs ${
-                        isAdopted
-                          ? 'border border-sage-700 bg-sage-700 text-white hover:bg-sage-800'
-                          : 'border border-stone-300 bg-white text-ink hover:bg-stone-50 hover:border-stone-400'
-                      }`}
+                      className="flex items-center gap-2.5 cursor-pointer select-none py-1 px-2 rounded hover:bg-stone-100/60 transition-colors"
+                      role="switch"
+                      aria-checked={isAdopted}
+                      title={isAdopted ? 'Click to deactivate habit' : 'Click to adopt habit'}
                     >
-                      <div
-                        className={`h-4 w-4 rounded flex items-center justify-center transition-colors ${
-                          isAdopted ? 'bg-white text-sage-700' : 'border border-stone-300 bg-stone-100'
+                      <div className="text-right">
+                        <span className={`block text-[11px] font-bold uppercase tracking-wider ${isAdopted ? 'text-sage-700' : 'text-ink-muted'}`}>
+                          {isAdopted ? 'Active' : 'Off'}
+                        </span>
+                        <span className="block text-[10px] text-ink-muted">
+                          {isAdopted ? 'Habit Adopted' : 'Click to Adopt'}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                          isAdopted ? 'bg-sage-600' : 'bg-stone-300'
                         }`}
                       >
-                        {isAdopted && <Check className="h-3 w-3 stroke-[3]" />}
-                      </div>
-                      <span>{isAdopted ? 'Habit Adopted' : 'Adopt Habit'}</span>
-                    </button>
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                            isAdopted ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
                   </div>
 
                   <p className="mt-2 text-xs text-ink leading-relaxed">
@@ -288,7 +281,7 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       : 'border-stone-200 bg-white hover:border-stone-300'
                   }`}
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="rounded bg-stone-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink">
@@ -303,25 +296,36 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       </h4>
                     </div>
 
-                    <button
-                      type="button"
+                    {/* True Tactile Interactive Toggle Switch */}
+                    <div
                       onClick={() => onToggleAction(action.id)}
-                      aria-pressed={isAdopted}
-                      className={`flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs ${
-                        isAdopted
-                          ? 'border border-sage-700 bg-sage-700 text-white hover:bg-sage-800'
-                          : 'border border-stone-300 bg-white text-ink hover:bg-stone-50 hover:border-stone-400'
-                      }`}
+                      className="flex items-center gap-2.5 cursor-pointer select-none py-1 px-2 rounded hover:bg-stone-100/60 transition-colors"
+                      role="switch"
+                      aria-checked={isAdopted}
+                      title={isAdopted ? 'Click to deactivate policy' : 'Click to adopt policy'}
                     >
-                      <div
-                        className={`h-4 w-4 rounded flex items-center justify-center transition-colors ${
-                          isAdopted ? 'bg-white text-sage-700' : 'border border-stone-300 bg-stone-100'
+                      <div className="text-right">
+                        <span className={`block text-[11px] font-bold uppercase tracking-wider ${isAdopted ? 'text-sage-700' : 'text-ink-muted'}`}>
+                          {isAdopted ? 'Active' : 'Off'}
+                        </span>
+                        <span className="block text-[10px] text-ink-muted">
+                          {isAdopted ? 'Policy Adopted' : 'Click to Adopt'}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                          isAdopted ? 'bg-sage-600' : 'bg-stone-300'
                         }`}
                       >
-                        {isAdopted && <Check className="h-3 w-3 stroke-[3]" />}
-                      </div>
-                      <span>{isAdopted ? 'Policy Active' : 'Adopt Policy'}</span>
-                    </button>
+                        <span
+                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                            isAdopted ? 'translate-x-5' : 'translate-x-0'
+                          }`}
+                        />
+                      </button>
+                    </div>
                   </div>
 
                   <p className="mt-2 text-xs text-ink leading-relaxed">

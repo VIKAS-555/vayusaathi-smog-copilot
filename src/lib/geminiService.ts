@@ -34,7 +34,7 @@ export function generateDeterministicPlan(
   } else if (isPoorOrVeryPoor) {
     summaryVerdict = `Elevated smog conditions in ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Developing thermal boundary trapping requires closing windows during cold early hours and restricting strenuous morning exertion for ${vulnString}. Aerate during the midday window (${city.safeVentilationWindows}).`;
   } else {
-    summaryVerdict = `Critical winter smog emergency protocol for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Severe nocturnal temperature inversion traps dangerous fine particles ($PM_{2.5} > ${city.pm25} \\mu\\text{g/m}^3$) at ground level. Your household with ${vulnString} must enforce strict window sealing during peak trapping (${city.highRiskInversionHours}) and limit all outdoor exposure.`;
+    summaryVerdict = `Critical winter smog emergency protocol for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Severe nocturnal temperature inversion traps dangerous fine particles (PM2.5 > ${city.pm25} µg/m³) at ground level. Your household with ${vulnString} must enforce strict window sealing during peak trapping (${city.highRiskInversionHours}) and limit all outdoor exposure.`;
   }
 
   // 2. DYNAMIC ROUTINE SCHEDULE BASED ON AQI TIER
