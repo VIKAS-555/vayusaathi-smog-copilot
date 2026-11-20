@@ -144,15 +144,15 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       {slot.recommendation}
                     </p>
 
-                    <div className="grid grid-cols-[95px_1fr] gap-2 text-[11px] items-baseline">
+                    <div className="flex flex-col sm:grid sm:grid-cols-[105px_1fr] gap-1 sm:gap-2 text-[11px] items-baseline">
                       <span className="font-semibold text-ink">Transit/Outdoor:</span>
-                      <span className="text-ink-muted">{slot.commuteOrOutdoorGuidance}</span>
+                      <span className="text-ink-muted leading-relaxed">{slot.commuteOrOutdoorGuidance}</span>
                     </div>
 
                     {slot.vulnerableCareNote && (
-                      <div className="grid grid-cols-[95px_1fr] gap-2 text-[11px] items-baseline rounded bg-stone-50 border border-stone-200 p-2">
+                      <div className="flex flex-col sm:grid sm:grid-cols-[105px_1fr] gap-1 sm:gap-2 text-[11px] items-baseline rounded bg-stone-50 border border-stone-200 p-2.5">
                         <span className="font-semibold text-ink">Vulnerable Care:</span>
-                        <span className="text-ink-muted">{slot.vulnerableCareNote}</span>
+                        <span className="text-ink-muted leading-relaxed">{slot.vulnerableCareNote}</span>
                       </div>
                     )}
                   </div>

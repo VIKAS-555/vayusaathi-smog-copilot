@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { CitySmogContext } from '../types';
 import { CITY_PRESETS } from '../data/cityPresets';
-import { Wind, Thermometer, Droplets, ShieldAlert, Clock, CheckCircle2, ChevronRight, Sliders } from 'lucide-react';
+import { Wind, Thermometer, Droplets, ShieldAlert, Sliders } from 'lucide-react';
 
 interface SmogContextBarProps {
   currentCity: CitySmogContext;
@@ -107,114 +107,140 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
       )}
 
-      {/* Primary Meteorological Grid */}
-      <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-        {/* AQI Metric */}
-        <div className="rounded border border-stone-200 bg-stone-50/80 p-3">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
-            Index (CPCB AQI)
-          </span>
-          <div className="mt-1 flex items-baseline gap-1.5">
-            <span className="font-mono text-3xl font-bold text-ink tabular-nums">
-              {currentCity.currentAQI}
+      {/* Primary Meteorological Grid: Spacious 3x2 Layout (No Narrow Squeezing) */}
+      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+        {/* Card 1: CPCB AQI */}
+        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+              Index (CPCB AQI)
             </span>
             <span
-              className={`rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase ${
+              className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
                 currentCity.currentAQI >= 400
-                  ? 'bg-red-100 text-red-800'
+                  ? 'bg-red-100 text-red-800 border border-red-200'
                   : currentCity.currentAQI >= 300
-                  ? 'bg-amber-100 text-amber-900'
+                  ? 'bg-amber-100 text-amber-900 border border-amber-200'
                   : currentCity.currentAQI >= 200
-                  ? 'bg-orange-100 text-orange-800'
-                  : 'bg-emerald-100 text-emerald-800'
+                  ? 'bg-orange-100 text-orange-800 border border-orange-200'
+                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
               }`}
             >
               {currentCity.aqiCategory}
             </span>
           </div>
+          <div className="my-2 flex items-baseline gap-2">
+            <span className="font-mono text-3xl font-extrabold text-ink tabular-nums">
+              {currentCity.currentAQI}
+            </span>
+            <span className="text-xs text-ink-muted">
+              {currentCity.currentAQI <= 100 ? 'Minimal health risk' : 'Active air alert'}
+            </span>
+          </div>
+          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+            Dominant pollutant: <strong className="text-ink font-semibold">{currentCity.dominantPollutant}</strong>
+          </span>
         </div>
 
-        {/* PM2.5 Concentration */}
-        <div className="rounded border border-stone-200 bg-stone-50/80 p-3">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
-            PM2.5 Ambient
+        {/* Card 2: PM2.5 Fine Ambient Particles */}
+        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            PM2.5 Ambient Concentration
           </span>
-          <div className="mt-1 flex items-baseline gap-1">
+          <div className="my-2 flex items-baseline gap-1.5">
             <span
-              className={`font-mono text-3xl font-bold tabular-nums ${
+              className={`font-mono text-3xl font-extrabold tabular-nums ${
                 currentCity.currentAQI > 200 ? 'text-terracotta-700' : 'text-sage-700'
               }`}
             >
               {currentCity.pm25}
             </span>
-            <span className="text-xs font-mono text-ink-muted">µg/m³</span>
+            <span className="text-xs font-mono font-medium text-ink-muted">µg/m³</span>
           </div>
-          <span className="text-[10px] text-ink-muted">
-            {currentCity.pm25 <= 15 ? 'Within WHO safe limit' : `${(currentCity.pm25 / 15).toFixed(1)}x WHO 24h limit`}
+          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+            {currentCity.pm25 <= 15
+              ? 'Within WHO annual safe guideline'
+              : `${(currentCity.pm25 / 15).toFixed(1)}x above WHO 24h limit (15 µg/m³)`}
           </span>
         </div>
 
-        {/* PM10 Concentration */}
-        <div className="rounded border border-stone-200 bg-stone-50/80 p-3">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
-            PM10 Coarse
+        {/* Card 3: PM10 Coarse Particulates */}
+        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            PM10 Coarse Dust
           </span>
-          <div className="mt-1 flex items-baseline gap-1">
-            <span className="font-mono text-3xl font-bold text-ink tabular-nums">
+          <div className="my-2 flex items-baseline gap-1.5">
+            <span className="font-mono text-3xl font-extrabold text-ink tabular-nums">
               {currentCity.pm10}
             </span>
-            <span className="text-xs font-mono text-ink-muted">µg/m³</span>
+            <span className="text-xs font-mono font-medium text-ink-muted">µg/m³</span>
           </div>
-          <span className="text-[10px] text-ink-muted">Dominant: {currentCity.dominantPollutant}</span>
+          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+            Inhalable road dust, crustal soil & soot
+          </span>
         </div>
 
-        {/* Temperature & Humidity */}
-        <div className="rounded border border-stone-200 bg-stone-50/80 p-3">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
-            Weather State
+        {/* Card 4: Weather State & Moisture */}
+        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            Weather & Moisture
           </span>
-          <div className="mt-1 flex items-center gap-2 text-sm font-semibold text-ink">
-            <span className="flex items-center gap-1 font-mono">
-              <Thermometer className="h-3.5 w-3.5 text-ink-muted" />
-              {currentCity.temperatureC}°C
+          <div className="my-2 flex items-center gap-3">
+            <span className="flex items-center gap-1.5 font-mono text-base font-bold text-ink">
+              <Thermometer className="h-4 w-4 text-ink-muted" />
+              <span>{currentCity.temperatureC}°C</span>
             </span>
-            <span className="flex items-center gap-1 font-mono">
-              <Droplets className="h-3.5 w-3.5 text-ink-muted" />
-              {currentCity.humidityPercent}%
+            <span className="text-stone-300">|</span>
+            <span className="flex items-center gap-1.5 font-mono text-base font-bold text-ink">
+              <Droplets className="h-4 w-4 text-ink-muted" />
+              <span>{currentCity.humidityPercent}% RH</span>
             </span>
           </div>
-          <span className="text-[10px] text-ink-muted">
-            {currentCity.humidityPercent >= 75 ? 'Moist winter air' : 'Moderate ambient humidity'}
+          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+            {currentCity.humidityPercent >= 75
+              ? 'High moisture promotes secondary chemical smog'
+              : 'Moderate humidity · Low mist condensation'}
           </span>
         </div>
 
-        {/* Wind Speed & Direction */}
-        <div className="rounded border border-stone-200 bg-stone-50/80 p-3">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
-            Dispersion Wind
+        {/* Card 5: Dispersion Wind */}
+        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            Dispersion Surface Wind
           </span>
-          <div className="mt-1 flex items-center gap-1 font-mono text-sm font-semibold text-ink">
-            <Wind className="h-3.5 w-3.5 text-ink-muted" />
-            <span>{currentCity.windSpeedKmh} km/h</span>
+          <div className="my-2 flex items-center gap-2 font-mono">
+            <Wind className="h-4 w-4 text-ink-muted shrink-0" />
+            <span className="text-xl font-bold text-ink tabular-nums">
+              {currentCity.windSpeedKmh} km/h
+            </span>
+            <span className="rounded bg-stone-200 px-2 py-0.5 text-[11px] font-sans font-semibold text-ink">
+              {currentCity.windDirection}
+            </span>
           </div>
-          <span className="text-[10px] text-ink-muted">{currentCity.windDirection}</span>
+          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+            {currentCity.windSpeedKmh < 5
+              ? 'Calm wind speeds impede pollutant dispersion'
+              : 'Moderate airflow assisting natural air renewal'}
+          </span>
         </div>
 
-        {/* Inversion Mechanism Status */}
-        <div className="rounded border border-stone-200 bg-stone-50/80 p-3 flex flex-col justify-between">
-          <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
-            Atmospheric Boundary
+        {/* Card 6: Atmospheric Inversion & Boundary */}
+        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            Atmospheric Boundary Layer
           </span>
           <div
-            className={`mt-1 flex items-center gap-1.5 text-xs font-bold leading-snug ${
+            className={`my-2 flex items-center gap-2 text-xs font-bold leading-snug ${
               currentCity.currentAQI > 200 ? 'text-terracotta-700' : 'text-sage-700'
             }`}
           >
-            <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
+            <ShieldAlert className="h-4 w-4 shrink-0" />
             <span>{currentCity.inversionStatus}</span>
           </div>
-          <span className="text-[10px] text-ink-muted mt-0.5">
-            {currentCity.currentAQI > 200 ? 'Trapping depth < 250m' : 'Clear planetary boundary'}
+          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+            {currentCity.currentAQI > 200
+              ? 'Thermal ceiling trapping surface emissions (< 250m)'
+              : 'Deep boundary layer height · Clear solar convection'}
           </span>
         </div>
       </div>
