@@ -59,7 +59,7 @@ export default function Home() {
 
   useEffect(() => {
     try {
-      const savedTheme = localStorage.getItem('vayusaathi-theme');
+      const savedTheme = localStorage.getItem('breathline-theme') || localStorage.getItem('vayusaathi-theme');
       if (savedTheme === 'dark') {
         setIsDarkMode(true);
         document.documentElement.classList.add('dark');
@@ -80,10 +80,10 @@ export default function Home() {
       const next = !prev;
       if (next) {
         document.documentElement.classList.add('dark');
-        try { localStorage.setItem('vayusaathi-theme', 'dark'); } catch {}
+        try { localStorage.setItem('breathline-theme', 'dark'); } catch {}
       } else {
         document.documentElement.classList.remove('dark');
-        try { localStorage.setItem('vayusaathi-theme', 'light'); } catch {}
+        try { localStorage.setItem('breathline-theme', 'light'); } catch {}
       }
       return next;
     });
@@ -213,10 +213,10 @@ export default function Home() {
       <footer className="border-t border-stone-300 bg-stone-50 py-4 text-center text-xs text-ink-muted">
         <div className="mx-auto max-w-7xl px-4 flex flex-wrap items-center justify-between gap-2">
           <span>
-            <strong>VayuSaathi (वायुसाथी)</strong> · Public Health Environmental Field Co-Pilot
+            <strong>BreathLine</strong> · Winter Air &amp; Routine Guide · Household Exposure Co-Pilot
           </span>
           <span className="font-mono text-[11px]">
-            EPA & WHO Inhalation Dose Modeling · Tabular Strict Physics Engine
+            EPA &amp; WHO Inhalation Dose Modeling · Tabular Strict Physics Engine
           </span>
         </div>
       </footer>

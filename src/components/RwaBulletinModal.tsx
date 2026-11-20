@@ -51,7 +51,7 @@ Cold winter air is trapping vehicle smoke and construction dust close to the gro
 🌱 *COLLECTIVE COMMUNITY IMPACT:*
 When ${impact.communityFamiliesCount} families in our complex follow this protocol, our society avoids *${impact.communityMonthlyCo2SavedKg} kg CO₂* and prevents *${impact.communityMonthlyPmPreventedKg} kg PM2.5* this month!
 
-— Shared via *VayuSaathi* (Household Air Co-Pilot)`
+— Shared via *BreathLine* (Winter Air & Routine Guide)`
     : `🌱 *RWA / APARTMENT CLEAN AIR & HEALTH BULLETIN*
 📍 *Area:* ${city.name} | *Date:* ${todayStr}
 📊 *Today's AQI:* ${city.currentAQI} (${city.aqiCategory} · Clean Air)
@@ -72,7 +72,7 @@ Airflow is fresh and clear with steady breezes across our area. No smog or cold 
 🏆 *COLLECTIVE COMMUNITY IMPACT:*
 When ${impact.communityFamiliesCount} families in our complex practice these easy habits, our society avoids *${impact.communityMonthlyCo2SavedKg} kg CO₂* and prevents *${impact.communityMonthlyPmPreventedKg} kg PM2.5* every month!
 
-— Shared via *VayuSaathi* (Household Air Co-Pilot)`;
+— Shared via *BreathLine* (Winter Air & Routine Guide)`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(bulletinText);

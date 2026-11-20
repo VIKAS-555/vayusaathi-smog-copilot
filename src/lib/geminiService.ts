@@ -348,7 +348,7 @@ export async function fetchGenAIPlan(
     const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
     const model = genAI.getGenerativeModel({ model: modelName });
 
-    const prompt = `You are VayuSaathi, an elite public health environmental scientist and winter smog co-pilot for Indian urban families.
+    const prompt = `You are BreathLine, an elite public health environmental scientist and winter smog routine guide for Indian urban families.
 Analyze the following environmental and household context:
 
 City Context:

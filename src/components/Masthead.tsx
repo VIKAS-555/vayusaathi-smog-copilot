@@ -1,5 +1,6 @@
 import React from 'react';
-import { Wind, ShieldAlert, CheckCircle2, RefreshCw, FileText, Sun, Moon } from 'lucide-react';
+import Image from 'next/image';
+import { ShieldAlert, CheckCircle2, RefreshCw, FileText, Sun, Moon } from 'lucide-react';
 
 interface MastheadProps {
   aqiCategory: string;
@@ -25,22 +26,30 @@ export const Masthead: React.FC<MastheadProps> = ({
   return (
     <header className="border-b border-stone-300 bg-stone-50 px-4 py-3.5 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4">
-        {/* Brand & Editorial Title */}
+        {/* Brand & Editorial Title with Custom Continuous-Line Logo */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded border border-stone-300 bg-white shadow-xs">
-            <Wind className="h-5 w-5 text-ink" />
+          <div className="flex h-11 w-12 items-center justify-center rounded border border-stone-300 bg-white shadow-xs p-1 overflow-hidden">
+            <Image
+              src={isDarkMode ? '/breathline-mark-dark.png' : '/breathline-mark.png'}
+              alt="BreathLine Logo Mark"
+              width={48}
+              height={36}
+              className="h-full w-full object-contain"
+              priority
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight text-ink">
-                VayuSaathi <span className="font-normal text-ink-muted">· वायुसाथी</span>
+              <h1 className="text-xl font-bold tracking-tight text-ink font-sans flex items-center">
+                <span>Breath</span>
+                <span className="font-light">Line</span>
               </h1>
               <span className="rounded bg-stone-200 px-1.5 py-0.5 text-[11px] font-mono uppercase tracking-wider text-ink-muted">
                 v1.0 Civic Pilot
               </span>
             </div>
-            <p className="text-xs text-ink-muted">
-              Family & Community Winter Smog Co-Pilot · Field Advisory Platform
+            <p className="text-xs text-ink-muted font-medium">
+              Winter Air &amp; Routine Guide · Household Exposure Co-Pilot
             </p>
           </div>
         </div>

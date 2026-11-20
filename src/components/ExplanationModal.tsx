@@ -39,7 +39,7 @@ export const ExplanationModal: React.FC<ExplanationModalProps> = ({ isOpen, onCl
               <span>Why We Decouple Deterministic Physics from LLMs</span>
             </h4>
             <p className="text-ink-muted">
-              Standard GenAI models hallucinate numbers, miscalculate unit conversions, and produce inconsistent answers when users toggle habits. In VayuSaathi, <strong>100% of numeric metrics are calculated deterministically in TypeScript (<code className="bg-stone-200 px-1 py-0.5 rounded text-[11px]">lib/environmentMath.ts</code>)</strong> based on peer-reviewed EPA and WHO standards. Gemini 2.5 is used solely for natural language synthesis, customized schedule sequencing, and localized advice.
+              Standard GenAI models hallucinate numbers, miscalculate unit conversions, and produce inconsistent answers when users toggle habits. In BreathLine, <strong>100% of numeric metrics are calculated deterministically in TypeScript (<code className="bg-stone-200 px-1 py-0.5 rounded text-[11px]">lib/environmentMath.ts</code>)</strong> based on peer-reviewed EPA and WHO standards. Gemini is used solely for natural language synthesis, customized schedule sequencing, and localized advice.
             </p>
           </div>
 

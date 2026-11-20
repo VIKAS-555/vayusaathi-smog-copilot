@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'VayuSaathi (वायुसाथी) — Family & Community Winter Smog Co-Pilot',
-  description: 'Grounded atmospheric civic co-pilot for urban families navigating severe winter temperature inversions, toxic AQI peaks, and low-emission routines.',
+  title: 'BreathLine — Winter Air & Routine Guide',
+  description: 'Household air quality co-pilot helping urban families navigate severe winter temperature inversions, toxic AQI peaks, and low-emission daily routines.',
+  icons: {
+    icon: '/breathline-mark.png',
+  },
 };
 
 export default function RootLayout({
