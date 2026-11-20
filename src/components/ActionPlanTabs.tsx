@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
 import { DailyRoutineSlot, ActionItem } from '../types';
-import { Clock, Wrench, Leaf, Sparkles, Building } from 'lucide-react';
+import { 
+  Clock, 
+  Wrench, 
+  Leaf, 
+  Sparkles, 
+  Building, 
+  Wind, 
+  Lock, 
+  Shield, 
+  Sun, 
+  CloudFog, 
+  ArrowDownToLine, 
+  Activity, 
+  Layers, 
+  Filter, 
+  CheckCircle2 
+} from 'lucide-react';
 
 interface ActionPlanTabsProps {
   routineSchedule: DailyRoutineSlot[];
@@ -101,15 +117,16 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
             {routineSchedule.map((slot, index) => {
               const isVentilationAction = slot.windowAction.includes('Safe');
               const isSealAction = slot.windowAction.includes('Seal');
+
               return (
                 <div key={index} className="py-3.5 grid grid-cols-1 md:grid-cols-12 gap-3 text-xs items-start">
-                  {/* Time & Phase Badge */}
+                  {/* Time & Phase Badge with Quiet Line Icons */}
                   <div className="md:col-span-3">
                     <span className="font-mono text-sm font-bold text-ink block">
                       {slot.timeWindow}
                     </span>
                     <span
-                      className={`inline-block mt-1 rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${
+                      className={`inline-flex items-center gap-1 mt-1 rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${
                         isVentilationAction
                           ? 'bg-sage-100 text-sage-800'
                           : isSealAction
@@ -117,7 +134,18 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                           : 'bg-stone-200 text-ink-muted'
                       }`}
                     >
-                      {slot.phase}
+                      {slot.phase.includes('Smog Peak') ? (
+                        <CloudFog className="h-3 w-3 shrink-0" />
+                      ) : slot.phase.includes('Ventilation') ? (
+                        <Sun className="h-3 w-3 shrink-0" />
+                      ) : slot.phase.includes('Re-Inversion') ? (
+                        <ArrowDownToLine className="h-3 w-3 shrink-0" />
+                      ) : slot.phase.includes('Night') ? (
+                        <Shield className="h-3 w-3 shrink-0" />
+                      ) : (
+                        <Activity className="h-3 w-3 shrink-0" />
+                      )}
+                      <span>{slot.phase}</span>
                     </span>
                   </div>
 
@@ -140,7 +168,7 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                     )}
                   </div>
 
-                  {/* Window Guidance Action */}
+                  {/* Window Guidance Action with Strict Crisp Line Icons (Zero Emojis) */}
                   <div className="md:col-span-3 flex md:justify-end items-start">
                     <span
                       className={`rounded px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
@@ -151,7 +179,13 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                           : 'border border-stone-200 bg-stone-100 text-ink-muted'
                       }`}
                     >
-                      <span>{isVentilationAction ? '🪟' : isSealAction ? '🔒' : '🚪'}</span>
+                      {isVentilationAction ? (
+                        <Wind className="h-3.5 w-3.5 text-sage-700 shrink-0" />
+                      ) : isSealAction ? (
+                        <Lock className="h-3.5 w-3.5 text-terracotta-700 shrink-0" />
+                      ) : (
+                        <Shield className="h-3.5 w-3.5 text-stone-500 shrink-0" />
+                      )}
                       <span>{slot.windowAction}</span>
                     </span>
                   </div>
@@ -192,6 +226,26 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                         <span className="rounded bg-stone-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink">
                           {hack.tier}
                         </span>
+
+                        {/* Quiet Category Classification Badges */}
+                        {hack.id.includes('seal') || hack.id.includes('towel') ? (
+                          <span className="inline-flex items-center gap-1 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+                            <Shield className="h-3 w-3 text-stone-500" /> Infiltration Barrier
+                          </span>
+                        ) : hack.id.includes('fan') || hack.id.includes('filter') ? (
+                          <span className="inline-flex items-center gap-1 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+                            <Filter className="h-3 w-3 text-stone-500" /> Particulate Trap
+                          </span>
+                        ) : hack.id.includes('purifier') ? (
+                          <span className="inline-flex items-center gap-1 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+                            <Wind className="h-3 w-3 text-stone-500" /> CADR Optimization
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+                            <Layers className="h-3 w-3 text-stone-500" /> Aerosol Buffer
+                          </span>
+                        )}
+
                         <span className="font-mono text-xs font-semibold text-ink-muted">
                           {hack.costEstimateInr === 0 ? 'Zero-Cost' : `~₹${hack.costEstimateInr}`}
                         </span>
@@ -243,8 +297,9 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                   </div>
 
                   <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-mono">
-                    <span className="text-sage-700 font-bold">
-                      ↓ -{hack.pm25ReductionPercent}% indoor particulate load
+                    <span className="text-sage-700 font-bold flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span>↓ -{hack.pm25ReductionPercent}% indoor particulate load</span>
                     </span>
                     <span className="text-ink-muted">
                       Saves ~{hack.dailyExposureReductionUg} µg PM2.5/day
@@ -287,6 +342,22 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                         <span className="rounded bg-stone-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-ink">
                           {action.tier}
                         </span>
+
+                        {/* Quiet Category Classification Badges */}
+                        {action.id.includes('metro') || action.id.includes('commute') ? (
+                          <span className="inline-flex items-center gap-1 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+                            <Activity className="h-3 w-3 text-stone-500" /> Commute Shift
+                          </span>
+                        ) : action.id.includes('burn') || action.id.includes('waste') ? (
+                          <span className="inline-flex items-center gap-1 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+                            <Shield className="h-3 w-3 text-stone-500" /> Zero-Burn Enforcement
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-ink-muted">
+                            <Building className="h-3 w-3 text-stone-500" /> Diesel Soot Abatement
+                          </span>
+                        )}
+
                         <span className="text-xs font-mono text-ink-muted">
                           {action.timeSlot}
                         </span>

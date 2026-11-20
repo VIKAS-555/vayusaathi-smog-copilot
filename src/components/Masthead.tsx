@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wind, ShieldAlert, Sparkles, RefreshCw, FileText } from 'lucide-react';
+import { Wind, ShieldAlert, CheckCircle2, RefreshCw, FileText } from 'lucide-react';
 
 interface MastheadProps {
   aqiCategory: string;
@@ -50,7 +50,11 @@ export const Masthead: React.FC<MastheadProps> = ({
                 : 'border-sage-300 bg-sage-50 text-sage-800'
             }`}
           >
-            <ShieldAlert className="h-3.5 w-3.5" />
+            {isHazardous ? (
+              <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
+            ) : (
+              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+            )}
             <span>Episode: {aqiCategory}</span>
           </div>
 

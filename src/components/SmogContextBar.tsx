@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
 import { CitySmogContext } from '../types';
 import { CITY_PRESETS } from '../data/cityPresets';
-import { Wind, Thermometer, Droplets, ShieldAlert, Sliders } from 'lucide-react';
+import { 
+  Wind, 
+  Thermometer, 
+  Droplets, 
+  ShieldAlert, 
+  Sliders, 
+  Sun, 
+  CloudFog, 
+  ArrowDownToLine, 
+  ArrowUpFromLine, 
+  Activity, 
+  AlertTriangle, 
+  Flame, 
+  CheckCircle2, 
+  Lock 
+} from 'lucide-react';
 
 interface SmogContextBarProps {
   currentCity: CitySmogContext;
@@ -107,7 +122,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
       )}
 
-      {/* Primary Meteorological Grid: Spacious 3x2 Layout (No Narrow Squeezing) */}
+      {/* Primary Meteorological Grid: Spacious 3x2 Layout with Crisp Micro-Badges */}
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
         {/* Card 1: CPCB AQI */}
         <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
@@ -116,7 +131,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               Index (CPCB AQI)
             </span>
             <span
-              className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${
+              className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 ${
                 currentCity.currentAQI >= 400
                   ? 'bg-red-100 text-red-800 border border-red-200'
                   : currentCity.currentAQI >= 300
@@ -126,7 +141,8 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                   : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
               }`}
             >
-              {currentCity.aqiCategory}
+              <Activity className="h-3 w-3 shrink-0" />
+              <span>{currentCity.aqiCategory}</span>
             </span>
           </div>
           <div className="my-2 flex items-baseline gap-2">
@@ -137,16 +153,32 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               {currentCity.currentAQI <= 100 ? 'Minimal health risk' : 'Active air alert'}
             </span>
           </div>
-          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
-            Dominant pollutant: <strong className="text-ink font-semibold">{currentCity.dominantPollutant}</strong>
+          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5 flex items-center justify-between">
+            <span>Dominant: <strong className="text-ink font-semibold">{currentCity.dominantPollutant}</strong></span>
+            <span className="font-mono text-[10px]">Station live</span>
           </span>
         </div>
 
-        {/* Card 2: PM2.5 Fine Ambient Particles */}
+        {/* Card 2: PM2.5 Fine Ambient Particles with Quiet Condition Badge */}
         <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
-            PM2.5 Ambient Concentration
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+              PM2.5 Ambient Load
+            </span>
+            {currentCity.pm25 > 250 ? (
+              <span className="inline-flex items-center gap-1 rounded bg-terracotta-50 border border-terracotta-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-terracotta-700">
+                <Flame className="h-3 w-3" /> Extreme Fine Load
+              </span>
+            ) : currentCity.pm25 > 100 ? (
+              <span className="inline-flex items-center gap-1 rounded bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-amber-800">
+                <AlertTriangle className="h-3 w-3" /> Elevated Exposure
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded bg-sage-50 border border-sage-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-sage-700">
+                <CheckCircle2 className="h-3 w-3" /> Baseline Safe
+              </span>
+            )}
+          </div>
           <div className="my-2 flex items-baseline gap-1.5">
             <span
               className={`font-mono text-3xl font-extrabold tabular-nums ${
@@ -159,16 +191,19 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </div>
           <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
             {currentCity.pm25 <= 15
-              ? 'Within WHO annual safe guideline'
+              ? 'Within WHO annual guideline (5 µg/m³)'
               : `${(currentCity.pm25 / 15).toFixed(1)}x above WHO 24h limit (15 µg/m³)`}
           </span>
         </div>
 
         {/* Card 3: PM10 Coarse Particulates */}
         <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
-            PM10 Coarse Dust
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+              PM10 Coarse Dust
+            </span>
+            <span className="text-[10px] font-mono text-ink-muted">Aerodynamic &lt; 10µm</span>
+          </div>
           <div className="my-2 flex items-baseline gap-1.5">
             <span className="font-mono text-3xl font-extrabold text-ink tabular-nums">
               {currentCity.pm10}
@@ -213,7 +248,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             <span className="text-xl font-bold text-ink tabular-nums">
               {currentCity.windSpeedKmh} km/h
             </span>
-            <span className="rounded bg-stone-200 px-2 py-0.5 text-[11px] font-sans font-semibold text-ink">
+            <span className="rounded bg-stone-200 px-1.5 py-0.5 text-[11px] font-sans font-semibold text-ink">
               {currentCity.windDirection}
             </span>
           </div>
@@ -224,11 +259,22 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </span>
         </div>
 
-        {/* Card 6: Atmospheric Inversion & Boundary */}
+        {/* Card 6: Atmospheric Inversion & Boundary with Quiet Line Badge */}
         <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
-            Atmospheric Boundary Layer
-          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+              Atmospheric Boundary
+            </span>
+            {currentCity.currentAQI > 200 ? (
+              <span className="inline-flex items-center gap-1 rounded bg-terracotta-50 border border-terracotta-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-terracotta-700">
+                <ArrowDownToLine className="h-3 w-3" /> Inversion Active
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded bg-sage-50 border border-sage-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-sage-700">
+                <ArrowUpFromLine className="h-3 w-3" /> Convection Open
+              </span>
+            )}
+          </div>
           <div
             className={`my-2 flex items-center gap-2 text-xs font-bold leading-snug ${
               currentCity.currentAQI > 200 ? 'text-terracotta-700' : 'text-sage-700'
@@ -260,23 +306,24 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-sage-600"></span>
-              <span className="font-medium text-ink-muted">
-                Safe Ventilation ({currentCity.safeVentilationWindows})
-              </span>
+          {/* Quiet Status Badges in Diurnal Legend */}
+          <div className="flex flex-wrap items-center gap-2.5 text-xs">
+            <div className="flex items-center gap-1.5 rounded border border-sage-200 bg-sage-50/90 px-2.5 py-1 text-sage-800 font-medium">
+              <Sun className="h-3.5 w-3.5 text-sage-700 shrink-0" />
+              <span>Safe Ventilation ({currentCity.safeVentilationWindows})</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <span
-                className={`inline-block h-2.5 w-2.5 rounded-full ${
-                  currentCity.currentAQI > 200 ? 'bg-terracotta-500' : 'bg-stone-400'
-                }`}
-              ></span>
-              <span className="font-medium text-ink-muted">
-                {currentCity.currentAQI > 200 ? 'Inversion Danger (Seal Windows)' : 'Traffic Peak (Mild Haze)'}
-              </span>
-            </div>
+
+            {currentCity.currentAQI > 200 ? (
+              <div className="flex items-center gap-1.5 rounded border border-terracotta-200 bg-terracotta-50/90 px-2.5 py-1 text-terracotta-800 font-medium">
+                <CloudFog className="h-3.5 w-3.5 text-terracotta-700 shrink-0" />
+                <span>Inversion Boundary Peak</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 rounded border border-stone-200 bg-stone-100 px-2.5 py-1 text-ink-muted font-medium">
+                <Activity className="h-3.5 w-3.5 text-stone-500 shrink-0" />
+                <span>Normal Convective Mixing</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -317,7 +364,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             })}
           </div>
 
-          {/* Dynamic Hover Tooltip / Detail Callout */}
+          {/* Dynamic Hover Tooltip / Detail Callout with Crisp Line Icons */}
           <div className="mt-3 min-h-[38px] rounded border border-stone-200 bg-white px-3 py-2 text-xs flex flex-wrap items-center justify-between gap-2">
             {hoveredPoint ? (
               <>
@@ -332,18 +379,29 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                     (AQI ~{hoveredPoint.aqi})
                   </span>
                   <span
-                    className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase ${
+                    className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase flex items-center gap-1 ${
                       hoveredPoint.isSafeVentilationWindow
                         ? 'bg-sage-100 text-sage-800'
                         : 'bg-terracotta-100 text-terracotta-800'
                     }`}
                   >
-                    {hoveredPoint.isSafeVentilationWindow ? 'Safe Ventilation Window' : `Inversion: ${hoveredPoint.inversionRisk}`}
+                    {hoveredPoint.isSafeVentilationWindow ? (
+                      <>
+                        <Sun className="h-3 w-3" />
+                        <span>Safe Ventilation</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="h-3 w-3" />
+                        <span>Inversion: {hoveredPoint.inversionRisk}</span>
+                      </>
+                    )}
                   </span>
                 </div>
                 {hoveredPoint.notes && (
-                  <span className="text-xs text-ink-muted italic">
-                    ℹ️ {hoveredPoint.notes}
+                  <span className="text-xs text-ink-muted flex items-center gap-1">
+                    <Activity className="h-3 w-3 text-ink-muted shrink-0" />
+                    <span>{hoveredPoint.notes}</span>
                   </span>
                 )}
               </>
@@ -352,8 +410,9 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                 <span>
                   Hover over any hourly bar to inspect modeled micro-particulate concentration and inversion risk.
                 </span>
-                <span className="font-semibold text-sage-700">
-                  Recommended Daily Ventilation: {currentCity.safeVentilationWindows}
+                <span className="font-semibold text-sage-700 flex items-center gap-1">
+                  <Sun className="h-3.5 w-3.5 text-sage-600" />
+                  <span>Recommended Daily Ventilation: {currentCity.safeVentilationWindows}</span>
                 </span>
               </div>
             )}
