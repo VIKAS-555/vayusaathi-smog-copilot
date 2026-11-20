@@ -29,8 +29,10 @@ export interface CitySmogContext {
   humidityPercent: number;
   windSpeedKmh: number;
   windDirection: string;
-  inversionStatus: 'Active Ground Inversion' | 'Weakening' | 'Dispersion Window' | 'Developing Evening Trapping';
+  inversionStatus: 'Active Ground Inversion' | 'Weakening' | 'Dispersion Window' | 'Developing Evening Trapping' | 'Minimal Inversion / Clear Dispersion';
   safeVentilationWindows: string; // e.g. "12:30 PM - 03:30 PM"
+  ventilationStartHour: number; // e.g. 12
+  ventilationEndHour: number; // e.g. 15
   highRiskInversionHours: string; // e.g. "05:00 AM - 09:30 AM & 08:00 PM - 02:00 AM"
   diurnalCurve: DiurnalHourPoint[];
 }

@@ -100,8 +100,9 @@ export function calculateInhaledDose(
   const totalUgAvoidedDaily = Math.max(0, baselineAvgUg - adoptedAvgUg);
   const percentExposureDrop = baselineAvgUg > 0 ? Math.round((totalUgAvoidedDaily / baselineAvgUg) * 100) : 0;
 
-  // 1 passive cigarette equivalence ≈ 22 µg PM2.5 inhaled
-  const passiveCigaretteEquivalentAvoidedDaily = Number((totalUgAvoidedDaily / 22).toFixed(1));
+  // Berkeley Earth Equivalence:
+  // 1 passive cigarette ≈ 22 µg/m³ ambient 24h exposure ≈ 220 µg of inhaled PM2.5 dose (at ~10-11 m³ daily breathing volume).
+  const passiveCigaretteEquivalentAvoidedDaily = Number((totalUgAvoidedDaily / 220).toFixed(1));
 
   // 2. Commute & Household Emission Reductions (CO2 & PM2.5)
   // Petrol car: 140g CO2/km, 0.025g PM2.5/km

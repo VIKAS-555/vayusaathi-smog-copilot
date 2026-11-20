@@ -95,15 +95,20 @@ export default function Home() {
   // When city changes, trigger plan refresh
   const handleSelectCity = (newCity: CitySmogContext) => {
     setCurrentCity(newCity);
-    // Instant preliminary plan update for zero lag
     setPlan(generateDeterministicPlan(profile, newCity));
   };
 
   const handleCustomCityUpdate = (updated: Partial<CitySmogContext>) => {
     setCurrentCity((prev) => {
       const merged = { ...prev, ...updated };
+      setPlan(generateDeterministicPlan(profile, merged));
       return merged;
     });
+  };
+
+  const handleProfileChange = (updated: HouseholdProfile) => {
+    setProfile(updated);
+    setPlan(generateDeterministicPlan(updated, currentCity));
   };
 
   const isHazardous = currentCity.currentAQI >= 400;
@@ -139,7 +144,7 @@ export default function Home() {
             {/* Household & Lifestyle Profiler */}
             <HouseholdProfiler
               profile={profile}
-              onChangeProfile={(updated) => setProfile(updated)}
+              onChangeProfile={handleProfileChange}
             />
           </aside>
 

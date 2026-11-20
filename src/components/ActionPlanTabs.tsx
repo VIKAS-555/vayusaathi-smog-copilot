@@ -23,6 +23,9 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'routine' | 'iaq' | 'sustainable'>('routine');
 
+  const iaqAdoptedCount = adoptedActionIds.filter(id => id.startsWith('iaq-')).length;
+  const sustainableAdoptedCount = adoptedActionIds.filter(id => id.startsWith('sustainable-')).length;
+
   return (
     <div className="rounded-lg border border-stone-300 bg-white p-5 shadow-xs">
       {/* Editorial Diagnosis Callout */}
@@ -42,47 +45,64 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
         </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex border-b border-stone-200 gap-6">
+      {/* Prominent Numbered Tab Navigation */}
+      <div className="flex flex-wrap border-b border-stone-200 gap-2 sm:gap-6">
         <button
           onClick={() => setActiveTab('routine')}
-          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-1.5 ${
+          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-2 ${
             activeTab === 'routine'
               ? 'text-ink border-b-2 border-ink'
               : 'text-ink-muted hover:text-ink'
           }`}
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-200 text-[10px] font-mono text-ink">
+            1
+          </span>
           <Clock className="h-3.5 w-3.5" />
           <span>Low-Emission Daily Routine</span>
         </button>
 
         <button
           onClick={() => setActiveTab('iaq')}
-          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-1.5 ${
+          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-2 ${
             activeTab === 'iaq'
               ? 'text-ink border-b-2 border-ink'
               : 'text-ink-muted hover:text-ink'
           }`}
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-200 text-[10px] font-mono text-ink">
+            2
+          </span>
           <Wrench className="h-3.5 w-3.5" />
-          <span>Indoor Air Quality (IAQ) Hacks</span>
-          <span className="rounded-full bg-stone-200 px-1.5 py-0.2 text-[10px] font-mono text-ink">
-            {iaqHacks.length}
+          <span>Indoor Air Quality Hacks</span>
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-mono font-bold ${
+              iaqAdoptedCount > 0 ? 'bg-sage-100 text-sage-800' : 'bg-stone-200 text-ink-muted'
+            }`}
+          >
+            {iaqAdoptedCount}/{iaqHacks.length} Adopted
           </span>
         </button>
 
         <button
           onClick={() => setActiveTab('sustainable')}
-          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-1.5 ${
+          className={`pb-3 text-xs font-bold uppercase tracking-wider transition-colors relative flex items-center gap-2 ${
             activeTab === 'sustainable'
               ? 'text-ink border-b-2 border-ink'
               : 'text-ink-muted hover:text-ink'
           }`}
         >
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-stone-200 text-[10px] font-mono text-ink">
+            3
+          </span>
           <Leaf className="h-3.5 w-3.5" />
-          <span>Sustainable & Community Actions</span>
-          <span className="rounded-full bg-stone-200 px-1.5 py-0.2 text-[10px] font-mono text-ink">
-            {sustainableActions.length}
+          <span>Sustainable Alternatives</span>
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-mono font-bold ${
+              sustainableAdoptedCount > 0 ? 'bg-sage-100 text-sage-800' : 'bg-stone-200 text-ink-muted'
+            }`}
+          >
+            {sustainableAdoptedCount}/{sustainableActions.length} Active
           </span>
         </button>
       </div>
@@ -96,9 +116,10 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
 
           <div className="divide-y divide-stone-200 border-y border-stone-200">
             {routineSchedule.map((slot, index) => {
-              const isVentilationSlot = slot.phase.includes('Ventilation');
+              const isVentilationAction = slot.windowAction.includes('Safe');
+              const isSealAction = slot.windowAction.includes('Seal');
               return (
-                <div key={index} className="py-3.5 grid grid-cols-1 md:grid-cols-12 gap-3 text-xs">
+                <div key={index} className="py-3.5 grid grid-cols-1 md:grid-cols-12 gap-3 text-xs items-start">
                   {/* Time & Phase Badge */}
                   <div className="md:col-span-3">
                     <span className="font-mono text-sm font-bold text-ink block">
@@ -106,9 +127,9 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                     </span>
                     <span
                       className={`inline-block mt-1 rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${
-                        isVentilationSlot
+                        isVentilationAction
                           ? 'bg-sage-100 text-sage-800'
-                          : slot.phase.includes('Smog Peak') || slot.phase.includes('Re-Inversion')
+                          : isSealAction
                           ? 'bg-terracotta-100 text-terracotta-800'
                           : 'bg-stone-200 text-ink-muted'
                       }`}
@@ -117,18 +138,21 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                     </span>
                   </div>
 
-                  {/* Operational Recommendations */}
-                  <div className="md:col-span-6 space-y-1.5">
-                    <p className="text-ink font-medium">
+                  {/* Operational Recommendations with Clean Alignment */}
+                  <div className="md:col-span-6 space-y-2">
+                    <p className="text-ink font-medium leading-relaxed">
                       {slot.recommendation}
                     </p>
-                    <div className="flex items-center gap-2 text-[11px] text-ink-muted">
+
+                    <div className="grid grid-cols-[95px_1fr] gap-2 text-[11px] items-baseline">
                       <span className="font-semibold text-ink">Transit/Outdoor:</span>
-                      <span>{slot.commuteOrOutdoorGuidance}</span>
+                      <span className="text-ink-muted">{slot.commuteOrOutdoorGuidance}</span>
                     </div>
+
                     {slot.vulnerableCareNote && (
-                      <div className="rounded bg-stone-50 border border-stone-200 px-2 py-1 text-[11px] text-ink-muted">
-                        <strong className="text-ink">Vulnerable Care:</strong> {slot.vulnerableCareNote}
+                      <div className="grid grid-cols-[95px_1fr] gap-2 text-[11px] items-baseline rounded bg-stone-50 border border-stone-200 p-2">
+                        <span className="font-semibold text-ink">Vulnerable Care:</span>
+                        <span className="text-ink-muted">{slot.vulnerableCareNote}</span>
                       </div>
                     )}
                   </div>
@@ -136,14 +160,16 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                   {/* Window Guidance Action */}
                   <div className="md:col-span-3 flex md:justify-end items-start">
                     <span
-                      className={`rounded px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 ${
-                        isVentilationSlot
+                      className={`rounded px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+                        isVentilationAction
                           ? 'border border-sage-300 bg-sage-50 text-sage-800'
-                          : 'border border-terracotta-200 bg-terracotta-50 text-terracotta-800'
+                          : isSealAction
+                          ? 'border border-terracotta-200 bg-terracotta-50 text-terracotta-800'
+                          : 'border border-stone-200 bg-stone-100 text-ink-muted'
                       }`}
                     >
-                      {isVentilationSlot ? '🪟 ' : '🔒 '}
-                      {slot.windowAction}
+                      <span>{isVentilationAction ? '🪟' : isSealAction ? '🔒' : '🚪'}</span>
+                      <span>{slot.windowAction}</span>
                     </span>
                   </div>
                 </div>
@@ -158,10 +184,10 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
         <div className="mt-5 space-y-4">
           <div className="flex items-center justify-between text-xs text-ink-muted">
             <p>
-              Evidence-based micro-environment interventions sorted by implementation cost. Toggle items to recalculate your personal health dose.
+              Evidence-based micro-environment interventions sorted by implementation cost. Toggle items to immediately recalculate your personal health dose.
             </p>
             <span className="font-mono text-ink font-semibold">
-              {adoptedActionIds.filter(id => id.startsWith('iaq-')).length} of {iaqHacks.length} Adopted
+              {iaqAdoptedCount} of {iaqHacks.length} Adopted
             </span>
           </div>
 
@@ -173,7 +199,7 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                   key={hack.id}
                   className={`rounded-lg border p-4 transition-all ${
                     isAdopted
-                      ? 'border-sage-400 bg-sage-50/30 shadow-xs'
+                      ? 'border-sage-400 bg-sage-50/40 shadow-xs'
                       : 'border-stone-200 bg-white hover:border-stone-300'
                   }`}
                 >
@@ -192,27 +218,25 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       </h4>
                     </div>
 
-                    {/* Interactive Adopt Habit Toggle */}
+                    {/* Prominent Adopt Habit Button */}
                     <button
                       type="button"
                       onClick={() => onToggleAction(hack.id)}
-                      className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      aria-pressed={isAdopted}
+                      className={`flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs ${
                         isAdopted
-                          ? 'border border-sage-600 bg-sage-600 text-white'
-                          : 'border border-stone-300 bg-white text-ink hover:bg-stone-100'
+                          ? 'border border-sage-700 bg-sage-700 text-white hover:bg-sage-800'
+                          : 'border border-stone-300 bg-white text-ink hover:bg-stone-50 hover:border-stone-400'
                       }`}
                     >
-                      {isAdopted ? (
-                        <>
-                          <Check className="h-3.5 w-3.5" />
-                          <span>Habit Active</span>
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="h-3.5 w-3.5" />
-                          <span>Adopt Habit</span>
-                        </>
-                      )}
+                      <div
+                        className={`h-4 w-4 rounded flex items-center justify-center transition-colors ${
+                          isAdopted ? 'bg-white text-sage-700' : 'border border-stone-300 bg-stone-100'
+                        }`}
+                      >
+                        {isAdopted && <Check className="h-3 w-3 stroke-[3]" />}
+                      </div>
+                      <span>{isAdopted ? 'Habit Adopted' : 'Adopt Habit'}</span>
                     </button>
                   </div>
 
@@ -248,7 +272,7 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
               High-impact commute, energy, and residential society policies that stop emissions at source.
             </p>
             <span className="font-mono text-ink font-semibold">
-              {adoptedActionIds.filter(id => id.startsWith('sustainable-')).length} of {sustainableActions.length} Active
+              {sustainableAdoptedCount} of {sustainableActions.length} Active
             </span>
           </div>
 
@@ -260,7 +284,7 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                   key={action.id}
                   className={`rounded-lg border p-4 transition-all ${
                     isAdopted
-                      ? 'border-sage-400 bg-sage-50/30 shadow-xs'
+                      ? 'border-sage-400 bg-sage-50/40 shadow-xs'
                       : 'border-stone-200 bg-white hover:border-stone-300'
                   }`}
                 >
@@ -282,23 +306,21 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                     <button
                       type="button"
                       onClick={() => onToggleAction(action.id)}
-                      className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      aria-pressed={isAdopted}
+                      className={`flex items-center gap-2 rounded-md px-3.5 py-1.5 text-xs font-bold transition-all shadow-xs ${
                         isAdopted
-                          ? 'border border-sage-600 bg-sage-600 text-white'
-                          : 'border border-stone-300 bg-white text-ink hover:bg-stone-100'
+                          ? 'border border-sage-700 bg-sage-700 text-white hover:bg-sage-800'
+                          : 'border border-stone-300 bg-white text-ink hover:bg-stone-50 hover:border-stone-400'
                       }`}
                     >
-                      {isAdopted ? (
-                        <>
-                          <Check className="h-3.5 w-3.5" />
-                          <span>Policy Active</span>
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="h-3.5 w-3.5" />
-                          <span>Adopt Policy</span>
-                        </>
-                      )}
+                      <div
+                        className={`h-4 w-4 rounded flex items-center justify-center transition-colors ${
+                          isAdopted ? 'bg-white text-sage-700' : 'border border-stone-300 bg-stone-100'
+                        }`}
+                      >
+                        {isAdopted && <Check className="h-3 w-3 stroke-[3]" />}
+                      </div>
+                      <span>{isAdopted ? 'Policy Active' : 'Adopt Policy'}</span>
                     </button>
                   </div>
 

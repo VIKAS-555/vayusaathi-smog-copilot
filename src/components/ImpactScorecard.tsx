@@ -80,11 +80,19 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
               Health Equivalence:{' '}
             </span>
             <span className="text-ink-muted">
-              Equivalent to avoiding{' '}
-              <strong className="font-mono font-bold text-ink">
-                ~{impact.passiveCigaretteEquivalentAvoidedDaily} passive cigarettes
-              </strong>{' '}
-              worth of fine particulate inhalation daily per person.
+              {impact.passiveCigaretteEquivalentAvoidedDaily >= 0.1 ? (
+                <>
+                  Equivalent to avoiding{' '}
+                  <strong className="font-mono font-bold text-ink">
+                    ~{impact.passiveCigaretteEquivalentAvoidedDaily} passive cigarettes
+                  </strong>{' '}
+                  worth of fine particulate inhalation daily per person.
+                </>
+              ) : (
+                <>
+                  <strong className="font-semibold text-sage-700">Clean baseline air:</strong> Inhaled fine particulate load is within safe physiological limits.
+                </>
+              )}
             </span>
           </div>
         </div>

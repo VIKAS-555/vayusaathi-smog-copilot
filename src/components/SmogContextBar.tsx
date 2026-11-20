@@ -108,7 +108,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
       )}
 
       {/* Primary Meteorological Grid */}
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
         {/* AQI Metric */}
         <div className="rounded border border-stone-200 bg-stone-50/80 p-3">
           <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
@@ -140,13 +140,17 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             PM2.5 Ambient
           </span>
           <div className="mt-1 flex items-baseline gap-1">
-            <span className="font-mono text-3xl font-bold text-terracotta-700 tabular-nums">
+            <span
+              className={`font-mono text-3xl font-bold tabular-nums ${
+                currentCity.currentAQI > 200 ? 'text-terracotta-700' : 'text-sage-700'
+              }`}
+            >
               {currentCity.pm25}
             </span>
             <span className="text-xs font-mono text-ink-muted">µg/m³</span>
           </div>
           <span className="text-[10px] text-ink-muted">
-            {(currentCity.pm25 / 15).toFixed(1)}x WHO 24h limit
+            {currentCity.pm25 <= 15 ? 'Within WHO safe limit' : `${(currentCity.pm25 / 15).toFixed(1)}x WHO 24h limit`}
           </span>
         </div>
 
@@ -179,7 +183,9 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               {currentCity.humidityPercent}%
             </span>
           </div>
-          <span className="text-[10px] text-ink-muted">High moisture promotes secondary aerosols</span>
+          <span className="text-[10px] text-ink-muted">
+            {currentCity.humidityPercent >= 75 ? 'Moist winter air' : 'Moderate ambient humidity'}
+          </span>
         </div>
 
         {/* Wind Speed & Direction */}
@@ -195,15 +201,21 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
 
         {/* Inversion Mechanism Status */}
-        <div className="rounded border border-stone-200 bg-stone-50/80 p-3">
+        <div className="rounded border border-stone-200 bg-stone-50/80 p-3 flex flex-col justify-between">
           <span className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
             Atmospheric Boundary
           </span>
-          <div className="mt-1 flex items-center gap-1 text-xs font-bold text-terracotta-700">
+          <div
+            className={`mt-1 flex items-center gap-1.5 text-xs font-bold leading-snug ${
+              currentCity.currentAQI > 200 ? 'text-terracotta-700' : 'text-sage-700'
+            }`}
+          >
             <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
-            <span className="truncate">{currentCity.inversionStatus}</span>
+            <span>{currentCity.inversionStatus}</span>
           </div>
-          <span className="text-[10px] text-ink-muted">Trapping depth &lt; 250m</span>
+          <span className="text-[10px] text-ink-muted mt-0.5">
+            {currentCity.currentAQI > 200 ? 'Trapping depth < 250m' : 'Clear planetary boundary'}
+          </span>
         </div>
       </div>
 
@@ -216,18 +228,28 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               <span className="font-mono text-xs font-normal text-ink-muted">· Hourly PM2.5 Trapping Profile</span>
             </h3>
             <p className="text-xs text-ink-muted">
-              Cold surface air traps pollutants early morning and late night. Midday solar heating triggers convection and temporary dilution.
+              {currentCity.currentAQI > 200
+                ? 'Cold surface air traps pollutants early morning and late night. Midday solar heating triggers convection and temporary dilution.'
+                : 'Steady convective mixing and airflow maintain healthy dispersion throughout daytime hours.'}
             </p>
           </div>
 
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex flex-wrap items-center gap-3 text-xs">
             <div className="flex items-center gap-1.5">
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-sage-600"></span>
-              <span className="font-medium text-ink-muted">Safe Ventilation Window (12–15h)</span>
+              <span className="font-medium text-ink-muted">
+                Safe Ventilation ({currentCity.safeVentilationWindows})
+              </span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="inline-block h-2.5 w-2.5 rounded-full bg-terracotta-500"></span>
-              <span className="font-medium text-ink-muted">Inversion Danger (Seal Windows)</span>
+              <span
+                className={`inline-block h-2.5 w-2.5 rounded-full ${
+                  currentCity.currentAQI > 200 ? 'bg-terracotta-500' : 'bg-stone-400'
+                }`}
+              ></span>
+              <span className="font-medium text-ink-muted">
+                {currentCity.currentAQI > 200 ? 'Inversion Danger (Seal Windows)' : 'Traffic Peak (Mild Haze)'}
+              </span>
             </div>
           </div>
         </div>

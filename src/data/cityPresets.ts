@@ -1,9 +1,53 @@
 import { CitySmogContext, DiurnalHourPoint } from '../types';
 
-function generateDiurnalCurve(basePm25: number, baseAqi: number): DiurnalHourPoint[] {
-  // Models the classic winter temperature inversion curve:
+function generateDiurnalCurve(
+  basePm25: number,
+  baseAqi: number,
+  ventStart: number = 12,
+  ventEnd: number = 15,
+  isLowSmogCity: boolean = false
+): DiurnalHourPoint[] {
+  // If low smog city (e.g., Bengaluru with good airflow or Mumbai with maritime breeze):
+  // Diurnal variation is mild, driven mainly by peak traffic rush rather than cold surface inversion trapping.
+  if (isLowSmogCity) {
+    const mildMultipliers = [
+      0.85, 0.82, 0.80, 0.82, 0.88, // 00:00 - 04:00 (clean night baseline)
+      0.95, 1.10, 1.18, 1.12, 1.00, // 05:00 - 09:00 (morning traffic peak)
+      0.90, 0.85, 0.82, 0.80, 0.82, // 10:00 - 14:00 (daytime sun & convective dispersion)
+      0.85, 0.92, 1.08, 1.15, 1.10, // 15:00 - 19:00 (evening traffic)
+      1.00, 0.95, 0.90, 0.88        // 20:00 - 23:00 (dispersed)
+    ];
+
+    return mildMultipliers.map((mult, hour) => {
+      const pm25 = Math.round(basePm25 * mult);
+      const aqi = Math.min(500, Math.round(baseAqi * mult));
+      const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
+      
+      const inversionRisk: 'Low' | 'Moderate' | 'High' | 'Severe' = 
+        mult >= 1.15 ? 'Moderate' : 'Low';
+
+      const isSafeVentilationWindow = hour >= ventStart && hour <= ventEnd;
+
+      let notes = undefined;
+      if (hour === 8) notes = 'Mild morning traffic rush';
+      if (hour === 13) notes = 'Active solar convective mixing';
+      if (hour === 18) notes = 'Evening commute rush';
+
+      return {
+        hour,
+        timeLabel,
+        pm25,
+        aqi,
+        inversionRisk,
+        isSafeVentilationWindow,
+        notes,
+      };
+    });
+  }
+
+  // Models the severe winter temperature inversion curve (Indo-Gangetic Plain):
   // Peaks between 05:00 and 08:30 (cold ground surface layer traps pollutants)
-  // Low dip between 12:30 and 15:30 (solar heating breaks inversion cap and enables dispersion)
+  // Low dip between 12:00 and 15:30 (solar heating breaks inversion cap and enables dispersion)
   // Re-inversion rises sharply from 18:00 to 23:00 (cooling ground + evening traffic + biomass burning)
   const multipliers = [
     1.15, 1.20, 1.25, 1.30, 1.35, // 00:00 - 04:00 (heavy overnight inversion)
@@ -23,11 +67,11 @@ function generateDiurnalCurve(basePm25: number, baseAqi: number): DiurnalHourPoi
     else if (mult >= 1.15) inversionRisk = 'High';
     else if (mult <= 0.75) inversionRisk = 'Low';
 
-    const isSafeVentilationWindow = hour >= 12 && hour <= 15;
+    const isSafeVentilationWindow = hour >= ventStart && hour <= ventEnd;
 
     let notes = undefined;
     if (hour === 6) notes = 'Peak overnight cold pool & inversion ceiling';
-    if (hour === 13) notes = 'Best daytime dispersion window';
+    if (hour === 13) notes = 'Optimal daytime solar dispersion window';
     if (hour === 20) notes = 'Evening thermal re-inversion begins';
 
     return {
@@ -57,9 +101,11 @@ export const CITY_PRESETS: CitySmogContext[] = [
     windSpeedKmh: 3.8,
     windDirection: 'NW (Calm / Inverted)',
     inversionStatus: 'Active Ground Inversion',
-    safeVentilationWindows: '12:30 PM – 03:15 PM',
+    safeVentilationWindows: '12:00 PM – 03:30 PM',
+    ventilationStartHour: 12,
+    ventilationEndHour: 15,
     highRiskInversionHours: '05:00 AM – 09:30 AM & 08:00 PM – 02:00 AM',
-    diurnalCurve: generateDiurnalCurve(320, 438),
+    diurnalCurve: generateDiurnalCurve(320, 438, 12, 15, false),
   },
   {
     id: 'gurugram',
@@ -76,8 +122,10 @@ export const CITY_PRESETS: CitySmogContext[] = [
     windDirection: 'WNW',
     inversionStatus: 'Active Ground Inversion',
     safeVentilationWindows: '12:00 PM – 03:30 PM',
+    ventilationStartHour: 12,
+    ventilationEndHour: 15,
     highRiskInversionHours: '05:30 AM – 09:00 AM & 08:30 PM – 01:30 AM',
-    diurnalCurve: generateDiurnalCurve(275, 382),
+    diurnalCurve: generateDiurnalCurve(275, 382, 12, 15, false),
   },
   {
     id: 'noida',
@@ -93,9 +141,11 @@ export const CITY_PRESETS: CitySmogContext[] = [
     windSpeedKmh: 3.2,
     windDirection: 'NW',
     inversionStatus: 'Active Ground Inversion',
-    safeVentilationWindows: '12:30 PM – 03:00 PM',
+    safeVentilationWindows: '12:00 PM – 03:00 PM',
+    ventilationStartHour: 12,
+    ventilationEndHour: 15,
     highRiskInversionHours: '05:00 AM – 09:30 AM & 08:00 PM – 02:30 AM',
-    diurnalCurve: generateDiurnalCurve(298, 412),
+    diurnalCurve: generateDiurnalCurve(298, 412, 12, 15, false),
   },
   {
     id: 'lucknow',
@@ -111,9 +161,11 @@ export const CITY_PRESETS: CitySmogContext[] = [
     windSpeedKmh: 4.0,
     windDirection: 'W',
     inversionStatus: 'Developing Evening Trapping',
-    safeVentilationWindows: '11:45 AM – 03:30 PM',
+    safeVentilationWindows: '11:30 AM – 03:30 PM',
+    ventilationStartHour: 11,
+    ventilationEndHour: 15,
     highRiskInversionHours: '06:00 AM – 09:00 AM & 09:00 PM – 01:00 AM',
-    diurnalCurve: generateDiurnalCurve(215, 326),
+    diurnalCurve: generateDiurnalCurve(215, 326, 11, 15, false),
   },
   {
     id: 'kolkata',
@@ -130,8 +182,10 @@ export const CITY_PRESETS: CitySmogContext[] = [
     windDirection: 'NNE',
     inversionStatus: 'Weakening',
     safeVentilationWindows: '11:00 AM – 04:00 PM',
+    ventilationStartHour: 11,
+    ventilationEndHour: 16,
     highRiskInversionHours: '06:30 AM – 08:30 AM & 09:30 PM – 12:30 AM',
-    diurnalCurve: generateDiurnalCurve(162, 265),
+    diurnalCurve: generateDiurnalCurve(162, 265, 11, 16, false),
   },
   {
     id: 'mumbai',
@@ -148,8 +202,10 @@ export const CITY_PRESETS: CitySmogContext[] = [
     windDirection: 'SW (Sea Breeze)',
     inversionStatus: 'Dispersion Window',
     safeVentilationWindows: '10:00 AM – 05:00 PM',
-    highRiskInversionHours: '07:00 AM – 08:30 AM (Rush hour haze)',
-    diurnalCurve: generateDiurnalCurve(88, 178),
+    ventilationStartHour: 10,
+    ventilationEndHour: 17,
+    highRiskInversionHours: '07:30 AM – 09:00 AM (Traffic peak)',
+    diurnalCurve: generateDiurnalCurve(88, 178, 10, 17, true),
   },
   {
     id: 'bengaluru',
@@ -164,9 +220,11 @@ export const CITY_PRESETS: CitySmogContext[] = [
     humidityPercent: 62,
     windSpeedKmh: 13.0,
     windDirection: 'E',
-    inversionStatus: 'Dispersion Window',
-    safeVentilationWindows: '08:00 AM – 06:00 PM (Clear Airflow)',
-    highRiskInversionHours: '08:00 AM – 09:30 AM (Localized traffic peak)',
-    diurnalCurve: generateDiurnalCurve(42, 94),
+    inversionStatus: 'Minimal Inversion / Clear Dispersion',
+    safeVentilationWindows: '08:00 AM – 06:00 PM',
+    ventilationStartHour: 8,
+    ventilationEndHour: 18,
+    highRiskInversionHours: '08:00 AM – 09:30 AM (Rush hour only)',
+    diurnalCurve: generateDiurnalCurve(42, 94, 8, 18, true),
   },
 ];

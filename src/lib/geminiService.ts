@@ -8,14 +8,16 @@ export function generateDeterministicPlan(
   const hasKids = profile.members.some(m => m.role === 'Child');
   const hasSeniors = profile.members.some(m => m.role === 'Senior');
   const hasRespiratory = profile.members.some(m => m.hasRespiratorySensitivity);
-  const isSevere = city.currentAQI >= 300;
-  const isHazardous = city.currentAQI >= 400;
 
-  const riskRating = isHazardous 
-    ? 'Hazardous Emergency' 
-    : isSevere 
-      ? 'Severe Winter Episode' 
-      : 'Moderate Concern';
+  const aqi = city.currentAQI;
+  const isGood = aqi <= 100;
+  const isModerate = aqi > 100 && aqi <= 200;
+  const isPoorOrVeryPoor = aqi > 200 && aqi <= 350;
+  const isSevereOrHazardous = aqi > 350;
+
+  const riskRating = isSevereOrHazardous 
+    ? (aqi >= 400 ? 'Hazardous Emergency' : 'Severe Winter Episode')
+    : (isPoorOrVeryPoor ? 'Severe Winter Episode' : 'Moderate Concern');
 
   const vulnerableLabels: string[] = [];
   if (hasKids) vulnerableLabels.push('school-age children');
@@ -23,59 +25,162 @@ export function generateDeterministicPlan(
   if (hasRespiratory) vulnerableLabels.push('respiratory/asthmatic sensitivity');
   const vulnString = vulnerableLabels.length > 0 ? vulnerableLabels.join(', ') : 'healthy adults';
 
-  const summaryVerdict = `Tailored winter smog protocol for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Your household profile with ${vulnString} in a ${profile.homeType.replace(/-/g, ' ')} requires active morning sealing during the 05:00–09:30 inversion peak, utilizing the brief ${city.safeVentilationWindows} dispersion window for air exchange, and protecting morning commutes.`;
+  // 1. DYNAMIC SUMMARY VERDICT BASED ON AQI TIER
+  let summaryVerdict = '';
+  if (isGood) {
+    summaryVerdict = `Optimal ambient air quality for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Atmospheric dispersion is active with zero cold-inversion trapping. For your household with ${vulnString}, natural cross-ventilation is recommended throughout the day (${city.safeVentilationWindows}), and outdoor morning activities and school sports are safe.`;
+  } else if (isModerate) {
+    summaryVerdict = `Moderate air quality in ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Maritime winds and steady airflow prevent deep particulate trapping. Vulnerable members (${vulnString}) should take mild precautions during peak traffic hours (08:00–09:30 AM), with full convective ventilation safe between ${city.safeVentilationWindows}.`;
+  } else if (isPoorOrVeryPoor) {
+    summaryVerdict = `Elevated smog conditions in ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Developing thermal boundary trapping requires closing windows during cold early hours and restricting strenuous morning exertion for ${vulnString}. Aerate during the midday window (${city.safeVentilationWindows}).`;
+  } else {
+    summaryVerdict = `Critical winter smog emergency protocol for ${city.name} (AQI ${city.currentAQI} · ${city.aqiCategory}). Severe nocturnal temperature inversion traps dangerous fine particles ($PM_{2.5} > ${city.pm25} \\mu\\text{g/m}^3$) at ground level. Your household with ${vulnString} must enforce strict window sealing during peak trapping (${city.highRiskInversionHours}) and limit all outdoor exposure.`;
+  }
 
-  const routineSchedule: DailyRoutineSlot[] = [
-    {
-      timeWindow: '05:30 – 08:30',
-      phase: 'Morning Smog Peak',
-      recommendation: 'Strict window lockdown. Cold air pool traps tailpipe and biomass emissions at ground level. Postpone outdoor jogging/strolls.',
-      windowAction: 'Seal tightly',
-      commuteOrOutdoorGuidance: profile.commuteMode === 'solo-petrol-car' 
-        ? 'Pre-cool car cabin with AC in internal air-recirculation mode (never pull external air).' 
-        : 'Equip certified N95/FFP2 mask before exiting the door; avoid walking near major arterial roads.',
-      vulnerableCareNote: hasKids 
-        ? 'Coordinate with school administration for indoor-only morning assemblies.' 
-        : 'Seniors should postpone balcony walks until after 11:30 AM.'
-    },
-    {
-      timeWindow: '08:30 – 12:00',
-      phase: 'Morning Smog Peak',
-      recommendation: 'Keep entry doors shut. Use door draft snakes or wet rolled towels at base of exterior doors to block dust infiltration.',
-      windowAction: 'Keep closed',
-      commuteOrOutdoorGuidance: 'Avoid idling engines in apartment parking lots; wear mask during building transit.',
-      vulnerableCareNote: hasRespiratory ? 'Keep prescribed bronchodilator / inhaler within immediate arm reach.' : 'Maintain indoor hydration.'
-    },
-    {
-      timeWindow: '12:15 – 15:15',
-      phase: 'Midday Ventilation Window',
-      recommendation: `Solar thermal heating temporarily breaks the ground inversion layer. Optimum window to flush stagnant indoor CO₂ for 30–40 minutes.`,
-      windowAction: 'Safe to cross-ventilate (30-45m)',
-      commuteOrOutdoorGuidance: 'Safest time of the day for essential outdoor errands, balcony drying, or dog walking.',
-      vulnerableCareNote: 'Open opposite windows to create a brisk cross-breeze, then re-seal promptly at 3:30 PM before evening cooling starts.'
-    },
-    {
-      timeWindow: '17:30 – 20:30',
-      phase: 'Evening Re-Inversion',
-      recommendation: 'Ground temperatures drop rapidly; industrial and evening rush hour emissions become trapped in the boundary layer.',
-      windowAction: 'Seal tightly',
-      commuteOrOutdoorGuidance: profile.commuteMode.includes('metro') 
-        ? 'Metro stations provide filtered underground transit; avoid surface auto-rickshaws in slow traffic.' 
-        : 'Keep vehicle windows closed and cabin fan on recirculation.',
-      vulnerableCareNote: hasKids ? 'Children must complete play inside or in indoor clubhouses; zero strenuous outdoor sports.' : 'Limit evening outdoor exposure.'
-    },
-    {
-      timeWindow: '21:00 – 06:00',
-      phase: 'Night Sealing',
-      recommendation: profile.purifierStatus === 'none'
-        ? 'Run fan on low speed with DIY filter/wet barrier to circulate air; keep bedroom door closed to create a micro-clean sleeping sanctuary.'
-        : 'Set bedroom purifier to Auto/Night mode 30 minutes before sleep. Ensure windows are latched.',
-      windowAction: 'Seal tightly',
-      commuteOrOutdoorGuidance: 'Zero night outdoor exposure.',
-      vulnerableCareNote: 'Dry winter smog irritates mucous membranes; use a room humidifier or open bowl of water near radiator/heat source.'
-    }
-  ];
+  // 2. DYNAMIC ROUTINE SCHEDULE BASED ON AQI TIER
+  let routineSchedule: DailyRoutineSlot[] = [];
 
+  if (isGood) {
+    routineSchedule = [
+      {
+        timeWindow: '06:00 – 08:30',
+        phase: 'Midday Ventilation Window',
+        recommendation: 'Clean morning airflow. Great time for morning jogs, yoga on the balcony, and natural cross-ventilation.',
+        windowAction: 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Active commute (walking, cycling) is safe and encouraged. Minimal background particulate pollution.',
+        vulnerableCareNote: hasKids ? 'Safe for normal outdoor school sports and morning playtime.' : 'Enjoy morning natural sunlight.'
+      },
+      {
+        timeWindow: '08:30 – 12:00',
+        phase: 'Midday Ventilation Window',
+        recommendation: 'Mild localized traffic increase near major junctions. Keep windows open for fresh air exchange away from main roads.',
+        windowAction: 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Public transit or carpool recommended to keep regional emissions low.',
+        vulnerableCareNote: hasRespiratory ? 'No special respiratory restrictions under current AQI levels.' : 'Maintain regular indoor hydration.'
+      },
+      {
+        timeWindow: '12:00 – 16:30',
+        phase: 'Afternoon Low Inversion',
+        recommendation: `Optimal convective dispersion window (${city.safeVentilationWindows}). High planetary boundary layer height.`,
+        windowAction: 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Full outdoor mobility with zero atmospheric risk.',
+        vulnerableCareNote: 'Sunlight and airflow keep indoor CO₂ levels low without purifier strain.'
+      },
+      {
+        timeWindow: '17:30 – 20:30',
+        phase: 'Afternoon Low Inversion',
+        recommendation: 'Evening commute traffic peak. Close street-facing windows only if dwelling directly overlooks major traffic junctions.',
+        windowAction: profile.homeType === 'independent-house-street' ? 'Keep closed' : 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Standard evening commute.',
+        vulnerableCareNote: 'Park visits and outdoor exercise safe for all ages.'
+      },
+      {
+        timeWindow: '21:00 – 06:00',
+        phase: 'Night Sealing',
+        recommendation: 'Cool, pleasant night air. Natural cross-ventilation or fan circulation is comfortable and safe.',
+        windowAction: 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Zero ambient hazard.',
+        vulnerableCareNote: 'Normal restful sleep; purifiers optional.'
+      }
+    ];
+  } else if (isModerate) {
+    routineSchedule = [
+      {
+        timeWindow: '06:00 – 08:30',
+        phase: 'Morning Smog Peak',
+        recommendation: 'Mild early haze mixed with humidity. Sensitive individuals should avoid jogging immediately adjacent to heavy traffic arteries.',
+        windowAction: 'Keep closed',
+        commuteOrOutdoorGuidance: 'Use AC recirc mode in cars during peak traffic; two-wheeler riders may use a basic dust mask.',
+        vulnerableCareNote: hasRespiratory ? 'Asthmatics should do gentle warm-ups before heading outdoors.' : 'Safe for general population.'
+      },
+      {
+        timeWindow: '08:30 – 12:00',
+        phase: 'Midday Ventilation Window',
+        recommendation: 'Solar radiation burns off morning moisture. Steady wind dispersion begins.',
+        windowAction: 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Standard transit; avoid idling vehicles in basement parking.',
+        vulnerableCareNote: 'Good time for elderly balcony strolls.'
+      },
+      {
+        timeWindow: '12:00 – 16:30',
+        phase: 'Midday Ventilation Window',
+        recommendation: `Prime ventilation window (${city.safeVentilationWindows}). Good sea breeze or thermal mixing.`,
+        windowAction: 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Safest outdoor window of the day for errands and sports.',
+        vulnerableCareNote: 'Open opposite windows to flush indoor cooking aerosol and CO₂.'
+      },
+      {
+        timeWindow: '17:30 – 20:30',
+        phase: 'Evening Re-Inversion',
+        recommendation: 'Evening traffic accumulation. Keep windows closed on road-facing sides.',
+        windowAction: 'Keep closed',
+        commuteOrOutdoorGuidance: 'Metro rail or carpool helps prevent traffic-clogged exhaust pockets.',
+        vulnerableCareNote: 'Children outdoor play is fine in green community parks.'
+      },
+      {
+        timeWindow: '21:00 – 06:00',
+        phase: 'Night Sealing',
+        recommendation: 'Night settling. Purifiers on low or auto speed in bedrooms.',
+        windowAction: 'Keep closed',
+        commuteOrOutdoorGuidance: 'Minimal outdoor precautions needed.',
+        vulnerableCareNote: 'Ensure bedroom doors are slightly ajar for air circulation if not using purifier.'
+      }
+    ];
+  } else {
+    // Severe / Hazardous (Delhi, Gurugram, Noida, etc.)
+    routineSchedule = [
+      {
+        timeWindow: '05:30 – 08:30',
+        phase: 'Morning Smog Peak',
+        recommendation: 'Strict window lockdown. Shallow cold boundary layer (<150m) traps heavy toxic particulates and vehicle exhaust.',
+        windowAction: 'Seal tightly',
+        commuteOrOutdoorGuidance: profile.commuteMode === 'solo-petrol-car'
+          ? 'Pre-cool car cabin with AC set strictly to internal air recirculation.'
+          : 'Equip certified N95 mask before leaving home; avoid walking near arterial roads.',
+        vulnerableCareNote: hasKids
+          ? 'Coordinate with school administration for indoor-only morning activities.'
+          : 'Seniors & asthmatics must postpone outdoor walks until after 11:30 AM.'
+      },
+      {
+        timeWindow: '08:30 – 12:00',
+        phase: 'Morning Smog Peak',
+        recommendation: 'Keep all exterior doors sealed. Place door draft snakes or damp towels at entrance sills to prevent particulate entry.',
+        windowAction: 'Keep closed',
+        commuteOrOutdoorGuidance: 'Avoid idling engines in apartment parking basements; wear mask during transit.',
+        vulnerableCareNote: hasRespiratory ? 'Keep emergency inhaler/bronchodilator in immediate reach.' : 'Maintain indoor hydration.'
+      },
+      {
+        timeWindow: city.safeVentilationWindows,
+        phase: 'Midday Ventilation Window',
+        recommendation: `Thermal solar heating temporarily pierces the cold inversion ceiling. Optimum 30–45 min window to flush indoor CO₂.`,
+        windowAction: 'Safe to cross-ventilate (30-45m)',
+        commuteOrOutdoorGuidance: 'Safest daytime window for essential outdoor grocery runs or pet walks.',
+        vulnerableCareNote: 'Open opposite windows for brisk airflow, then re-seal promptly before 3:30 PM.'
+      },
+      {
+        timeWindow: '17:30 – 20:30',
+        phase: 'Evening Re-Inversion',
+        recommendation: 'Surface cooling triggers rapid re-inversion. Biomass smoke and rush-hour emissions get trapped.',
+        windowAction: 'Seal tightly',
+        commuteOrOutdoorGuidance: profile.commuteMode.includes('metro')
+          ? 'Metro rail provides filtered underground transit; avoid open two-wheelers in traffic jams.'
+          : 'Keep vehicle windows rolled up and fan on recirculation.',
+        vulnerableCareNote: hasKids ? 'Children must remain strictly indoors; zero strenuous outdoor sports.' : 'Limit evening outdoor exposure.'
+      },
+      {
+        timeWindow: '21:00 – 06:00',
+        phase: 'Night Sealing',
+        recommendation: profile.purifierStatus === 'none'
+          ? 'Keep bedroom sealed to create a micro-clean sleeping sanctuary; use fan with DIY filter to circulate air.'
+          : 'Set bedroom purifier to Auto/Night mode 30 minutes before sleep. Ensure windows are tightly latched.',
+        windowAction: 'Seal tightly',
+        commuteOrOutdoorGuidance: 'Zero non-essential night outdoor exposure.',
+        vulnerableCareNote: 'Dry toxic smog irritates airways; keep an open water bowl or humidifier near sleeping area.'
+      }
+    ];
+  }
+
+  // 3. IAQ HACKS TAILORED TO AMBIENT SMOG SEVERITY
   const iaqHacks: ActionItem[] = [
     {
       id: 'iaq-zero-cost-door-seal',
@@ -84,12 +189,12 @@ export function generateDeterministicPlan(
       category: 'iaq',
       timeSlot: 'Morning & Night Inversion',
       description: 'Roll up damp microfiber towels or old cotton bedsheets and place them tightly along the gap beneath the main entrance and street-facing balcony doors.',
-      evidenceBasedReason: 'Blocks up to 40% of micro-particulate draft infiltration at floor level where particulate concentration is highest.',
-      pm25ReductionPercent: 22,
-      dailyExposureReductionUg: 38,
+      evidenceBasedReason: 'Blocks up to 40% of micro-particulate draft infiltration at floor level where ground-inversion particulate density is highest.',
+      pm25ReductionPercent: isGood ? 10 : 22,
+      dailyExposureReductionUg: isGood ? 12 : 38,
       co2SavedMonthlyKg: 0,
       pm25PreventedMonthlyG: 0,
-      isAdopted: true,
+      isAdopted: !isGood,
       costEstimateInr: 0,
     },
     {
@@ -99,9 +204,9 @@ export function generateDeterministicPlan(
       category: 'iaq',
       timeSlot: 'Meal Prep Hours',
       description: 'Run kitchen exhaust fan during tadka/frying while keeping kitchen door shut to prevent fine cooking aerosol (PM2.5) from flooding bedrooms.',
-      evidenceBasedReason: 'Unventilated frying spices generate indoor PM2.5 spikes exceeding 600 µg/m³ within 15 minutes.',
+      evidenceBasedReason: 'Unventilated frying spices generate indoor PM2.5 spikes exceeding 600 µg/m³ within 15 minutes, degrading clean indoor rooms.',
       pm25ReductionPercent: 18,
-      dailyExposureReductionUg: 32,
+      dailyExposureReductionUg: isGood ? 15 : 32,
       co2SavedMonthlyKg: 0,
       pm25PreventedMonthlyG: 0,
       isAdopted: true,
@@ -115,8 +220,8 @@ export function generateDeterministicPlan(
       timeSlot: 'One-Time Setup',
       description: 'Line window sashes and balcony sliding glass tracks with 5mm self-adhesive EPDM D-profile foam tape (available on Amazon/local hardware for ~₹350).',
       evidenceBasedReason: 'Reduces passive air leakage exchange rate (ACH) from 1.2 to 0.45 air changes/hour, cutting indoor particulate load by nearly half.',
-      pm25ReductionPercent: 35,
-      dailyExposureReductionUg: 58,
+      pm25ReductionPercent: isGood ? 15 : 35,
+      dailyExposureReductionUg: isGood ? 20 : 58,
       co2SavedMonthlyKg: 0,
       pm25PreventedMonthlyG: 0,
       isAdopted: profile.hasWindowWeatherstripping,
@@ -130,8 +235,8 @@ export function generateDeterministicPlan(
       timeSlot: 'Continuous in Living Area',
       description: 'Affix a 16x16" MERV-13 HVAC filter (~₹900) or replacement HEPA sheet to the intake of a standard table/pedestal fan with bungee cords.',
       evidenceBasedReason: 'Tested by Harvard & EPA studies to deliver 150–220 m³/h Clean Air Delivery Rate (CADR) at 1/10th the cost of commercial purifiers.',
-      pm25ReductionPercent: 42,
-      dailyExposureReductionUg: 72,
+      pm25ReductionPercent: isGood ? 20 : 42,
+      dailyExposureReductionUg: isGood ? 24 : 72,
       co2SavedMonthlyKg: 0,
       pm25PreventedMonthlyG: 0,
       isAdopted: false,
@@ -145,8 +250,8 @@ export function generateDeterministicPlan(
       timeSlot: '24/7 Smart Cycling',
       description: 'Move purifier away from room corners (minimum 1.5 ft clearance on all sides). Clean the mesh pre-filter weekly under running water to prevent motor strain.',
       evidenceBasedReason: 'Corner obstruction cuts effective laminar circulation volume by 30%. A clean mesh pre-filter extends expensive True HEPA lifespan by 4 months.',
-      pm25ReductionPercent: 28,
-      dailyExposureReductionUg: 45,
+      pm25ReductionPercent: isGood ? 12 : 28,
+      dailyExposureReductionUg: isGood ? 16 : 45,
       co2SavedMonthlyKg: 6.2,
       pm25PreventedMonthlyG: 0,
       isAdopted: profile.purifierStatus !== 'none',
@@ -154,6 +259,7 @@ export function generateDeterministicPlan(
     },
   ];
 
+  // 4. SUSTAINABLE ACTIONS
   const sustainableActions: ActionItem[] = [
     {
       id: 'sustainable-commute-metro-shift',
@@ -164,11 +270,11 @@ export function generateDeterministicPlan(
       description: 'Replace solo petrol car driving with Metro rail or society carpooling for 3 workdays per week.',
       evidenceBasedReason: 'Every 20 km roundtrip avoided by metro prevents 2.8 kg CO2 and 0.5g direct toxic tailpipe PM2.5 in neighborhood breathing zones.',
       pm25ReductionPercent: 25,
-      dailyExposureReductionUg: 40,
+      dailyExposureReductionUg: isGood ? 14 : 40,
       co2SavedMonthlyKg: 34.0,
       pm25PreventedMonthlyG: 16.5,
       isAdopted: profile.commuteMode === 'metro-public-transit',
-      costEstimateInr: -1200, // saves fuel money
+      costEstimateInr: -1200,
     },
     {
       id: 'sustainable-waste-zero-burn',
@@ -178,8 +284,8 @@ export function generateDeterministicPlan(
       timeSlot: 'Daily Society Protocol',
       description: 'Enforce ban on security guards and gardeners burning dried leaves/waste for evening warmth; install electric radiant infrared heaters at guard booths.',
       evidenceBasedReason: 'Single pile of garden leaf burning emits more carcinogenic polycyclic aromatic hydrocarbons (PAHs) than 100 idling diesel trucks.',
-      pm25ReductionPercent: 15,
-      dailyExposureReductionUg: 24,
+      pm25ReductionPercent: isGood ? 8 : 15,
+      dailyExposureReductionUg: isGood ? 10 : 24,
       co2SavedMonthlyKg: 22.0,
       pm25PreventedMonthlyG: 28.0,
       isAdopted: true,
@@ -193,8 +299,8 @@ export function generateDeterministicPlan(
       timeSlot: 'Winter Evening Peak',
       description: 'Pass RWA resolution to restrict non-essential diesel generator power backups (corridor decorative lights, luxury lifts) to reduce localized soot.',
       evidenceBasedReason: 'Unfiltered diesel exhaust is classified as Group 1 human carcinogen by IARC and spikes rooftop PM2.5 by 400 µg/m³.',
-      pm25ReductionPercent: 20,
-      dailyExposureReductionUg: 30,
+      pm25ReductionPercent: isGood ? 10 : 20,
+      dailyExposureReductionUg: isGood ? 12 : 30,
       co2SavedMonthlyKg: 45.0,
       pm25PreventedMonthlyG: 35.0,
       isAdopted: false,
@@ -202,12 +308,19 @@ export function generateDeterministicPlan(
     },
   ];
 
-  const communityPointers: string[] = [
-    `Mandate electric heaters for night security guards across all gates to prevent open wood/plastic burning.`,
-    `Sync apartment school bus stops to minimize multiple idling vehicles within society premises between 07:00 and 08:00 AM.`,
-    `Schedule mechanical wet-sweeping or misting of internal society roads at 11:00 AM before afternoon dry dust re-suspension.`,
-    `Establish a community clean-air sanctuary in the society clubhouse equipped with high-capacity HEPA filtration for elderly residents.`,
-  ];
+  const communityPointers: string[] = isGood
+    ? [
+        `Maintain green tree canopy and balcony potted buffers (Areca palm, Snake plant) to absorb localized road dust.`,
+        `Promote active carpooling and electric shuttle links for school and office commutes to maintain green city status.`,
+        `Enforce decentralized society wet-waste composting to eliminate plastic/leaf burning permanently.`,
+        `Keep society solar water heaters and rooftop solar panels free of construction dust for peak winter efficiency.`,
+      ]
+    : [
+        `Mandate electric heaters for night security guards across all gates to prevent open wood/plastic burning.`,
+        `Sync apartment school bus stops to minimize multiple idling vehicles within society premises between 07:00 and 08:00 AM.`,
+        `Schedule mechanical wet-sweeping or misting of internal society roads at 11:00 AM before afternoon dry dust re-suspension.`,
+        `Establish a community clean-air sanctuary in the society clubhouse equipped with high-capacity HEPA filtration for elderly residents.`,
+      ];
 
   return {
     summaryVerdict,
@@ -256,10 +369,13 @@ Household Profile:
 - Cooking Fuel: ${profile.cookingFuel}
 - Society / Apartment Size: ${profile.societySizeFamilies} families
 
-Requirements:
-Return ONLY valid JSON matching this exact structure (no markdown formatting, no backticks, just raw JSON):
+IMPORTANT LOGIC RULE:
+If AQI is Good (<=100) or Moderate (<=200), advice MUST NOT prescribe severe smog emergency window lockdowns or high-risk warnings! Instead, encourage healthy outdoor activities and daytime ventilation.
+If AQI is Severe or Hazardous (>350), prescribe strict morning window sealing, N95 usage, and emergency protocols.
+
+Return ONLY valid JSON matching this exact structure:
 {
-  "summaryVerdict": "string (2-3 sentences concise civic environmental diagnosis)",
+  "summaryVerdict": "string (2-3 sentences concise civic environmental diagnosis tailored to AQI level)",
   "riskRating": "Moderate Concern" | "Severe Winter Episode" | "Hazardous Emergency",
   "routineSchedule": [
     {
@@ -311,7 +427,6 @@ Return ONLY valid JSON matching this exact structure (no markdown formatting, no
     const result = await model.generateContent(prompt);
     const text = result.response.text().trim();
     
-    // Clean potential markdown wrap
     const cleanedJson = text.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
     const parsed = JSON.parse(cleanedJson) as GenAIPlanResponse;
     return parsed;

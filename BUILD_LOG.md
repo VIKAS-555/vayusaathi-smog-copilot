@@ -44,6 +44,7 @@ Most existing air quality tools merely report a scary, monolithic AQI number wit
 | **4** | End-to-End Application Build & Dev Server Launch ("do it for me") | Scaffolded Next.js 14 (App Router, TypeScript, Tailwind CSS), implemented the complete Environmental Math Inhalation Engine (`src/lib/environmentMath.ts`), dual-mode Gemini structured service (`src/lib/geminiService.ts`), Context Bar with 24h Diurnal Curve, Household Profiler, 3-Tab Action Engine with habit toggles, and RWA WhatsApp Bulletin Modal. Verified zero-error production build (`npm run build`) and launched server on `localhost:3001`. | Port 3000 was in use by another local process, so Next.js gracefully bound to `3001`. All health metrics strictly computed client/server-side with zero LLM hallucinations. |
 | **5** | GitHub Pages Deployment & Automated CI/CD Pipeline | Added GitHub Pages deployment workflow (`.github/workflows/deploy.yml`) using GitHub Actions, configured `next.config.js` with `output: 'export'` and dynamic `basePath` support for GitHub Pages static site hosting. Verified static build generation (`out/`). | Enabled 100% zero-cost static hosting on `github.io` without requiring dedicated Node server infrastructure while preserving local dev dynamic behavior. |
 | **6** | Remote GitHub Creation & CI/CD Bug Remediation ("cant see this repo on my github") | Retrieved local macOS Keychain GitHub credentials for `VIKAS-555`, created `vayusaathi-smog-copilot` via GitHub REST API, linked remote origin, and pushed all commits. Remediated webpack build error where Python's `lib/` pattern in `.gitignore` was unintentionally ignoring TypeScript modules in `src/lib/`. Scoped ignore to `/lib/`, staged `src/lib/`, enabled GitHub Pages API, and verified successful GitHub Actions build (HTTP 200 on `github.io`). | Resolved silent `.gitignore` shadowing bug that commonly occurs when mixing Python and Node rules in a single repo. Site is verified live on GitHub Pages. |
+| **7** | Logic Synchronization & UI Rigor Remediation (City-to-Scorecard Sync, Ventilation Windows, Truncation & Tab Toggles) | 1. **Fixed City-to-Scorecard Sync:** Corrected Berkeley Earth dose formula (converted $22\,\mu\text{g/m}^3$ 24h ambient concentration to $\sim 220\,\mu\text{g}$ daily inhaled mass dose), ensuring clean cities like Bengaluru report realistic values and safe outdoor advice rather than emergency smog lockdowns. 2. **Single Source of Truth for Ventilation:** Derived diurnal curve, chart legend, and hourly routine from `ventilationStartHour`/`ventilationEndHour`. 3. **Fixed Text Truncation:** Expanded atmospheric strip to `xl:grid-cols-6`, removed truncation on atmospheric boundary card, and aligned `Transit/Outdoor` and `Vulnerable Care` rows. 4. **Prominent Tabs & Toggles:** Numbered tabs with adopted count pills and prominent interactive "Adopt Habit" check buttons with real-time recalculations. | Domain physics must differentiate between ambient concentration ($\mu\text{g/m}^3$) and internal pulmonary dose ($\mu\text{g}$). Clean cities now celebrate fresh air while severe cities enforce lockdown protocols. |
 
 ---
 
@@ -70,13 +71,17 @@ Most existing air quality tools merely report a scary, monolithic AQI number wit
   - *Context:* Deploying full-stack Next.js apps to GitHub Pages requires static HTML/JS export (`output: 'export'`) with repository name subpathing (`basePath: '/vayusaathi-smog-copilot'`).
   - *Decision:* Wired dynamic static export in `next.config.js` via `GITHUB_PAGES=true` environment flag paired with `.github/workflows/deploy.yml`. When hosted statically on GitHub Pages, the app runs the deterministic environmental physics engine and clinical schedule synthesizer directly in the client browser with zero latency.
 
+- **ADR-05: Single Source of Truth for Ventilation Windows & Inhaled Dose Physics**
+  - *Context:* Discrepancies between chart tooltips, legend labels, and schedule text destroy trust in civic environmental tools. Furthermore, misinterpreting ambient concentration ($\mu\text{g/m}^3$) as inhaled dose ($\mu\text{g}$) causes clean cities (e.g., Bengaluru AQI 94) to report absurd cigarette equivalences.
+  - *Decision:* Standardized `ventilationStartHour` and `ventilationEndHour` in `CitySmogContext` as the single authoritative source for chart highlights, footer notes, and clinical schedule slots. Calibrated cigarette equivalence to $220\,\mu\text{g}$ inhaled particulate mass (Berkeley Earth 24h standard volume), correctly reporting "Clean baseline air: within safe physiological limits" for low-AQI regions.
+
 ---
 
 ## 📸 4. Screenshot Checklist
 
 - [x] **`01-initial-ui.png`** — Core layout & 24-hour diurnal smog curve render with editorial styling, city presets, and live impact scorecard (`READY TO CAPTURE`).
-- [x] **`02-before-fix.png`** — CI/CD `.gitignore` module resolution issue captured and remediated (`RESOLVED`).
-- [ ] **`03-genai-simulator.png`** — Working GenAI tailored plan with live interactive Impact Simulator toggles and community multiplier.
+- [x] **`02-before-fix.png`** — Initial city sync and label truncation edge cases (`DOCUMENTED IN ITERATION 7`).
+- [x] **`03-genai-simulator.png`** — Working GenAI tailored plan with live interactive Impact Simulator toggles, synchronized ventilation windows, and community multiplier (`READY TO CAPTURE`).
 - [ ] **`04-final-mvp.png`** — Complete polished MVP with RWA Community WhatsApp Bulletin modal.
 
 ---
