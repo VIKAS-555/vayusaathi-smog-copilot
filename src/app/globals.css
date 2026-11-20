@@ -13,12 +13,151 @@
   --terracotta-accent: #C4512C;
 }
 
+.dark {
+  --bg-stone: #121615;
+  --panel-white: #1A221F;
+  --border-hairline: #2B3833;
+  --border-subtle: #232E2A;
+  --ink-primary: #EDEDE8;
+  --ink-muted: #90A09A;
+  --sage-accent: #3DA887;
+  --terracotta-accent: #F27A55;
+}
+
 body {
   background-color: var(--bg-stone);
   color: var(--ink-primary);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ==========================================================================
+   Editorial Charcoal Night Mode Styles (Anti-"AI Slop" Slate Palette)
+   ========================================================================== */
+.dark body {
+  background-color: #121615 !important;
+  color: #EDEDE8 !important;
+}
+
+.dark .bg-stone-100 {
+  background-color: #121615 !important;
+}
+
+.dark .bg-stone-50 {
+  background-color: #161D1A !important;
+}
+
+.dark .bg-stone-50\/80,
+.dark .bg-stone-50\/90,
+.dark .bg-stone-50\/70,
+.dark .bg-stone-50\/60 {
+  background-color: #18201D !important;
+}
+
+.dark .bg-stone-200 {
+  background-color: #242E2A !important;
+}
+
+.dark .bg-stone-300 {
+  background-color: #313E38 !important;
+}
+
+.dark .bg-white {
+  background-color: #1A221F !important;
+}
+
+.dark .text-ink {
+  color: #EDEDE8 !important;
+}
+
+.dark .text-ink-muted {
+  color: #90A09A !important;
+}
+
+.dark .border-stone-200,
+.dark .border-stone-300 {
+  border-color: #2B3833 !important;
+}
+
+.dark .border-stone-200\/80 {
+  border-color: #232E2A !important;
+}
+
+.dark .hover\:bg-stone-100:hover {
+  background-color: #222B27 !important;
+}
+
+.dark .hover\:bg-stone-200:hover {
+  background-color: #2D3A34 !important;
+}
+
+/* Sage / Clean Air Accents in Dark Mode */
+.dark .bg-sage-50,
+.dark .bg-sage-50\/60,
+.dark .bg-sage-50\/90 {
+  background-color: rgba(35, 107, 86, 0.22) !important;
+}
+
+.dark .bg-sage-100 {
+  background-color: rgba(35, 107, 86, 0.32) !important;
+}
+
+.dark .border-sage-200,
+.dark .border-sage-300 {
+  border-color: rgba(61, 168, 135, 0.35) !important;
+}
+
+.dark .text-sage-700,
+.dark .text-sage-800 {
+  color: #3DA887 !important;
+}
+
+/* Terracotta / Smog Warning Accents in Dark Mode */
+.dark .bg-terracotta-50,
+.dark .bg-terracotta-50\/90 {
+  background-color: rgba(196, 81, 44, 0.22) !important;
+}
+
+.dark .bg-terracotta-100 {
+  background-color: rgba(196, 81, 44, 0.32) !important;
+}
+
+.dark .border-terracotta-200,
+.dark .border-terracotta-300 {
+  border-color: rgba(242, 122, 85, 0.35) !important;
+}
+
+.dark .text-terracotta-700,
+.dark .text-terracotta-800 {
+  color: #F27A55 !important;
+}
+
+/* Form Controls in Dark Mode */
+.dark select,
+.dark input[type="text"],
+.dark input[type="number"] {
+  background-color: #1A221F !important;
+  color: #EDEDE8 !important;
+  border-color: #2B3833 !important;
+}
+
+.dark select option {
+  background-color: #1A221F !important;
+  color: #EDEDE8 !important;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #141A17;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #2D3A34;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3E4F47;
 }
 
 /* Tabular numbers for all environmental metrics */

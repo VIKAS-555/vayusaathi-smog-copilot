@@ -1,5 +1,5 @@
 import React from 'react';
-import { Wind, ShieldAlert, CheckCircle2, RefreshCw, FileText } from 'lucide-react';
+import { Wind, ShieldAlert, CheckCircle2, RefreshCw, FileText, Sun, Moon } from 'lucide-react';
 
 interface MastheadProps {
   aqiCategory: string;
@@ -8,6 +8,8 @@ interface MastheadProps {
   isLoading: boolean;
   onOpenExplainer: () => void;
   onOpenRwaModal: () => void;
+  isDarkMode?: boolean;
+  onToggleTheme?: () => void;
 }
 
 export const Masthead: React.FC<MastheadProps> = ({
@@ -17,6 +19,8 @@ export const Masthead: React.FC<MastheadProps> = ({
   isLoading,
   onOpenExplainer,
   onOpenRwaModal,
+  isDarkMode = false,
+  onToggleTheme,
 }) => {
   return (
     <header className="border-b border-stone-300 bg-stone-50 px-4 py-3.5 sm:px-6 lg:px-8">
@@ -82,6 +86,28 @@ export const Masthead: React.FC<MastheadProps> = ({
             <RefreshCw className={`h-3.5 w-3.5 text-ink-muted ${isLoading ? 'animate-spin' : ''}`} />
             <span>{isLoading ? 'Synthesizing…' : 'Update Plan'}</span>
           </button>
+
+          {/* Editorial Day/Night Mode Toggle */}
+          {onToggleTheme && (
+            <button
+              onClick={onToggleTheme}
+              className="flex items-center gap-1.5 rounded border border-stone-300 bg-white px-3 py-1.5 text-xs font-semibold text-ink hover:bg-stone-100 transition-colors shadow-xs"
+              title={isDarkMode ? 'Switch to Warm Stone Newsprint' : 'Switch to Charcoal Night Mode'}
+              aria-label="Toggle Night/Day Mode"
+            >
+              {isDarkMode ? (
+                <>
+                  <Sun className="h-3.5 w-3.5 text-amber-500" />
+                  <span>Day Mode</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="h-3.5 w-3.5 text-ink-muted" />
+                  <span>Night Mode</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </header>

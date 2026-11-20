@@ -54,6 +54,41 @@ export default function Home() {
   const [isRwaModalOpen, setIsRwaModalOpen] = useState<boolean>(false);
   const [isExplainerOpen, setIsExplainerOpen] = useState<boolean>(false);
 
+  // 4b. Dark Mode / Theme State with localStorage & OS sync
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const savedTheme = localStorage.getItem('vayusaathi-theme');
+      if (savedTheme === 'dark') {
+        setIsDarkMode(true);
+        document.documentElement.classList.add('dark');
+      } else if (savedTheme === 'light') {
+        setIsDarkMode(false);
+        document.documentElement.classList.remove('dark');
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        setIsDarkMode(true);
+        document.documentElement.classList.add('dark');
+      }
+    } catch {
+      // Ignore in SSR / private browsing
+    }
+  }, []);
+
+  const handleToggleTheme = () => {
+    setIsDarkMode((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add('dark');
+        try { localStorage.setItem('vayusaathi-theme', 'dark'); } catch {}
+      } else {
+        document.documentElement.classList.remove('dark');
+        try { localStorage.setItem('vayusaathi-theme', 'light'); } catch {}
+      }
+      return next;
+    });
+  };
+
   // 5. Calculate Deterministic Inhaled Dose & Climate Metrics
   const impact = useMemo(() => {
     return calculateInhaledDose(profile, currentCity, adoptedActionIds);
@@ -123,6 +158,8 @@ export default function Home() {
         isLoading={isLoadingPlan}
         onOpenExplainer={() => setIsExplainerOpen(true)}
         onOpenRwaModal={() => setIsRwaModalOpen(true)}
+        isDarkMode={isDarkMode}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* Main Two-Column Workstation Container */}
