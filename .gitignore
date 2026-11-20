@@ -48,14 +48,16 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-build/
+# Python build & virtualenv
+/build/
 develop-eggs/
-dist/
+/dist/
 downloads/
 eggs/
 .eggs/
-lib/
-lib64/
+/lib/
+/lib64/
+!src/lib/
 parts/
 sdist/
 var/
