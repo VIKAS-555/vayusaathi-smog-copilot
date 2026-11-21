@@ -320,8 +320,8 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
           {/* Stacked Daily Cigarette Number & Label */}
           <div className="flex flex-col shrink-0">
             <span 
-              className="font-mono text-5xl sm:text-6xl font-black tracking-tight tabular-nums leading-none"
-              style={{ color: aqiStyle.text }}
+              className="font-mono text-5xl sm:text-6xl font-black tracking-tight tabular-nums leading-none transition-colors duration-500"
+              style={{ color: aqiStyle.accent }}
             >
               ~{activeDailyCigs}
             </span>

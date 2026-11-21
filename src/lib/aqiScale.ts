@@ -10,13 +10,17 @@ export interface AQITierStyle {
   summary: string;
   // Day Mode (Newsprint / Stone)
   day: {
-    accent: string;       // Bar & primary graphic fill
+    accent: string;       // Exact vibrant tier color
     activeAccent: string; // Active/selected bar fill
     text: string;         // High-contrast readable text
     bg: string;           // Badge soft background
     border: string;       // Badge border
-    bannerBg: string;     // Gradient for header banner
+    bannerBg: string;     // Atmospheric dusk/night gradient for hero banner
     skyline: string;      // Skyline architectural tint
+    liveDot: string;      // Live AQI glowing dot
+    badgeBg: string;
+    badgeBorder: string;
+    badgeText: string;
   };
   // Night Mode (Editorial Charcoal)
   dark: {
@@ -27,9 +31,22 @@ export interface AQITierStyle {
     border: string;
     bannerBg: string;
     skyline: string;
+    liveDot: string;
+    badgeBg: string;
+    badgeBorder: string;
+    badgeText: string;
   };
 }
 
+/**
+ * 6 Graded AQI Tiers adhering to strict physical thresholds:
+ * Good (0-50)       -> Green (#10B981)
+ * Moderate (51-100) -> Yellow (#EAB308)
+ * Poor (101-200)    -> Orange (#F97316)
+ * Unhealthy (201-300)-> Red (#EF4444)
+ * Severe (301-400)  -> Purple (#A855F7)
+ * Hazardous (401+)  -> Deep Maroon (#881337)
+ */
 export const AQI_TIERS: Record<AQITier, AQITierStyle> = {
   good: {
     key: 'good',
@@ -38,22 +55,30 @@ export const AQI_TIERS: Record<AQITier, AQITierStyle> = {
     maxAqi: 50,
     summary: 'Minimal health impact · Clean ambient air',
     day: {
-      accent: '#236B56',
-      activeAccent: '#1B5443',
-      text: '#1E5C4A',
+      accent: '#10B981',
+      activeAccent: '#059669',
+      text: '#047857',
       bg: '#EAF6F1',
       border: '#95D1BD',
-      bannerBg: 'linear-gradient(135deg, rgba(234, 246, 241, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(228, 242, 235, 0.85) 100%)',
-      skyline: '#236B56',
+      bannerBg: 'linear-gradient(135deg, #0d1f23 0%, #12323a 45%, #071518 100%)',
+      skyline: '#10B981',
+      liveDot: '#10B981',
+      badgeBg: 'rgba(16, 185, 129, 0.22)',
+      badgeBorder: 'rgba(52, 211, 153, 0.45)',
+      badgeText: '#6EE7B7',
     },
     dark: {
-      accent: '#3DA887',
-      activeAccent: '#4EC5A0',
-      text: '#4EBA97',
-      bg: 'rgba(35, 107, 86, 0.28)',
-      border: 'rgba(61, 168, 135, 0.45)',
-      bannerBg: 'linear-gradient(135deg, rgba(20, 36, 30, 0.95) 0%, rgba(24, 32, 29, 0.92) 55%, rgba(18, 30, 26, 0.88) 100%)',
-      skyline: '#3DA887',
+      accent: '#34D399',
+      activeAccent: '#10B981',
+      text: '#6EE7B7',
+      bg: 'rgba(16, 185, 129, 0.25)',
+      border: 'rgba(52, 211, 153, 0.45)',
+      bannerBg: 'linear-gradient(135deg, #0d1f23 0%, #12323a 45%, #071518 100%)',
+      skyline: '#10B981',
+      liveDot: '#34D399',
+      badgeBg: 'rgba(16, 185, 129, 0.25)',
+      badgeBorder: 'rgba(52, 211, 153, 0.45)',
+      badgeText: '#6EE7B7',
     },
   },
   moderate: {
@@ -63,22 +88,30 @@ export const AQI_TIERS: Record<AQITier, AQITierStyle> = {
     maxAqi: 100,
     summary: 'Minor breathing discomfort to sensitive people · Acceptable air',
     day: {
-      accent: '#4A7C59',
-      activeAccent: '#3B6447',
-      text: '#2E5A36',
-      bg: '#F0F6F1',
-      border: '#B7D9BF',
-      bannerBg: 'linear-gradient(135deg, rgba(240, 246, 241, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(235, 244, 236, 0.85) 100%)',
-      skyline: '#4A7C59',
+      accent: '#EAB308',
+      activeAccent: '#CA8A04',
+      text: '#A16207',
+      bg: '#FEFCE8',
+      border: '#FDE047',
+      bannerBg: 'linear-gradient(135deg, #182012 0%, #263319 45%, #0f170b 100%)',
+      skyline: '#EAB308',
+      liveDot: '#EAB308',
+      badgeBg: 'rgba(234, 179, 8, 0.22)',
+      badgeBorder: 'rgba(250, 204, 21, 0.45)',
+      badgeText: '#FEF08A',
     },
     dark: {
-      accent: '#68B684',
-      activeAccent: '#7EC798',
-      text: '#7BC896',
-      bg: 'rgba(74, 124, 89, 0.28)',
-      border: 'rgba(104, 182, 132, 0.45)',
-      bannerBg: 'linear-gradient(135deg, rgba(22, 34, 26, 0.95) 0%, rgba(24, 32, 29, 0.92) 55%, rgba(20, 30, 24, 0.88) 100%)',
-      skyline: '#68B684',
+      accent: '#FACC15',
+      activeAccent: '#EAB308',
+      text: '#FEF08A',
+      bg: 'rgba(234, 179, 8, 0.25)',
+      border: 'rgba(250, 204, 21, 0.45)',
+      bannerBg: 'linear-gradient(135deg, #182012 0%, #263319 45%, #0f170b 100%)',
+      skyline: '#EAB308',
+      liveDot: '#FACC15',
+      badgeBg: 'rgba(234, 179, 8, 0.25)',
+      badgeBorder: 'rgba(250, 204, 21, 0.45)',
+      badgeText: '#FEF08A',
     },
   },
   poor: {
@@ -88,22 +121,30 @@ export const AQI_TIERS: Record<AQITier, AQITierStyle> = {
     maxAqi: 200,
     summary: 'Breathing discomfort to asthmatics & heart patients · Haze building',
     day: {
-      accent: '#D97706',
-      activeAccent: '#B45309',
-      text: '#B45309',
-      bg: '#FEF7EB',
-      border: '#FCD34D',
-      bannerBg: 'linear-gradient(135deg, rgba(254, 247, 235, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(253, 240, 219, 0.85) 100%)',
-      skyline: '#B45309',
+      accent: '#F97316',
+      activeAccent: '#EA580C',
+      text: '#C2410C',
+      bg: '#FFF7ED',
+      border: '#FDBA74',
+      bannerBg: 'linear-gradient(135deg, #27160a 0%, #43220e 45%, #170e06 100%)',
+      skyline: '#F97316',
+      liveDot: '#F97316',
+      badgeBg: 'rgba(249, 115, 22, 0.22)',
+      badgeBorder: 'rgba(251, 146, 60, 0.45)',
+      badgeText: '#FDBA74',
     },
     dark: {
-      accent: '#FBBF24',
-      activeAccent: '#FCD34D',
-      text: '#FCD34D',
-      bg: 'rgba(217, 119, 6, 0.28)',
-      border: 'rgba(251, 191, 36, 0.45)',
-      bannerBg: 'linear-gradient(135deg, rgba(38, 31, 20, 0.95) 0%, rgba(28, 24, 18, 0.92) 55%, rgba(33, 26, 17, 0.88) 100%)',
-      skyline: '#FBBF24',
+      accent: '#FB923C',
+      activeAccent: '#F97316',
+      text: '#FDBA74',
+      bg: 'rgba(249, 115, 22, 0.25)',
+      border: 'rgba(251, 146, 60, 0.45)',
+      bannerBg: 'linear-gradient(135deg, #27160a 0%, #43220e 45%, #170e06 100%)',
+      skyline: '#F97316',
+      liveDot: '#FB923C',
+      badgeBg: 'rgba(249, 115, 22, 0.25)',
+      badgeBorder: 'rgba(251, 146, 60, 0.45)',
+      badgeText: '#FDBA74',
     },
   },
   unhealthy: {
@@ -113,22 +154,30 @@ export const AQI_TIERS: Record<AQITier, AQITierStyle> = {
     maxAqi: 300,
     summary: 'Respiratory illness on prolonged exposure · Thermal trap active',
     day: {
-      accent: '#C4512C',
-      activeAccent: '#9C3E20',
-      text: '#9C3E20',
-      bg: '#FDF2EE',
-      border: '#F6D3C4',
-      bannerBg: 'linear-gradient(135deg, rgba(253, 242, 238, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(250, 232, 226, 0.85) 100%)',
-      skyline: '#C4512C',
+      accent: '#EF4444',
+      activeAccent: '#DC2626',
+      text: '#B91C1C',
+      bg: '#FEF2F2',
+      border: '#FCA5A5',
+      bannerBg: 'linear-gradient(135deg, #28111c 0%, #44172a 45%, #180d14 100%)',
+      skyline: '#EF4444',
+      liveDot: '#EF4444',
+      badgeBg: 'rgba(239, 68, 68, 0.25)',
+      badgeBorder: 'rgba(248, 113, 113, 0.45)',
+      badgeText: '#FDA4AF',
     },
     dark: {
-      accent: '#F27A55',
-      activeAccent: '#FF9573',
-      text: '#FF8F6B',
-      bg: 'rgba(196, 81, 44, 0.28)',
-      border: 'rgba(242, 122, 85, 0.45)',
-      bannerBg: 'linear-gradient(135deg, rgba(38, 24, 20, 0.95) 0%, rgba(26, 20, 19, 0.92) 55%, rgba(34, 22, 19, 0.88) 100%)',
-      skyline: '#F27A55',
+      accent: '#F87171',
+      activeAccent: '#EF4444',
+      text: '#FCA5A5',
+      bg: 'rgba(239, 68, 68, 0.28)',
+      border: 'rgba(248, 113, 113, 0.45)',
+      bannerBg: 'linear-gradient(135deg, #28111c 0%, #44172a 45%, #180d14 100%)',
+      skyline: '#EF4444',
+      liveDot: '#F87171',
+      badgeBg: 'rgba(239, 68, 68, 0.28)',
+      badgeBorder: 'rgba(248, 113, 113, 0.45)',
+      badgeText: '#FDA4AF',
     },
   },
   severe: {
@@ -138,22 +187,30 @@ export const AQI_TIERS: Record<AQITier, AQITierStyle> = {
     maxAqi: 400,
     summary: 'Affects healthy people · Serious impact on vulnerable groups',
     day: {
-      accent: '#B91C1C',
-      activeAccent: '#991B1B',
-      text: '#991B1B',
-      bg: '#FEF2F2',
-      border: '#FECACA',
-      bannerBg: 'linear-gradient(135deg, rgba(254, 242, 242, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(254, 226, 226, 0.85) 100%)',
-      skyline: '#B91C1C',
+      accent: '#A855F7',
+      activeAccent: '#9333EA',
+      text: '#7E22CE',
+      bg: '#FAF5FF',
+      border: '#D8B4FE',
+      bannerBg: 'linear-gradient(135deg, #1c1026 0%, #351647 45%, #150d1e 100%)',
+      skyline: '#A855F7',
+      liveDot: '#A855F7',
+      badgeBg: 'rgba(168, 85, 247, 0.25)',
+      badgeBorder: 'rgba(192, 132, 252, 0.45)',
+      badgeText: '#D8B4FE',
     },
     dark: {
-      accent: '#F87171',
-      activeAccent: '#FCA5A5',
-      text: '#FCA5A5',
-      bg: 'rgba(185, 28, 28, 0.28)',
-      border: 'rgba(248, 113, 113, 0.45)',
-      bannerBg: 'linear-gradient(135deg, rgba(40, 18, 18, 0.95) 0%, rgba(28, 20, 20, 0.92) 55%, rgba(36, 18, 18, 0.88) 100%)',
-      skyline: '#F87171',
+      accent: '#C084FC',
+      activeAccent: '#A855F7',
+      text: '#D8B4FE',
+      bg: 'rgba(168, 85, 247, 0.28)',
+      border: 'rgba(192, 132, 252, 0.45)',
+      bannerBg: 'linear-gradient(135deg, #1c1026 0%, #351647 45%, #150d1e 100%)',
+      skyline: '#A855F7',
+      liveDot: '#C084FC',
+      badgeBg: 'rgba(168, 85, 247, 0.28)',
+      badgeBorder: 'rgba(192, 132, 252, 0.45)',
+      badgeText: '#D8B4FE',
     },
   },
   hazardous: {
@@ -163,55 +220,76 @@ export const AQI_TIERS: Record<AQITier, AQITierStyle> = {
     maxAqi: 500,
     summary: 'Severe public health emergency · Whole population affected',
     day: {
-      accent: '#701A75',
-      activeAccent: '#581C87',
-      text: '#581C87',
-      bg: '#FAF5FF',
-      border: '#E9D5FF',
-      bannerBg: 'linear-gradient(135deg, rgba(250, 245, 255, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(245, 235, 255, 0.85) 100%)',
-      skyline: '#701A75',
+      accent: '#881337',
+      activeAccent: '#701A75',
+      text: '#7F1D1D',
+      bg: '#FFF1F2',
+      border: '#FECDD3',
+      bannerBg: 'linear-gradient(135deg, #2a0b10 0%, #46111a 45%, #17070a 100%)',
+      skyline: '#881337',
+      liveDot: '#881337',
+      badgeBg: 'rgba(136, 19, 55, 0.35)',
+      badgeBorder: 'rgba(244, 63, 94, 0.45)',
+      badgeText: '#FECDD3',
     },
     dark: {
-      accent: '#C084FC',
-      activeAccent: '#D8B4FE',
-      text: '#D8B4FE',
-      bg: 'rgba(112, 26, 117, 0.3)',
-      border: 'rgba(192, 132, 252, 0.45)',
-      bannerBg: 'linear-gradient(135deg, rgba(34, 18, 36, 0.95) 0%, rgba(26, 19, 28, 0.92) 55%, rgba(32, 18, 34, 0.88) 100%)',
-      skyline: '#C084FC',
+      accent: '#BE123C',
+      activeAccent: '#881337',
+      text: '#FCA5A5',
+      bg: 'rgba(136, 19, 55, 0.4)',
+      border: 'rgba(244, 63, 94, 0.5)',
+      bannerBg: 'linear-gradient(135deg, #2a0b10 0%, #46111a 45%, #17070a 100%)',
+      skyline: '#BE123C',
+      liveDot: '#BE123C',
+      badgeBg: 'rgba(136, 19, 55, 0.4)',
+      badgeBorder: 'rgba(244, 63, 94, 0.5)',
+      badgeText: '#FECDD3',
     },
   },
 };
 
 /**
- * Maps numeric AQI or category label to one of the 6 graded AQI tiers.
+ * Maps numeric AQI or category label strictly to one of the 6 graded AQI tiers:
+ * 0-50: good
+ * 51-100: moderate
+ * 101-200: poor
+ * 201-300: unhealthy
+ * 301-400: severe (e.g. 355 is SEVERE, PURPLE)
+ * 401+: hazardous (DEEP MAROON)
  */
 export function getAQITier(aqi: number, category?: string): AQITier {
+  if (typeof aqi === 'number' && !isNaN(aqi)) {
+    if (aqi <= 50) return 'good';
+    if (aqi <= 100) return 'moderate';
+    if (aqi <= 200) return 'poor';
+    if (aqi <= 300) return 'unhealthy';
+    if (aqi <= 400) return 'severe';
+    return 'hazardous';
+  }
+
   if (category) {
     const cat = category.toLowerCase().trim();
     if (cat === 'good') return 'good';
     if (cat === 'moderate' || cat === 'satisfactory') return 'moderate';
     if (cat === 'poor') return 'poor';
-    if (cat === 'very poor' || cat === 'unhealthy') return 'unhealthy';
+    if (cat === 'unhealthy' || cat === 'very poor') return 'unhealthy';
     if (cat === 'severe') return 'severe';
     if (cat === 'hazardous') return 'hazardous';
   }
 
-  if (aqi <= 50) return 'good';
-  if (aqi <= 100) return 'moderate';
-  if (aqi <= 200) return 'poor';
-  if (aqi <= 300) return 'unhealthy';
-  if (aqi <= 400) return 'severe';
-  return 'hazardous';
+  return 'severe';
 }
 
 /**
- * Returns complete styling configuration for a given AQI value and dark mode state.
+ * Unified Shared AQI Theme Mapper:
+ * Returns the exact synchronized accent color, dark hero gradient, skyline tint,
+ * live indicator dot, and card/badge accents across the entire application.
  */
-export function getAQIStyle(aqi: number, isDark: boolean, category?: string) {
+export function getSharedAQITheme(aqi: number, isDark: boolean = false, category?: string) {
   const tierKey = getAQITier(aqi, category);
   const tier = AQI_TIERS[tierKey];
   const mode = isDark ? tier.dark : tier.day;
+
   return {
     tierKey,
     label: tier.label,
@@ -223,20 +301,40 @@ export function getAQIStyle(aqi: number, isDark: boolean, category?: string) {
     border: mode.border,
     bannerBg: mode.bannerBg,
     skyline: mode.skyline,
+    liveDotColor: mode.liveDot,
+    badgeBg: mode.badgeBg,
+    badgeBorder: mode.badgeBorder,
+    badgeText: mode.badgeText,
   };
 }
 
 /**
+ * Backward-compatible wrapper for getSharedAQITheme
+ */
+export function getAQIStyle(aqi: number, isDark: boolean, category?: string) {
+  return getSharedAQITheme(aqi, isDark, category);
+}
+
+/**
+ * Continuous 6-segment rainbow track gradient matching the exact tier cutoffs:
+ * Good (0-16.67%) -> Moderate (16.67-33.33%) -> Poor (33.33-50%) ->
+ * Unhealthy (50-66.67%) -> Severe (66.67-83.33%) -> Hazardous (83.33-100%)
+ */
+export const AQI_SPECTRUM_GRADIENT =
+  'linear-gradient(to right, #10B981 0%, #10B981 16.67%, #EAB308 16.67%, #EAB308 33.33%, #F97316 33.33%, #F97316 50%, #EF4444 50%, #EF4444 66.67%, #A855F7 66.67%, #A855F7 83.33%, #881337 83.33%, #881337 100%)';
+
+export const AQI_SPECTRUM_TICKS = ['0', '50', '100', '200', '300', '400', '500+'];
+
+/**
  * Calculates continuous position (0% - 100%) along the 6-tier AQI spectrum bar.
- * Tiers: Good (0-50), Moderate (51-100), Poor (101-200), Unhealthy (201-300), Severe (301-400), Hazardous (401-500).
+ * At 355 AQI, it lands precisely at ~75.8% (within the 66.67%–83.33% PURPLE Severe segment).
  */
 export function getSpectrumPercentage(aqi: number): number {
   if (aqi <= 0) return 2;
-  if (aqi <= 50) return 2 + (aqi / 50) * 14.6;
-  if (aqi <= 100) return 16.6 + ((aqi - 50) / 50) * 16.7;
-  if (aqi <= 200) return 33.3 + ((aqi - 100) / 100) * 16.7;
-  if (aqi <= 300) return 50.0 + ((aqi - 200) / 100) * 16.6;
-  if (aqi <= 400) return 66.6 + ((aqi - 300) / 100) * 16.7;
-  return Math.min(98, 83.3 + ((aqi - 400) / 100) * 14.7);
+  if (aqi <= 50) return Math.max(2, (aqi / 50) * 16.67);
+  if (aqi <= 100) return 16.67 + ((aqi - 50) / 50) * 16.66;
+  if (aqi <= 200) return 33.33 + ((aqi - 100) / 100) * 16.67;
+  if (aqi <= 300) return 50.00 + ((aqi - 200) / 100) * 16.67;
+  if (aqi <= 400) return 66.67 + ((aqi - 300) / 100) * 16.66;
+  return Math.min(98, 83.33 + ((aqi - 400) / 100) * 14.67);
 }
-

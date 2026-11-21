@@ -2,7 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { CitySmogContext } from '../types';
 import { CITY_PRESETS, getHourlyGuidance } from '../data/cityPresets';
 import { CityPanoramicBackdrop } from './CityPanoramicBackdrop';
-import { getAQIStyle, getAQITier, getSpectrumPercentage, AQI_TIERS, AQITier } from '../lib/aqiScale';
+import { 
+  getAQIStyle, 
+  getAQITier, 
+  getSharedAQITheme,
+  getSpectrumPercentage, 
+  AQI_TIERS, 
+  AQITier,
+  AQI_SPECTRUM_GRADIENT,
+  AQI_SPECTRUM_TICKS
+} from '../lib/aqiScale';
 import { 
   Wind, 
   Thermometer, 
@@ -85,119 +94,89 @@ export function getAtmosphereState(city: CitySmogContext): AtmosphereState {
 }
 
 function getAtmosphereBannerStyle(city: CitySmogContext, isDark: boolean) {
-  const state = getAtmosphereState(city);
+  const theme = getSharedAQITheme(city.currentAQI, isDark, city.aqiCategory);
 
-  switch (state) {
-    case 'clean':
-      return {
-        background: 'linear-gradient(135deg, #0d1f23 0%, #123138 45%, #071518 100%)',
-        borderColor: 'rgba(52, 211, 153, 0.35)',
-        skylineColor: '#10B981',
-        categoryBg: 'rgba(16, 185, 129, 0.22)',
-        categoryBorder: 'rgba(52, 211, 153, 0.45)',
-        categoryText: '#6ee7b7',
-        categoryLabel: 'Good',
-        weatherLabel: 'Clear',
-        icon: (
-          <svg viewBox="0 0 24 24" className="h-6 w-6 text-emerald-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-          </svg>
-        ),
-      };
+  let weatherLabel = 'Smog';
+  let icon: React.ReactNode;
+
+  switch (theme.tierKey) {
+    case 'good':
+      weatherLabel = 'Clear';
+      icon = (
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-emerald-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      );
+      break;
     case 'moderate':
-      return {
-        background: 'linear-gradient(135deg, #102117 0%, #173625 45%, #0a160f 100%)',
-        borderColor: 'rgba(250, 204, 21, 0.35)',
-        skylineColor: '#EAB308',
-        categoryBg: 'rgba(234, 179, 8, 0.22)',
-        categoryBorder: 'rgba(250, 204, 21, 0.45)',
-        categoryText: '#fef08a',
-        categoryLabel: 'Moderate',
-        weatherLabel: 'Fair Airflow',
-        icon: (
-          <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="4" />
-            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-          </svg>
-        ),
-      };
-    case 'haze':
-      return {
-        background: 'linear-gradient(135deg, #27160a 0%, #43220e 45%, #170e06 100%)',
-        borderColor: 'rgba(251, 146, 60, 0.35)',
-        skylineColor: '#F97316',
-        categoryBg: 'rgba(249, 115, 22, 0.22)',
-        categoryBorder: 'rgba(251, 146, 60, 0.45)',
-        categoryText: '#fdba74',
-        categoryLabel: 'Poor',
-        weatherLabel: 'Photochemical Haze',
-        icon: (
-          <svg viewBox="0 0 24 24" className="h-6 w-6 text-amber-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
-            <line x1="4" y1="21" x2="20" y2="21" />
-          </svg>
-        ),
-      };
+      weatherLabel = 'Fair Airflow';
+      icon = (
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+        </svg>
+      );
+      break;
+    case 'poor':
+      weatherLabel = 'Photochemical Haze';
+      icon = (
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-amber-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+          <line x1="4" y1="21" x2="20" y2="21" />
+        </svg>
+      );
+      break;
     case 'unhealthy':
-      return {
-        background: 'linear-gradient(135deg, #28111c 0%, #44172a 45%, #180d14 100%)',
-        borderColor: 'rgba(251, 113, 133, 0.35)',
-        skylineColor: '#F43F5E',
-        categoryBg: 'rgba(244, 63, 94, 0.25)',
-        categoryBorder: 'rgba(251, 113, 133, 0.45)',
-        categoryText: '#fda4af',
-        categoryLabel: 'Unhealthy',
-        weatherLabel: 'Smoky haze',
-        icon: (
-          <svg viewBox="0 0 24 24" className="h-6 w-6 text-rose-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.25" />
-            <line x1="4" y1="19" x2="20" y2="19" strokeWidth="2" />
-            <line x1="7" y1="22" x2="17" y2="22" strokeWidth="2" />
-          </svg>
-        ),
-      };
-    case 'smog':
-      return {
-        background: 'linear-gradient(135deg, #1c1026 0%, #351647 45%, #150d1e 100%)',
-        borderColor: 'rgba(192, 132, 252, 0.35)',
-        skylineColor: '#A855F7',
-        categoryBg: 'rgba(168, 85, 247, 0.25)',
-        categoryBorder: 'rgba(192, 132, 252, 0.45)',
-        categoryText: '#d8b4fe',
-        categoryLabel: 'Severe',
-        weatherLabel: 'Smog',
-        icon: (
-          <svg viewBox="0 0 24 24" className="h-6 w-6 text-purple-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.3" />
-            <line x1="4" y1="19" x2="20" y2="19" strokeWidth="2" />
-            <line x1="7" y1="22" x2="17" y2="22" strokeWidth="2" />
-          </svg>
-        ),
-      };
+      weatherLabel = 'Smoky haze';
+      icon = (
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-rose-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.25" />
+          <line x1="4" y1="19" x2="20" y2="19" strokeWidth="2" />
+          <line x1="7" y1="22" x2="17" y2="22" strokeWidth="2" />
+        </svg>
+      );
+      break;
+    case 'severe':
+      weatherLabel = 'Smog';
+      icon = (
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-purple-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.3" />
+          <line x1="4" y1="19" x2="20" y2="19" strokeWidth="2" />
+          <line x1="7" y1="22" x2="17" y2="22" strokeWidth="2" />
+        </svg>
+      );
+      break;
     case 'hazardous':
     default:
-      return {
-        background: 'linear-gradient(135deg, #2a0b10 0%, #46111a 45%, #17070a 100%)',
-        borderColor: 'rgba(248, 113, 113, 0.4)',
-        skylineColor: '#DC2626',
-        categoryBg: 'rgba(220, 38, 38, 0.25)',
-        categoryBorder: 'rgba(248, 113, 113, 0.45)',
-        categoryText: '#fca5a5',
-        categoryLabel: 'Hazardous',
-        weatherLabel: 'Severe Smog',
-        icon: (
-          <svg viewBox="0 0 24 24" className="h-6 w-6 text-red-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.3" />
-            <line x1="3" y1="19" x2="21" y2="19" strokeWidth="2" />
-            <line x1="6" y1="22" x2="18" y2="22" strokeWidth="2" />
-          </svg>
-        ),
-      };
+      weatherLabel = 'Severe Smog';
+      icon = (
+        <svg viewBox="0 0 24 24" className="h-6 w-6 text-rose-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.3" />
+          <line x1="3" y1="19" x2="21" y2="19" strokeWidth="2" />
+          <line x1="6" y1="22" x2="18" y2="22" strokeWidth="2" />
+        </svg>
+      );
+      break;
   }
+
+  return {
+    tierKey: theme.tierKey,
+    background: theme.bannerBg,
+    borderColor: theme.border,
+    accent: theme.accent,
+    skylineColor: theme.skyline,
+    liveDotColor: theme.liveDotColor,
+    categoryBg: theme.badgeBg,
+    categoryBorder: theme.badgeBorder,
+    categoryText: theme.badgeText,
+    categoryLabel: theme.label,
+    weatherLabel,
+    icon,
+  };
 }
 
 export function getCityLandmarkName(cityId: string): string {
@@ -296,11 +275,11 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           {/* Top Control Bar: Station Switcher Chips + Provenance Badge + Action Buttons */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-black/10 dark:border-white/10">
             {/* Station Selection Chips Strip */}
-            <div className="flex items-center gap-2 overflow-hidden w-full lg:w-auto">
+            <div className="flex items-center gap-2 w-full lg:w-auto min-w-0 flex-1">
               <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-300 shrink-0">
                 City:
               </span>
-              <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-0.5 max-w-full touch-pan-x">
                 {CITY_PRESETS.map((preset) => {
                   const isActive = preset.id === currentCity.id;
                   return (
@@ -371,7 +350,13 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               {/* Top Row: Live AQI tag + "Air Quality is" + Category Pill */}
               <div className="flex flex-wrap items-center gap-3 text-xs mb-1">
                 <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-stone-200">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse shrink-0 shadow-sm shadow-rose-500/50" />
+                  <span 
+                    className="h-2.5 w-2.5 rounded-full animate-pulse shrink-0 shadow-sm transition-colors duration-500" 
+                    style={{ 
+                      backgroundColor: bannerStyle.liveDotColor,
+                      boxShadow: `0 0 10px ${bannerStyle.liveDotColor}`
+                    }}
+                  />
                   <span>Live AQI</span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -392,8 +377,8 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               {/* AQI Number + CPCB Tag */}
               <div className="flex items-baseline gap-2 my-1">
                 <span 
-                  className="font-mono text-5xl sm:text-6xl font-black tracking-tight drop-shadow-md tabular-nums"
-                  style={{ color: bannerStyle.skylineColor }}
+                  className="font-mono text-5xl sm:text-6xl font-black tracking-tight drop-shadow-md tabular-nums transition-colors duration-500"
+                  style={{ color: bannerStyle.accent }}
                 >
                   {currentCity.currentAQI}
                 </span>
@@ -434,9 +419,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                   {/* Gradient Track */}
                   <div 
                     className="w-full h-full rounded-full"
-                    style={{
-                      background: "linear-gradient(to right, #10B981 0%, #10B981 16.6%, #EAB308 16.6%, #EAB308 33.3%, #F97316 33.3%, #F97316 50%, #F43F5E 50%, #F43F5E 66.6%, #A855F7 66.6%, #A855F7 83.3%, #991B1B 83.3%, #991B1B 100%)"
-                    }}
+                    style={{ background: AQI_SPECTRUM_GRADIENT }}
                   />
 
                   {/* Active Pin Thumb positioned precisely at current AQI percentage */}
@@ -445,25 +428,24 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                     style={{ left: `${getSpectrumPercentage(currentCity.currentAQI)}%` }}
                   >
                     <div className="relative flex items-center justify-center">
-                      <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-white dark:bg-stone-900 border-2 border-stone-800 dark:border-white shadow-md flex items-center justify-center animate-pulse">
+                      <div 
+                        className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-white dark:bg-stone-900 border-2 shadow-md flex items-center justify-center animate-pulse"
+                        style={{ borderColor: bannerStyle.accent }}
+                      >
                         <div 
-                          className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full" 
-                          style={{ backgroundColor: bannerStyle.skylineColor }}
+                          className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full transition-colors duration-500" 
+                          style={{ backgroundColor: bannerStyle.accent }}
                         />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Scale Ticks Below Bar (0, 50, 100, 150, 200, 300, 301+) */}
+                {/* Scale Ticks Below Bar */}
                 <div className="flex justify-between items-center text-[10px] font-mono font-medium text-stone-400 mt-1 px-1">
-                  <span>0</span>
-                  <span>50</span>
-                  <span>100</span>
-                  <span>150</span>
-                  <span>200</span>
-                  <span>300</span>
-                  <span>301+</span>
+                  {AQI_SPECTRUM_TICKS.map((tick) => (
+                    <span key={tick}>{tick}</span>
+                  ))}
                 </div>
               </div>
             </div>
