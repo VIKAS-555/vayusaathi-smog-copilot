@@ -222,6 +222,7 @@ export default function Home() {
               onCustomUpdate={handleCustomCityUpdate}
               onRefreshLive={() => fetchLiveStation(currentCity)}
               isFetchingLive={isFetchingLive}
+              isDarkMode={isDarkMode}
             />
 
             {/* GenAI Tailored Action Engine (3 Focused Tabs) */}

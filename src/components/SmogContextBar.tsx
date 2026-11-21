@@ -26,6 +26,66 @@ interface SmogContextBarProps {
   onCustomUpdate?: (updated: Partial<CitySmogContext>) => void;
   onRefreshLive?: () => void;
   isFetchingLive?: boolean;
+  isDarkMode?: boolean;
+}
+
+// Calibrated high-contrast bar styling that guarantees 100% visibility in both Day and Night mode
+function getBarAppearance(
+  point: { hour: number; pm25: number; aqi: number; inversionRisk: string; isSafeVentilationWindow: boolean },
+  isActive: boolean,
+  isDark: boolean
+) {
+  if (point.isSafeVentilationWindow) {
+    return {
+      bg: isDark ? (isActive ? '#4EBA97' : '#3DA887') : (isActive ? '#1B5645' : '#236B56'),
+      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+    };
+  }
+  if (point.inversionRisk === 'Severe') {
+    return {
+      bg: isDark ? (isActive ? '#FF8F6B' : '#F27A55') : (isActive ? '#A83B19' : '#C4512C'),
+      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+    };
+  }
+  if (point.inversionRisk === 'High') {
+    return {
+      bg: isDark ? (isActive ? '#FCD34D' : '#FBBF24') : (isActive ? '#B45309' : '#D97706'),
+      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+    };
+  }
+  if (point.inversionRisk === 'Low' || point.pm25 <= 35) {
+    return {
+      bg: isDark ? (isActive ? '#5EEAD4' : '#2DD4BF') : (isActive ? '#0F766E' : '#0D9488'),
+      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+    };
+  }
+  // Moderate: High-contrast slate/silver so it's always clearly visible!
+  return {
+    bg: isDark ? (isActive ? '#CBD5E1' : '#94A3B8') : (isActive ? '#57534E' : '#64748B'),
+    border: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.4)',
+  };
+}
+
+function getTrackAppearance(
+  isSafe: boolean,
+  isDark: boolean,
+  isStart: boolean,
+  isEnd: boolean
+) {
+  if (isSafe) {
+    return {
+      backgroundColor: isDark ? 'rgba(35, 107, 86, 0.35)' : 'rgba(220, 240, 232, 0.85)',
+      borderTop: isDark ? '2px solid #3DA887' : '2px solid #236B56',
+      borderLeft: isStart ? (isDark ? '2px solid #3DA887' : '2px solid #236B56') : undefined,
+      borderRight: isEnd ? (isDark ? '2px solid #3DA887' : '2px solid #236B56') : undefined,
+    };
+  }
+  return {
+    backgroundColor: isDark ? '#1C2521' : '#E8E6DE',
+    borderTop: isDark ? '1px solid #2D3A34' : '1px solid #D5D2C7',
+    borderLeft: isDark ? '1px solid #242E29' : '1px solid #DFDCD3',
+    borderRight: isDark ? '1px solid #242E29' : '1px solid #DFDCD3',
+  };
 }
 
 export const SmogContextBar: React.FC<SmogContextBarProps> = ({
@@ -34,6 +94,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   onCustomUpdate,
   onRefreshLive,
   isFetchingLive = false,
+  isDarkMode = false,
 }) => {
   const [selectedHour, setSelectedHour] = useState<number>(() => {
     const midVent = Math.round((currentCity.ventilationStartHour + currentCity.ventilationEndHour) / 2);
@@ -395,6 +456,31 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </div>
         </div>
 
+        {/* Visual Color Swatch Key: Explains all 24 hours at a glance */}
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 text-[11px] font-mono text-ink-muted dark:text-stone-300 border-t border-stone-200/80 dark:border-stone-800 pt-2 mb-2">
+          <span className="font-semibold text-ink dark:text-stone-100">Curve Profile:</span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#3DA887' : '#236B56' }} />
+            <span>Safe Window</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#F27A55' : '#C4512C' }} />
+            <span>Severe Trap</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#FBBF24' : '#D97706' }} />
+            <span>High Inversion</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#94A3B8' : '#64748B' }} />
+            <span>Moderate</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#2DD4BF' : '#0D9488' }} />
+            <span>Clean Baseline</span>
+          </span>
+        </div>
+
         {/* Timeline Corridor Highlight Indicator */}
         <div className="mb-2 flex items-center justify-between text-[11px] font-mono text-ink-muted dark:text-stone-400 border-b border-stone-200 dark:border-stone-800 pb-1.5">
           <span className="flex items-center gap-1">
@@ -435,39 +521,21 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </button>
         </div>
 
-        {/* Diurnal Bar Visualization: All 24 Hours (00 through 23) - Horizontally Scrollable on Mobile for Large Tap Targets */}
+        {/* Diurnal Bar Visualization: All 24 Hours (00 through 23) - Guaranteed 100% Visibility at All Times */}
         <div className="pt-1 pb-1">
           <div className="w-full overflow-x-auto no-scrollbar sm:overflow-visible pb-1">
             <div className="flex items-end gap-1 sm:gap-1.5 h-36 min-w-[540px] sm:min-w-0 sm:w-full">
               {currentCity.diurnalCurve.map((point) => {
-                const heightPercent = Math.max(16, Math.min(100, Math.round((point.pm25 / maxPm25) * 100)));
+                const heightPercent = Math.max(26, Math.min(100, Math.round((point.pm25 / maxPm25) * 100)));
                 const isHovered = hoveredHour === point.hour;
                 const isSelected = selectedHour === point.hour;
                 const isActive = isHovered || isSelected;
 
-                // Distinct bar colors based on safe ventilation corridor vs inversion risk
-                let barColor = 'bg-stone-300 dark:bg-stone-600';
-                if (point.isSafeVentilationWindow) {
-                  barColor = isActive 
-                    ? 'bg-sage-600 dark:bg-sage-400' 
-                    : 'bg-sage-500/90 dark:bg-sage-500';
-                } else if (point.inversionRisk === 'Severe') {
-                  barColor = isActive 
-                    ? 'bg-terracotta-600 dark:bg-terracotta-400' 
-                    : 'bg-terracotta-500/90 dark:bg-terracotta-500';
-                } else if (point.inversionRisk === 'High') {
-                  barColor = isActive 
-                    ? 'bg-amber-600 dark:bg-amber-400' 
-                    : 'bg-amber-500/90 dark:bg-amber-500';
-                } else {
-                  barColor = isActive 
-                    ? 'bg-stone-500 dark:bg-stone-300' 
-                    : 'bg-stone-300 dark:bg-stone-600';
-                }
-
-                // Window corridor framing
                 const isWindowStart = point.hour === currentCity.ventilationStartHour;
                 const isWindowEnd = point.hour === currentCity.ventilationEndHour;
+
+                const barStyle = getBarAppearance(point, isActive, isDarkMode);
+                const trackStyle = getTrackAppearance(point.isSafeVentilationWindow, isDarkMode, isWindowStart, isWindowEnd);
 
                 return (
                   <div
@@ -487,26 +555,23 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                   >
                     {/* Slot Track Background: Gives every hour (00-23) distinct structural baseline and highlights the ventilation corridor */}
                     <div
+                      style={trackStyle}
                       className={`absolute inset-x-0 top-0 bottom-6 rounded-t transition-colors ${
-                        point.isSafeVentilationWindow
-                          ? `bg-sage-100/70 dark:bg-sage-950/60 border-t-2 border-sage-500 dark:border-sage-400 ${
-                              isWindowStart ? 'border-l-2 border-sage-500 dark:border-sage-400 rounded-tl' : ''
-                            } ${
-                              isWindowEnd ? 'border-r-2 border-sage-500 dark:border-sage-400 rounded-tr' : ''
-                            }`
-                          : 'bg-stone-200/40 dark:bg-stone-800/40'
-                      } ${
-                        isActive ? 'ring-1 ring-ink/30 dark:ring-white/30' : ''
+                        isActive ? 'ring-1 ring-ink/30 dark:ring-white/40' : ''
                       }`}
                     />
 
-                    {/* Filled Bar */}
+                    {/* Filled Bar: High-contrast vibrant colors that are 100% visible at all times */}
                     <div
-                      style={{ height: `${heightPercent}%` }}
-                      className={`relative z-1 w-full rounded-t transition-all duration-150 ${barColor} ${
+                      style={{
+                        height: `${heightPercent}%`,
+                        backgroundColor: barStyle.bg,
+                        borderColor: barStyle.border,
+                      }}
+                      className={`relative z-1 w-full rounded-t border-t border-x transition-all duration-150 ${
                         isActive
-                          ? 'ring-2 ring-ink dark:ring-stone-100 ring-offset-1 scale-y-105 shadow-xs'
-                          : 'hover:opacity-95'
+                          ? 'ring-2 ring-ink dark:ring-white ring-offset-1 scale-y-105 shadow-sm'
+                          : 'opacity-95 hover:opacity-100'
                       }`}
                     />
 

@@ -57,11 +57,11 @@ body {
 }
 
 .dark .bg-stone-200 {
-  background-color: #242E2A !important;
+  background-color: #242E2A;
 }
 
 .dark .bg-stone-300 {
-  background-color: #313E38 !important;
+  background-color: #313E38;
 }
 
 .dark .bg-white {
