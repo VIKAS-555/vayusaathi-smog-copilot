@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CitySmogContext } from '../types';
 import { CITY_PRESETS, getHourlyGuidance } from '../data/cityPresets';
+import { CityLandmarkIllustration } from './CityLandmarkIllustration';
 import { 
   Wind, 
   Thermometer, 
@@ -165,6 +166,18 @@ function getAtmosphereBannerStyle(state: AtmosphereState, isDark: boolean) {
   }
 }
 
+export function getCityLandmarkName(cityId: string): string {
+  const id = (cityId || '').toLowerCase();
+  if (id.includes('delhi')) return 'India Gate';
+  if (id.includes('bengaluru') || id.includes('bangalore')) return 'Vidhana Soudha';
+  if (id.includes('mumbai') || id.includes('bombay')) return 'Gateway of India';
+  if (id.includes('kolkata') || id.includes('calcutta')) return 'Victoria Memorial';
+  if (id.includes('lucknow')) return 'Rumi Darwaza';
+  if (id.includes('gurugram') || id.includes('gurgaon')) return 'Cyber City Horizon';
+  if (id.includes('noida')) return 'Express Towers & Stupa';
+  return 'Regional Metro Horizon';
+}
+
 export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   currentCity,
   onSelectCity,
@@ -247,6 +260,23 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </svg>
         </div>
 
+        {/* Selected City's Distinct Architectural Landmark Line Art (Watermark Backdrop) */}
+        <div 
+          className="absolute right-1 sm:right-6 bottom-0 sm:bottom-0 pointer-events-none select-none overflow-hidden h-24 sm:h-32 w-32 sm:w-44 z-0 transition-all duration-700 opacity-20 sm:opacity-25"
+          aria-hidden="true"
+          style={{
+            color: bannerStyle.skylineColor,
+            maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 70%, rgba(0,0,0,0.3) 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 70%, rgba(0,0,0,0.3) 100%)',
+          }}
+        >
+          <CityLandmarkIllustration 
+            cityId={currentCity.id} 
+            strokeColor={bannerStyle.skylineColor}
+            className="w-full h-full object-contain"
+          />
+        </div>
+
         {/* Content Layer with z-10 */}
         <div className="relative z-10 flex flex-col gap-3">
           {/* Station Selection Chips Strip */}
@@ -283,6 +313,9 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                 </h2>
                 <span className="font-mono text-[11px] text-ink-muted dark:text-stone-400">
                   {currentCity.latitude.toFixed(2)}°N, {currentCity.longitude.toFixed(2)}°E
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-ink-muted dark:text-stone-400 whitespace-nowrap">
+                  <span>{getCityLandmarkName(currentCity.id)}</span>
                 </span>
                 <span className="text-stone-300 dark:text-stone-600 hidden sm:inline">·</span>
                 <span className="font-mono text-[11px] text-ink dark:text-stone-300 font-semibold hidden sm:inline">
