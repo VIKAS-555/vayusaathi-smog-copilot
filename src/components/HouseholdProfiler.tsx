@@ -1,6 +1,6 @@
 import React from 'react';
 import { HouseholdProfile, HouseholdMember, HomeType, PurifierStatus, CommuteMode } from '../types';
-import { Users, Home, Wind, Car, Plus, Trash2, HeartPulse, ShieldCheck } from 'lucide-react';
+import { Users, Home, Wind, Car, Plus, Minus, Trash2, HeartPulse, ShieldCheck } from 'lucide-react';
 
 interface HouseholdProfilerProps {
   profile: HouseholdProfile;
@@ -50,6 +50,14 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
     });
   };
 
+  const incrementMemberOutdoorHours = (id: string, current: number) => {
+    updateMemberOutdoorHours(id, Math.min(12, current + 1));
+  };
+
+  const decrementMemberOutdoorHours = (id: string, current: number) => {
+    updateMemberOutdoorHours(id, Math.max(0, current - 1));
+  };
+
   return (
     <div className="rounded-lg border border-stone-300 bg-white p-5 shadow-xs">
       <div className="border-b border-stone-200 pb-3">
@@ -72,21 +80,21 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
             <button
               type="button"
               onClick={() => addMember('Child')}
-              className="rounded border border-stone-300 bg-stone-50 px-2 py-0.5 text-[11px] font-medium text-ink hover:bg-stone-100"
+              className="rounded border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
             >
               + Child
             </button>
             <button
               type="button"
               onClick={() => addMember('Senior')}
-              className="rounded border border-stone-300 bg-stone-50 px-2 py-0.5 text-[11px] font-medium text-ink hover:bg-stone-100"
+              className="rounded border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
             >
               + Senior
             </button>
             <button
               type="button"
               onClick={() => addMember('Adult')}
-              className="rounded border border-stone-300 bg-stone-50 px-2 py-0.5 text-[11px] font-medium text-ink hover:bg-stone-100"
+              className="rounded border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
             >
               + Adult
             </button>
@@ -97,7 +105,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           {profile.members.map((member, idx) => (
             <div
               key={member.id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded border border-stone-200 dark:border-stone-700 bg-stone-50/70 dark:bg-stone-800/60 p-2.5 sm:p-2 text-xs"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-2 text-xs transition-colors hover:border-stone-300 dark:hover:border-stone-600"
             >
               {/* Row 1 on mobile: Member Role + Sensitivity Badge + Delete (on mobile) */}
               <div className="flex items-center justify-between sm:justify-start gap-2">
@@ -125,7 +133,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                   <button
                     type="button"
                     onClick={() => removeMember(member.id)}
-                    className="sm:hidden text-stone-400 hover:text-terracotta-600 p-1 min-h-[30px] min-w-[30px] flex items-center justify-center"
+                    className="sm:hidden text-stone-400 hover:text-terracotta-600 p-1 min-h-[30px] min-w-[30px] flex items-center justify-center transition-colors"
                     title="Remove member"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -133,26 +141,45 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 )}
               </div>
 
-              {/* Row 2 on mobile: Outdoors Slider with Clear Label */}
-              <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0 border-t sm:border-0 border-stone-200/60 dark:border-stone-700/60">
+              {/* Stepper Control for Daily Outdoor Time */}
+              <div className="flex items-center justify-between sm:justify-end gap-2.5 pt-1.5 sm:pt-0 border-t sm:border-0 border-stone-200/60 dark:border-stone-700/60">
                 <span className="text-[11px] text-ink-muted dark:text-stone-400 font-mono">
-                  Outdoor: <strong>{member.hoursOutdoorsPerDay}h</strong>
+                  Outdoors:
                 </span>
                 <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min="0"
-                    max="8"
-                    value={member.hoursOutdoorsPerDay}
-                    onChange={(e) => updateMemberOutdoorHours(member.id, Number(e.target.value))}
-                    className="w-24 sm:w-16 accent-ink"
-                    title="Hours outdoors per day"
-                  />
+                  <div className="inline-flex items-center rounded-md border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-900 shadow-2xs">
+                    <button
+                      type="button"
+                      onClick={() => decrementMemberOutdoorHours(member.id, member.hoursOutdoorsPerDay)}
+                      disabled={member.hoursOutdoorsPerDay <= 0}
+                      aria-label={`Decrease outdoor hours for ${member.role}`}
+                      className="flex items-center justify-center h-8 w-8 sm:h-7 sm:w-7 text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 active:bg-stone-200 dark:active:bg-stone-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border-r border-stone-200 dark:border-stone-700 rounded-l-md"
+                      title="Decrease 1 hour"
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                    <span 
+                      className="w-10 sm:w-9 text-center font-mono font-bold text-xs sm:text-[11px] text-ink dark:text-stone-100 tabular-nums select-none"
+                      title={`${member.hoursOutdoorsPerDay} hours outdoors per day`}
+                    >
+                      {member.hoursOutdoorsPerDay}h
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => incrementMemberOutdoorHours(member.id, member.hoursOutdoorsPerDay)}
+                      disabled={member.hoursOutdoorsPerDay >= 12}
+                      aria-label={`Increase outdoor hours for ${member.role}`}
+                      className="flex items-center justify-center h-8 w-8 sm:h-7 sm:w-7 text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 active:bg-stone-200 dark:active:bg-stone-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border-l border-stone-200 dark:border-stone-700 rounded-r-md"
+                      title="Increase 1 hour"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                   {profile.members.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeMember(member.id)}
-                      className="hidden sm:inline-flex text-stone-400 hover:text-terracotta-600 p-0.5"
+                      className="hidden sm:inline-flex text-stone-400 hover:text-terracotta-600 p-1 rounded hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
                       title="Remove member"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
