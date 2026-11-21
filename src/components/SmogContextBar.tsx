@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CitySmogContext } from '../types';
 import { CITY_PRESETS, getHourlyGuidance } from '../data/cityPresets';
 import { CityLandmarkIllustration } from './CityLandmarkIllustration';
+import { getAQIStyle, getAQITier, AQI_TIERS, AQITier } from '../lib/aqiScale';
 import { 
   Wind, 
   Thermometer, 
@@ -30,40 +31,17 @@ interface SmogContextBarProps {
   isDarkMode?: boolean;
 }
 
-// Calibrated high-contrast bar styling that guarantees 100% visibility in both Day and Night mode
+// Calibrated 6-tier graded bar appearance adhering strictly to CPCB & international AQI scales
 function getBarAppearance(
   point: { hour: number; pm25: number; aqi: number; inversionRisk: string; isSafeVentilationWindow: boolean },
   isActive: boolean,
   isDark: boolean
 ) {
-  if (point.isSafeVentilationWindow) {
-    return {
-      bg: isDark ? (isActive ? '#4EBA97' : '#3DA887') : (isActive ? '#1B5645' : '#236B56'),
-      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
-    };
-  }
-  if (point.inversionRisk === 'Severe') {
-    return {
-      bg: isDark ? (isActive ? '#FF8F6B' : '#F27A55') : (isActive ? '#A83B19' : '#C4512C'),
-      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
-    };
-  }
-  if (point.inversionRisk === 'High') {
-    return {
-      bg: isDark ? (isActive ? '#FCD34D' : '#FBBF24') : (isActive ? '#B45309' : '#D97706'),
-      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
-    };
-  }
-  if (point.inversionRisk === 'Low' || point.pm25 <= 35) {
-    return {
-      bg: isDark ? (isActive ? '#5EEAD4' : '#2DD4BF') : (isActive ? '#0F766E' : '#0D9488'),
-      border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
-    };
-  }
-  // Moderate: High-contrast slate/silver so it's always clearly visible!
+  const tierStyle = getAQIStyle(point.aqi, isDark);
   return {
-    bg: isDark ? (isActive ? '#CBD5E1' : '#94A3B8') : (isActive ? '#57534E' : '#64748B'),
-    border: isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.4)',
+    bg: isActive ? tierStyle.activeAccent : tierStyle.accent,
+    border: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(255, 255, 255, 0.5)',
+    tier: tierStyle.tierKey,
   };
 }
 
@@ -89,79 +67,115 @@ function getTrackAppearance(
   };
 }
 
-export type AtmosphereState = 'clean' | 'haze' | 'smog' | 'humid';
+export type AtmosphereState = 'clean' | 'moderate' | 'haze' | 'unhealthy' | 'smog' | 'hazardous' | 'humid';
 
 export function getAtmosphereState(city: CitySmogContext): AtmosphereState {
-  if (city.currentAQI > 200 || city.pm25 > 100) {
-    return 'smog';
-  }
-  if (city.humidityPercent >= 75) {
+  if (city.humidityPercent >= 80 && city.currentAQI <= 200) {
     return 'humid';
   }
-  if (city.currentAQI > 100 || city.pm25 > 40) {
-    return 'haze';
-  }
+  const tier = getAQITier(city.currentAQI, city.aqiCategory);
+  if (tier === 'hazardous') return 'hazardous';
+  if (tier === 'severe') return 'smog';
+  if (tier === 'unhealthy') return 'unhealthy';
+  if (tier === 'poor') return 'haze';
+  if (tier === 'moderate') return 'moderate';
   return 'clean';
 }
 
-function getAtmosphereBannerStyle(state: AtmosphereState, isDark: boolean) {
+function getAtmosphereBannerStyle(city: CitySmogContext, isDark: boolean) {
+  const state = getAtmosphereState(city);
+  const aqiStyle = getAQIStyle(city.currentAQI, isDark, city.aqiCategory);
+
+  if (state === 'humid') {
+    return {
+      background: isDark
+        ? 'linear-gradient(135deg, rgba(22, 28, 36, 0.95) 0%, rgba(20, 24, 28, 0.92) 55%, rgba(18, 25, 32, 0.88) 100%)'
+        : 'linear-gradient(135deg, rgba(238, 242, 246, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(230, 236, 242, 0.85) 100%)',
+      borderColor: isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(100, 116, 139, 0.3)',
+      skylineColor: isDark ? '#94A3B8' : '#475569',
+      badgeBg: isDark ? 'rgba(71, 85, 105, 0.3)' : '#F1F5F9',
+      badgeBorder: isDark ? 'rgba(148, 163, 184, 0.4)' : '#CBD5E1',
+      badgeColor: isDark ? '#CBD5E1' : '#334155',
+      badgeLabel: 'Moist Maritime Mist · High Relative Humidity',
+      tagline: 'High moisture promotes secondary chemical aerosol & fog condensation',
+      icon: <Droplets className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400 shrink-0" />,
+    };
+  }
+
+  // Graded atmospheric banner corresponding to the 6 AQI tiers
   switch (state) {
     case 'clean':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(20, 36, 30, 0.95) 0%, rgba(24, 32, 29, 0.92) 55%, rgba(18, 30, 26, 0.88) 100%)'
-          : 'linear-gradient(135deg, rgba(235, 247, 242, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(228, 242, 235, 0.85) 100%)',
-        borderColor: isDark ? 'rgba(61, 168, 135, 0.4)' : 'rgba(35, 107, 86, 0.3)',
-        skylineColor: isDark ? '#3DA887' : '#236B56',
-        badgeClass: isDark
-          ? 'bg-sage-950/80 text-sage-200 border-sage-800'
-          : 'bg-sage-100/90 text-sage-800 border-sage-300',
-        badgeLabel: 'Clean Daylight Air · Healthy Convective Mixing',
-        tagline: 'Fresh ambient airflow across regional topography · Low trapping',
-        icon: <Sun className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />,
+        background: aqiStyle.bannerBg,
+        borderColor: aqiStyle.border,
+        skylineColor: aqiStyle.skyline,
+        badgeBg: aqiStyle.bg,
+        badgeBorder: aqiStyle.border,
+        badgeColor: aqiStyle.text,
+        badgeLabel: 'Good Air · Healthy Convective Mixing',
+        tagline: 'Fresh ambient airflow across regional topography · Minimal trapping',
+        icon: <Sun className="h-3.5 w-3.5 shrink-0" style={{ color: aqiStyle.text }} />,
+      };
+    case 'moderate':
+      return {
+        background: aqiStyle.bannerBg,
+        borderColor: aqiStyle.border,
+        skylineColor: aqiStyle.skyline,
+        badgeBg: aqiStyle.bg,
+        badgeBorder: aqiStyle.border,
+        badgeColor: aqiStyle.text,
+        badgeLabel: 'Moderate Air · Acceptable Dispersion',
+        tagline: 'Daytime surface heating supporting regular atmospheric air renewal',
+        icon: <CheckCircle2 className="h-3.5 w-3.5 shrink-0" style={{ color: aqiStyle.text }} />,
       };
     case 'haze':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(38, 31, 20, 0.95) 0%, rgba(28, 24, 18, 0.92) 55%, rgba(33, 26, 17, 0.88) 100%)'
-          : 'linear-gradient(135deg, rgba(254, 247, 235, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(253, 240, 219, 0.85) 100%)',
-        borderColor: isDark ? 'rgba(245, 158, 11, 0.35)' : 'rgba(217, 119, 6, 0.3)',
-        skylineColor: isDark ? '#FBBF24' : '#B45309',
-        badgeClass: isDark
-          ? 'bg-amber-950/80 text-amber-200 border-amber-800'
-          : 'bg-amber-100/90 text-amber-900 border-amber-300',
+        background: aqiStyle.bannerBg,
+        borderColor: aqiStyle.border,
+        skylineColor: aqiStyle.skyline,
+        badgeBg: aqiStyle.bg,
+        badgeBorder: aqiStyle.border,
+        badgeColor: aqiStyle.text,
         badgeLabel: 'Photochemical Haze · Ambient Particulate Accumulation',
         tagline: 'Moderate sunlight-driven aerosol stagnation · Boundary layer declining',
-        icon: <CloudFog className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />,
+        icon: <CloudFog className="h-3.5 w-3.5 shrink-0" style={{ color: aqiStyle.text }} />,
       };
-    case 'humid':
+    case 'unhealthy':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(22, 28, 36, 0.95) 0%, rgba(20, 24, 28, 0.92) 55%, rgba(18, 25, 32, 0.88) 100%)'
-          : 'linear-gradient(135deg, rgba(238, 242, 246, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(230, 236, 242, 0.85) 100%)',
-        borderColor: isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(100, 116, 139, 0.3)',
-        skylineColor: isDark ? '#94A3B8' : '#475569',
-        badgeClass: isDark
-          ? 'bg-slate-900/80 text-slate-200 border-slate-700'
-          : 'bg-slate-100/90 text-slate-800 border-slate-300',
-        badgeLabel: 'Moist Maritime Mist · High Relative Humidity',
-        tagline: 'High moisture promotes secondary chemical aerosol & fog condensation',
-        icon: <Droplets className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400 shrink-0" />,
+        background: aqiStyle.bannerBg,
+        borderColor: aqiStyle.border,
+        skylineColor: aqiStyle.skyline,
+        badgeBg: aqiStyle.bg,
+        badgeBorder: aqiStyle.border,
+        badgeColor: aqiStyle.text,
+        badgeLabel: 'Unhealthy Stagnation · Boundary Layer Declining',
+        tagline: 'Cool ground layer trapping vehicular and combustion particulates',
+        icon: <AlertTriangle className="h-3.5 w-3.5 shrink-0" style={{ color: aqiStyle.text }} />,
       };
     case 'smog':
+      return {
+        background: aqiStyle.bannerBg,
+        borderColor: aqiStyle.border,
+        skylineColor: aqiStyle.skyline,
+        badgeBg: aqiStyle.bg,
+        badgeBorder: aqiStyle.border,
+        badgeColor: aqiStyle.text,
+        badgeLabel: 'Severe Thermal Inversion · Dense Ground Particulate Trap',
+        tagline: 'Dense particulate blanket trapped close to ground · Cold surface boundary',
+        icon: <Flame className="h-3.5 w-3.5 shrink-0" style={{ color: aqiStyle.text }} />,
+      };
+    case 'hazardous':
     default:
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(38, 24, 20, 0.95) 0%, rgba(26, 20, 19, 0.92) 55%, rgba(34, 22, 19, 0.88) 100%)'
-          : 'linear-gradient(135deg, rgba(253, 242, 238, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(250, 232, 226, 0.85) 100%)',
-        borderColor: isDark ? 'rgba(242, 122, 85, 0.4)' : 'rgba(196, 81, 44, 0.35)',
-        skylineColor: isDark ? '#F27A55' : '#C4512C',
-        badgeClass: isDark
-          ? 'bg-terracotta-950/80 text-terracotta-200 border-terracotta-800'
-          : 'bg-terracotta-100/90 text-terracotta-900 border-terracotta-300',
-        badgeLabel: 'Severe Thermal Inversion · Ground Particulate Trap',
-        tagline: 'Dense particulate blanket trapped close to ground · Cold surface boundary',
-        icon: <Flame className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />,
+        background: aqiStyle.bannerBg,
+        borderColor: aqiStyle.border,
+        skylineColor: aqiStyle.skyline,
+        badgeBg: aqiStyle.bg,
+        badgeBorder: aqiStyle.border,
+        badgeColor: aqiStyle.text,
+        badgeLabel: 'Hazardous Smog Emergency · Surface Thermal Blanket',
+        tagline: 'Critical particulate trapping across regional airshed · Emergency episode',
+        icon: <ShieldAlert className="h-3.5 w-3.5 shrink-0" style={{ color: aqiStyle.text }} />,
       };
   }
 }
@@ -217,8 +231,15 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
     };
 
   const activeGuidance = getHourlyGuidance(activePoint);
-  const atmosphereState = getAtmosphereState(currentCity);
-  const bannerStyle = getAtmosphereBannerStyle(atmosphereState, isDarkMode);
+  const cityAqiStyle = getAQIStyle(currentCity.currentAQI, isDarkMode, currentCity.aqiCategory);
+  const CityStatusIcon = 
+    cityAqiStyle.tierKey === 'good' || cityAqiStyle.tierKey === 'moderate'
+      ? CheckCircle2
+      : cityAqiStyle.tierKey === 'poor' || cityAqiStyle.tierKey === 'unhealthy'
+      ? AlertTriangle
+      : ShieldAlert;
+
+  const bannerStyle = getAtmosphereBannerStyle(currentCity, isDarkMode);
 
   return (
     <div className="rounded-lg border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-4 sm:p-5 shadow-xs">
@@ -329,7 +350,14 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
 
             {/* Weather / AQI Condition Badge */}
             <div className="flex items-center gap-2 shrink-0">
-              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold border shadow-2xs whitespace-nowrap ${bannerStyle.badgeClass}`}>
+              <span 
+                className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold border shadow-2xs whitespace-nowrap transition-colors"
+                style={{
+                  backgroundColor: bannerStyle.badgeBg,
+                  borderColor: bannerStyle.badgeBorder,
+                  color: bannerStyle.badgeColor,
+                }}
+              >
                 {bannerStyle.icon}
                 <span>{bannerStyle.badgeLabel}</span>
               </span>
@@ -435,73 +463,94 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
       {/* Primary Meteorological Grid: Responsive Spacious Grid (2 cols on compact desktop lg, 3 cols on xl) */}
       <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3.5">
         {/* Card 1: CPCB AQI */}
-        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+        <div className="rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-3.5 flex flex-col justify-between">
           <div className="flex flex-wrap items-center justify-between gap-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
               Index (CPCB AQI)
             </span>
             <span
-              className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 whitespace-nowrap ${
-                currentCity.currentAQI >= 400
-                  ? 'bg-red-100 text-red-800 border border-red-200'
-                  : currentCity.currentAQI >= 300
-                  ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                  : currentCity.currentAQI >= 200
-                  ? 'bg-orange-100 text-orange-800 border border-orange-200'
-                  : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-              }`}
+              className="rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 whitespace-nowrap shadow-2xs transition-colors"
+              style={{
+                backgroundColor: cityAqiStyle.bg,
+                borderColor: cityAqiStyle.border,
+                color: cityAqiStyle.text,
+              }}
             >
-              <Activity className="h-3 w-3 shrink-0" />
+              <CityStatusIcon className="h-3 w-3 shrink-0" />
               <span>{currentCity.aqiCategory}</span>
             </span>
           </div>
           <div className="my-2 flex items-baseline gap-2">
-            <span className="font-mono text-3xl font-extrabold text-ink tabular-nums">
+            <span 
+              className="font-mono text-3xl font-extrabold tabular-nums"
+              style={{ color: cityAqiStyle.text }}
+            >
               {currentCity.currentAQI}
             </span>
-            <span className="text-xs text-ink-muted">
-              {currentCity.currentAQI <= 100 ? 'Minimal health risk' : 'Active air alert'}
+            <span className="text-xs text-ink-muted dark:text-stone-400">
+              {cityAqiStyle.summary.split(' · ')[0]}
             </span>
           </div>
-          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5 flex items-center justify-between">
-            <span>Dominant: <strong className="text-ink font-semibold">{currentCity.dominantPollutant}</strong></span>
-            <span className="font-mono text-[10px] text-ink-muted">
+          <span className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-1.5 flex items-center justify-between">
+            <span>Dominant: <strong className="text-ink dark:text-stone-200 font-semibold">{currentCity.dominantPollutant}</strong></span>
+            <span className="font-mono text-[10px] text-ink-muted dark:text-stone-400">
               {currentCity.dataSource === 'live' ? 'Live Telemetry' : currentCity.dataSource === 'manual' ? 'Manual Value' : 'Station Preset'}
             </span>
           </span>
         </div>
 
-        {/* Card 2: PM2.5 Fine Ambient Particles with Quiet Condition Badge */}
-        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+        {/* Card 2: PM2.5 Fine Ambient Particles with Graded Multi-Tier Badge */}
+        <div className="rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-3.5 flex flex-col justify-between">
           <div className="flex flex-wrap items-center justify-between gap-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
               PM2.5 Ambient
             </span>
-            {currentCity.pm25 > 250 ? (
-              <span className="inline-flex items-center gap-1 rounded bg-terracotta-50 border border-terracotta-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-terracotta-700 whitespace-nowrap">
-                <Flame className="h-3 w-3 shrink-0" /> Extreme Fine Load
-              </span>
-            ) : currentCity.pm25 > 100 ? (
-              <span className="inline-flex items-center gap-1 rounded bg-amber-50 border border-amber-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-amber-800 whitespace-nowrap">
-                <AlertTriangle className="h-3 w-3 shrink-0" /> Elevated Exposure
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 rounded bg-sage-50 border border-sage-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-sage-700 whitespace-nowrap">
-                <CheckCircle2 className="h-3 w-3 shrink-0" /> Baseline Safe
-              </span>
-            )}
+            <span
+              className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono font-bold whitespace-nowrap border shadow-2xs transition-colors"
+              style={{
+                backgroundColor: cityAqiStyle.bg,
+                borderColor: cityAqiStyle.border,
+                color: cityAqiStyle.text,
+              }}
+            >
+              {currentCity.pm25 > 250 ? (
+                <>
+                  <Flame className="h-3 w-3 shrink-0" />
+                  <span>Extreme Fine Load</span>
+                </>
+              ) : currentCity.pm25 > 120 ? (
+                <>
+                  <AlertTriangle className="h-3 w-3 shrink-0" />
+                  <span>Heavy Fine Load</span>
+                </>
+              ) : currentCity.pm25 > 60 ? (
+                <>
+                  <AlertTriangle className="h-3 w-3 shrink-0" />
+                  <span>Elevated Exposure</span>
+                </>
+              ) : currentCity.pm25 > 30 ? (
+                <>
+                  <Activity className="h-3 w-3 shrink-0" />
+                  <span>Moderate Exposure</span>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-3 w-3 shrink-0" />
+                  <span>Baseline Safe</span>
+                </>
+              )}
+            </span>
           </div>
           <div className="my-2 flex items-baseline gap-1.5">
             <span
-              className={`font-mono text-3xl font-extrabold tabular-nums ${
-                currentCity.currentAQI > 200 ? 'text-terracotta-700' : 'text-sage-700'
-              }`}
+              className="font-mono text-3xl font-extrabold tabular-nums"
+              style={{ color: cityAqiStyle.text }}
             >
               {currentCity.pm25}
             </span>
-            <span className="text-xs font-mono font-medium text-ink-muted">µg/m³</span>
+            <span className="text-xs font-mono font-medium text-ink-muted dark:text-stone-400">µg/m³</span>
           </div>
-          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+          <span className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-1.5">
             {currentCity.pm25 <= 15
               ? 'Within WHO annual guideline (5 µg/m³)'
               : `${(currentCity.pm25 / 15).toFixed(1)}x above WHO 24h limit (15 µg/m³)`}
@@ -509,41 +558,41 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
 
         {/* Card 3: PM10 Coarse Particulates */}
-        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+        <div className="rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-3.5 flex flex-col justify-between">
           <div className="flex flex-wrap items-center justify-between gap-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
               PM10 Coarse Dust
             </span>
-            <span className="text-[10px] font-mono text-ink-muted whitespace-nowrap">Aerodynamic &lt; 10µm</span>
+            <span className="text-[10px] font-mono text-ink-muted dark:text-stone-400 whitespace-nowrap">Aerodynamic &lt; 10µm</span>
           </div>
           <div className="my-2 flex items-baseline gap-1.5">
-            <span className="font-mono text-3xl font-extrabold text-ink tabular-nums">
+            <span className="font-mono text-3xl font-extrabold text-ink dark:text-stone-100 tabular-nums">
               {currentCity.pm10}
             </span>
-            <span className="text-xs font-mono font-medium text-ink-muted">µg/m³</span>
+            <span className="text-xs font-mono font-medium text-ink-muted dark:text-stone-400">µg/m³</span>
           </div>
-          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+          <span className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-1.5">
             Inhalable road dust, crustal soil & soot
           </span>
         </div>
 
         {/* Card 4: Weather State & Moisture */}
-        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+        <div className="rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-3.5 flex flex-col justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
             Weather & Moisture
           </span>
           <div className="my-2 flex flex-wrap items-center gap-2.5 font-mono">
-            <span className="flex items-center gap-1.5 text-base font-bold text-ink whitespace-nowrap">
-              <Thermometer className="h-4 w-4 text-ink-muted shrink-0" />
+            <span className="flex items-center gap-1.5 text-base font-bold text-ink dark:text-stone-100 whitespace-nowrap">
+              <Thermometer className="h-4 w-4 text-ink-muted dark:text-stone-400 shrink-0" />
               <span>{currentCity.temperatureC}°C</span>
             </span>
-            <span className="text-stone-300">·</span>
-            <span className="flex items-center gap-1.5 text-base font-bold text-ink whitespace-nowrap">
-              <Droplets className="h-4 w-4 text-ink-muted shrink-0" />
+            <span className="text-stone-300 dark:text-stone-600">·</span>
+            <span className="flex items-center gap-1.5 text-base font-bold text-ink dark:text-stone-100 whitespace-nowrap">
+              <Droplets className="h-4 w-4 text-ink-muted dark:text-stone-400 shrink-0" />
               <span>{currentCity.humidityPercent}% RH</span>
             </span>
           </div>
-          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+          <span className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-1.5">
             {currentCity.humidityPercent >= 75
               ? 'High moisture promotes secondary chemical smog'
               : 'Moderate humidity · Low mist condensation'}
@@ -551,20 +600,20 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
 
         {/* Card 5: Dispersion Wind */}
-        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+        <div className="rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-3.5 flex flex-col justify-between">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
             Dispersion Surface Wind
           </span>
           <div className="my-2 flex items-center gap-2 font-mono">
-            <Wind className="h-4 w-4 text-ink-muted shrink-0" />
-            <span className="text-xl font-bold text-ink tabular-nums whitespace-nowrap">
+            <Wind className="h-4 w-4 text-ink-muted dark:text-stone-400 shrink-0" />
+            <span className="text-xl font-bold text-ink dark:text-stone-100 tabular-nums whitespace-nowrap">
               {currentCity.windSpeedKmh} km/h
             </span>
-            <span className="rounded bg-stone-200 px-1.5 py-0.5 text-[11px] font-sans font-semibold text-ink whitespace-nowrap">
+            <span className="rounded bg-stone-200 dark:bg-stone-700 px-1.5 py-0.5 text-[11px] font-sans font-semibold text-ink dark:text-stone-200 whitespace-nowrap">
               {currentCity.windDirection}
             </span>
           </div>
-          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
+          <span className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-1.5">
             {currentCity.windSpeedKmh < 5
               ? 'Calm wind speeds impede pollutant dispersion'
               : 'Moderate airflow assisting natural air renewal'}
@@ -572,32 +621,44 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
 
         {/* Card 6: Atmospheric Inversion & Boundary with Quiet Line Badge */}
-        <div className="rounded-lg border border-stone-200 bg-stone-50/80 p-3.5 flex flex-col justify-between">
+        <div className="rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-3.5 flex flex-col justify-between">
           <div className="flex flex-wrap items-center justify-between gap-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
               Atmospheric Boundary
             </span>
-            {currentCity.currentAQI > 200 ? (
-              <span className="inline-flex items-center gap-1 rounded bg-terracotta-50 border border-terracotta-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-terracotta-700 whitespace-nowrap">
-                <ArrowDownToLine className="h-3 w-3 shrink-0" /> Cold Air Trap Active
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 rounded bg-sage-50 border border-sage-200 px-1.5 py-0.5 text-[10px] font-mono font-bold text-sage-700 whitespace-nowrap">
-                <ArrowUpFromLine className="h-3 w-3 shrink-0" /> Clear Airflow Active
-              </span>
-            )}
+            <span
+              className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono font-bold whitespace-nowrap border shadow-2xs transition-colors"
+              style={{
+                backgroundColor: cityAqiStyle.bg,
+                borderColor: cityAqiStyle.border,
+                color: cityAqiStyle.text,
+              }}
+            >
+              {currentCity.currentAQI > 200 ? (
+                <>
+                  <ArrowDownToLine className="h-3 w-3 shrink-0" />
+                  <span>{currentCity.currentAQI >= 350 ? 'Severe Inversion Trap' : 'Thermal Trap Active'}</span>
+                </>
+              ) : (
+                <>
+                  <ArrowUpFromLine className="h-3 w-3 shrink-0" />
+                  <span>Clear Airflow Active</span>
+                </>
+              )}
+            </span>
           </div>
           <div
-            className={`my-2 flex items-center gap-2 text-xs font-bold leading-snug ${
-              currentCity.currentAQI > 200 ? 'text-terracotta-700' : 'text-sage-700'
-            }`}
+            className="my-2 flex items-center gap-2 text-xs font-bold leading-snug"
+            style={{ color: cityAqiStyle.text }}
           >
             <ShieldAlert className="h-4 w-4 shrink-0" />
             <span className="break-words">{currentCity.inversionStatus}</span>
           </div>
-          <span className="text-[11px] text-ink-muted border-t border-stone-200/80 pt-1.5">
-            {currentCity.currentAQI > 200
-              ? 'Cold air trapping surface smoke & dust below 250m'
+          <span className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-1.5">
+            {currentCity.currentAQI > 300
+              ? 'Cold air trapping surface smoke & dust below 200m'
+              : currentCity.currentAQI > 200
+              ? 'Nighttime thermal cooling slowing atmospheric dispersion'
               : 'Warm sun and steady airflow naturally dispersing dust'}
           </span>
         </div>
@@ -618,49 +679,57 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             </p>
           </div>
 
-          {/* Quiet Status Badges in Diurnal Legend */}
+          {/* Graded Status Badges in Diurnal Legend */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <div className="flex items-center gap-1.5 rounded-md border border-sage-300 dark:border-sage-800 bg-sage-50 dark:bg-sage-950/80 px-2.5 py-1 text-sage-800 dark:text-sage-200 font-medium">
+            <div className="flex items-center gap-1.5 rounded-md border border-sage-300 dark:border-sage-800 bg-sage-50 dark:bg-sage-950/80 px-2.5 py-1 text-sage-800 dark:text-sage-200 font-medium shadow-2xs">
               <Sun className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />
               <span>Safe Ventilation ({currentCity.safeVentilationWindows})</span>
             </div>
 
-            {currentCity.currentAQI > 200 ? (
-              <div className="flex items-center gap-1.5 rounded-md border border-terracotta-200 dark:border-terracotta-800 bg-terracotta-50 dark:bg-terracotta-950/80 px-2.5 py-1 text-terracotta-800 dark:text-terracotta-200 font-medium">
-                <CloudFog className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />
-                <span>Cold Trap Window</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-1.5 rounded-md border border-stone-200 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-ink-muted dark:text-stone-300 font-medium">
-                <Activity className="h-3.5 w-3.5 text-stone-500 shrink-0" />
-                <span>Natural Airflow Active</span>
-              </div>
-            )}
+            <div 
+              className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-medium shadow-2xs transition-colors"
+              style={{
+                backgroundColor: cityAqiStyle.bg,
+                borderColor: cityAqiStyle.border,
+                color: cityAqiStyle.text,
+              }}
+            >
+              <CityStatusIcon className="h-3.5 w-3.5 shrink-0" />
+              <span>{cityAqiStyle.label} Episode Trapping</span>
+            </div>
           </div>
         </div>
 
-        {/* Visual Color Swatch Key: Explains all 24 hours at a glance */}
-        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3.5 text-[11px] font-mono text-ink-muted dark:text-stone-300 border-t border-stone-200/80 dark:border-stone-800 pt-2 mb-2">
-          <span className="font-semibold text-ink dark:text-stone-100">Curve Profile:</span>
+        {/* Visual Color Swatch Key: Explains all 6 AQI tiers + safe airing corridor */}
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] font-mono text-ink-muted dark:text-stone-300 border-t border-stone-200/80 dark:border-stone-800 pt-2 mb-2">
+          <span className="font-semibold text-ink dark:text-stone-100">AQI Scale:</span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#3DA887' : '#236B56' }} />
-            <span>Safe Window</span>
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.good.dark.accent : AQI_TIERS.good.day.accent }} />
+            <span>Good (0–50)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#F27A55' : '#C4512C' }} />
-            <span>Severe Trap</span>
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.moderate.dark.accent : AQI_TIERS.moderate.day.accent }} />
+            <span>Moderate (51–100)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#FBBF24' : '#D97706' }} />
-            <span>High Inversion</span>
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.poor.dark.accent : AQI_TIERS.poor.day.accent }} />
+            <span>Poor (101–200)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#94A3B8' : '#64748B' }} />
-            <span>Moderate</span>
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.unhealthy.dark.accent : AQI_TIERS.unhealthy.day.accent }} />
+            <span>Unhealthy (201–300)</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? '#2DD4BF' : '#0D9488' }} />
-            <span>Clean Baseline</span>
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.severe.dark.accent : AQI_TIERS.severe.day.accent }} />
+            <span>Severe (301–400)</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.hazardous.dark.accent : AQI_TIERS.hazardous.day.accent }} />
+            <span>Hazardous (401+)</span>
+          </span>
+          <span className="flex items-center gap-1.5 border-l border-stone-300 dark:border-stone-700 pl-2">
+            <span className="h-2.5 w-3 rounded-2xs shrink-0 border border-sage-600 dark:border-sage-400 bg-sage-100 dark:bg-sage-950/60" />
+            <span className="text-sage-700 dark:text-sage-300 font-semibold">Safe Airing Corridor</span>
           </span>
         </div>
 
@@ -788,129 +857,135 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </div>
 
           {/* Dynamic Detail Card with Plain-English Takeaway for Selected/Hovered Hour */}
-          <div className="mt-3.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800/90 p-3 sm:p-3.5 shadow-xs">
-            <div className="border-b border-stone-200/80 dark:border-stone-700 pb-2.5 space-y-2 sm:space-y-0 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
-              {/* Row 1 on mobile: Time + Condition Badge */}
-              <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
-                <span className="font-mono text-base font-bold text-ink dark:text-stone-100">
-                  {activePoint.timeLabel}
-                </span>
+          {(() => {
+            const activeHourStyle = getAQIStyle(activePoint.aqi, isDarkMode);
+            const ActiveHourIcon = activePoint.isSafeVentilationWindow
+              ? Sun
+              : activeHourStyle.tierKey === 'good' || activeHourStyle.tierKey === 'moderate'
+              ? CheckCircle2
+              : activeHourStyle.tierKey === 'poor' || activeHourStyle.tierKey === 'unhealthy'
+              ? AlertTriangle
+              : ShieldAlert;
 
-                {/* Mobile condition badge */}
-                <div className="sm:hidden">
-                  {activePoint.isSafeVentilationWindow ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-sage-100 text-sage-800 border border-sage-300 dark:bg-sage-950/80 dark:text-sage-200 dark:border-sage-700">
-                      <Sun className="h-3 w-3 shrink-0" />
-                      <span>Safe Ventilation</span>
+            return (
+              <div className="mt-3.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800/90 p-3 sm:p-3.5 shadow-xs">
+                <div className="border-b border-stone-200/80 dark:border-stone-700 pb-2.5 space-y-2 sm:space-y-0 sm:flex sm:flex-wrap sm:items-center sm:justify-between sm:gap-2">
+                  {/* Row 1 on mobile: Time + Condition Badge */}
+                  <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
+                    <span className="font-mono text-base font-bold text-ink dark:text-stone-100">
+                      {activePoint.timeLabel}
                     </span>
-                  ) : activePoint.inversionRisk === 'Low' ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-200 dark:border-emerald-800">
-                      <CheckCircle2 className="h-3 w-3 shrink-0" />
-                      <span>Clean Air</span>
+
+                    {/* Mobile condition badge */}
+                    <div className="sm:hidden">
+                      <span
+                        className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide border shadow-2xs whitespace-nowrap transition-colors"
+                        style={{
+                          backgroundColor: activePoint.isSafeVentilationWindow
+                            ? (isDarkMode ? 'rgba(35, 107, 86, 0.4)' : '#EAF6F1')
+                            : activeHourStyle.bg,
+                          borderColor: activePoint.isSafeVentilationWindow
+                            ? (isDarkMode ? 'rgba(61, 168, 135, 0.6)' : '#95D1BD')
+                            : activeHourStyle.border,
+                          color: activePoint.isSafeVentilationWindow
+                            ? (isDarkMode ? '#4EBA97' : '#1E5C4A')
+                            : activeHourStyle.text,
+                        }}
+                      >
+                        <ActiveHourIcon className="h-3 w-3 shrink-0" />
+                        <span>
+                          {activePoint.isSafeVentilationWindow
+                            ? `Safe Airing · ${activeHourStyle.label}`
+                            : `${activeHourStyle.label} Trapping`}
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Row 2 on mobile: Metrics + Desktop Badge + Hint */}
+                  <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto font-mono text-xs">
+                    <div className="flex items-center gap-1.5">
+                      <span className="hidden sm:inline text-stone-300 dark:text-stone-600">·</span>
+                      <span 
+                        className="font-bold tabular-nums"
+                        style={{ color: activeHourStyle.text }}
+                      >
+                        PM2.5: {activePoint.pm25} µg/m³
+                      </span>
+                      <span className="text-ink-muted dark:text-stone-400">
+                        (AQI ~{activePoint.aqi})
+                      </span>
+                    </div>
+
+                    {/* Desktop-only condition badge */}
+                    <div className="hidden sm:inline-flex">
+                      <span
+                        className="inline-flex items-center gap-1.5 rounded px-2.5 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide border shadow-2xs whitespace-nowrap transition-colors"
+                        style={{
+                          backgroundColor: activePoint.isSafeVentilationWindow
+                            ? (isDarkMode ? 'rgba(35, 107, 86, 0.4)' : '#EAF6F1')
+                            : activeHourStyle.bg,
+                          borderColor: activePoint.isSafeVentilationWindow
+                            ? (isDarkMode ? 'rgba(61, 168, 135, 0.6)' : '#95D1BD')
+                            : activeHourStyle.border,
+                          color: activePoint.isSafeVentilationWindow
+                            ? (isDarkMode ? '#4EBA97' : '#1E5C4A')
+                            : activeHourStyle.text,
+                        }}
+                      >
+                        <ActiveHourIcon className="h-3.5 w-3.5 shrink-0" />
+                        <span>
+                          {activePoint.isSafeVentilationWindow
+                            ? `Safe Ventilation Window · ${activeHourStyle.label}`
+                            : `Inversion: ${activeHourStyle.label} Trapping`}
+                        </span>
+                      </span>
+                    </div>
+
+                    <span className="text-[10px] sm:text-[11px] text-ink-muted dark:text-stone-400">
+                      {hoveredHour !== null ? 'Previewing hover' : 'Tap bar / arrows'}
                     </span>
-                  ) : activePoint.inversionRisk === 'Moderate' ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-200 dark:border-amber-800">
-                      <Activity className="h-3 w-3 shrink-0" />
-                      <span>Moderate</span>
-                    </span>
-                  ) : activePoint.inversionRisk === 'High' ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/60 dark:text-orange-200 dark:border-orange-800">
-                      <CloudFog className="h-3 w-3 shrink-0" />
-                      <span>High Inversion</span>
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-terracotta-50 text-terracotta-800 border border-terracotta-200 dark:bg-terracotta-950/60 dark:text-terracotta-200 dark:border-terracotta-800">
-                      <Lock className="h-3 w-3 shrink-0" />
-                      <span>Severe Smog Trap</span>
-                    </span>
-                  )}
+                  </div>
+                </div>
+
+                {/* 3 Structured Plain-English Action Guidance Cards */}
+                <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {/* Card 1: Windows & Ventilation */}
+                  <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
+                      <Wind className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />
+                      <span>Windows & Airing</span>
+                    </div>
+                    <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
+                      {activeGuidance.ventilation}
+                    </p>
+                  </div>
+
+                  {/* Card 2: Outdoor & Exercise */}
+                  <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
+                      <Activity className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />
+                      <span>Outdoor & Exercise</span>
+                    </div>
+                    <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
+                      {activeGuidance.outdoor}
+                    </p>
+                  </div>
+
+                  {/* Card 3: Atmospheric Inversion Context */}
+                  <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5 sm:col-span-2 lg:col-span-1">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
+                      <ShieldAlert className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400 shrink-0" />
+                      <span>Atmospheric Context</span>
+                    </div>
+                    <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
+                      {activeGuidance.atmosphere}
+                    </p>
+                  </div>
                 </div>
               </div>
-
-              {/* Row 2 on mobile: Metrics + Desktop Badge + Hint */}
-              <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto font-mono text-xs">
-                <div className="flex items-center gap-1.5">
-                  <span className="hidden sm:inline text-stone-300 dark:text-stone-600">·</span>
-                  <span className="font-semibold text-ink dark:text-stone-200">
-                    PM2.5: {activePoint.pm25} µg/m³
-                  </span>
-                  <span className="text-ink-muted dark:text-stone-400">
-                    (AQI ~{activePoint.aqi})
-                  </span>
-                </div>
-
-                {/* Desktop-only condition badge */}
-                <div className="hidden sm:inline-flex">
-                  {activePoint.isSafeVentilationWindow ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-sage-100 text-sage-800 border border-sage-300 dark:bg-sage-950/80 dark:text-sage-200 dark:border-sage-700">
-                      <Sun className="h-3 w-3 shrink-0" />
-                      <span>Safe Ventilation Window</span>
-                    </span>
-                  ) : activePoint.inversionRisk === 'Low' ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-200 dark:border-emerald-800">
-                      <CheckCircle2 className="h-3 w-3 shrink-0" />
-                      <span>Low Trapping · Clean Air</span>
-                    </span>
-                  ) : activePoint.inversionRisk === 'Moderate' ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-200 dark:border-amber-800">
-                      <Activity className="h-3 w-3 shrink-0" />
-                      <span>Inversion: Moderate</span>
-                    </span>
-                  ) : activePoint.inversionRisk === 'High' ? (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/60 dark:text-orange-200 dark:border-orange-800">
-                      <CloudFog className="h-3 w-3 shrink-0" />
-                      <span>Inversion: High Trapping</span>
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-terracotta-50 text-terracotta-800 border border-terracotta-200 dark:bg-terracotta-950/60 dark:text-terracotta-200 dark:border-terracotta-800">
-                      <Lock className="h-3 w-3 shrink-0" />
-                      <span>Inversion: Severe Smog Trap</span>
-                    </span>
-                  )}
-                </div>
-
-                <span className="text-[10px] sm:text-[11px] text-ink-muted dark:text-stone-400">
-                  {hoveredHour !== null ? 'Previewing hover' : 'Tap bar / arrows'}
-                </span>
-              </div>
-            </div>
-
-            {/* 3 Structured Plain-English Action Guidance Cards */}
-            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {/* Card 1: Windows & Ventilation */}
-              <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
-                  <Wind className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />
-                  <span>Windows & Airing</span>
-                </div>
-                <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
-                  {activeGuidance.ventilation}
-                </p>
-              </div>
-
-              {/* Card 2: Outdoor & Exercise */}
-              <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
-                  <Activity className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />
-                  <span>Outdoor & Exercise</span>
-                </div>
-                <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
-                  {activeGuidance.outdoor}
-                </p>
-              </div>
-
-              {/* Card 3: Atmospheric Inversion Context */}
-              <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5 sm:col-span-2 lg:col-span-1">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
-                  <ShieldAlert className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400 shrink-0" />
-                  <span>Atmospheric Context</span>
-                </div>
-                <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
-                  {activeGuidance.atmosphere}
-                </p>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
         </div>
       </div>
     </div>

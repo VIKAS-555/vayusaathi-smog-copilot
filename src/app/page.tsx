@@ -182,6 +182,7 @@ export default function Home() {
       <Masthead
         aqiCategory={currentCity.aqiCategory}
         isHazardous={isHazardous}
+        currentAQI={currentCity.currentAQI}
         onRefreshPlan={handleRefreshPlan}
         isLoading={isLoadingPlan}
         onOpenExplainer={() => setIsExplainerOpen(true)}

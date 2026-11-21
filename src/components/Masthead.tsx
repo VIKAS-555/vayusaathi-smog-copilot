@@ -1,10 +1,12 @@
 import React from 'react';
 import { BreathLineMark } from './BreathLineMark';
-import { ShieldAlert, CheckCircle2, RefreshCw, FileText, Sun, Moon } from 'lucide-react';
+import { ShieldAlert, CheckCircle2, AlertTriangle, RefreshCw, FileText, Sun, Moon } from 'lucide-react';
+import { getAQIStyle } from '../lib/aqiScale';
 
 interface MastheadProps {
   aqiCategory: string;
-  isHazardous: boolean;
+  isHazardous?: boolean;
+  currentAQI?: number;
   onRefreshPlan: () => void;
   isLoading: boolean;
   onOpenExplainer: () => void;
@@ -15,7 +17,8 @@ interface MastheadProps {
 
 export const Masthead: React.FC<MastheadProps> = ({
   aqiCategory,
-  isHazardous,
+  isHazardous = false,
+  currentAQI,
   onRefreshPlan,
   isLoading,
   onOpenExplainer,
@@ -23,6 +26,16 @@ export const Masthead: React.FC<MastheadProps> = ({
   isDarkMode = false,
   onToggleTheme,
 }) => {
+  const effectiveAQI = currentAQI ?? (isHazardous ? 450 : 80);
+  const aqiStyle = getAQIStyle(effectiveAQI, isDarkMode, aqiCategory);
+
+  const StatusIcon = 
+    aqiStyle.tierKey === 'good' || aqiStyle.tierKey === 'moderate'
+      ? CheckCircle2
+      : aqiStyle.tierKey === 'poor' || aqiStyle.tierKey === 'unhealthy'
+      ? AlertTriangle
+      : ShieldAlert;
+
   return (
     <header className="border-b border-stone-300 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/90 px-3.5 py-3 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
@@ -66,17 +79,14 @@ export const Masthead: React.FC<MastheadProps> = ({
             )}
 
             <div
-              className={`flex items-center gap-1 rounded border px-2 py-1 text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap ${
-                isHazardous
-                  ? 'border-terracotta-300 bg-terracotta-50 text-terracotta-700 dark:bg-terracotta-950/60 dark:text-terracotta-300 dark:border-terracotta-800'
-                  : 'border-sage-300 bg-sage-50 text-sage-800 dark:bg-sage-950/60 dark:text-sage-300 dark:border-sage-800'
-              }`}
+              className="flex items-center gap-1 rounded border px-2 py-1 text-[11px] font-semibold uppercase tracking-wide whitespace-nowrap shadow-2xs transition-colors"
+              style={{
+                backgroundColor: aqiStyle.bg,
+                borderColor: aqiStyle.border,
+                color: aqiStyle.text,
+              }}
             >
-              {isHazardous ? (
-                <ShieldAlert className="h-3 w-3 shrink-0" />
-              ) : (
-                <CheckCircle2 className="h-3 w-3 shrink-0" />
-              )}
+              <StatusIcon className="h-3 w-3 shrink-0" />
               <span>{aqiCategory}</span>
             </div>
           </div>
@@ -86,17 +96,14 @@ export const Masthead: React.FC<MastheadProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-2.5 w-full sm:w-auto">
           {/* Desktop-only Episode status badge */}
           <div
-            className={`hidden sm:flex items-center gap-1.5 rounded border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide ${
-              isHazardous
-                ? 'border-terracotta-300 bg-terracotta-50 text-terracotta-700 dark:bg-terracotta-950/60 dark:text-terracotta-300 dark:border-terracotta-800'
-                : 'border-sage-300 bg-sage-50 text-sage-800 dark:bg-sage-950/60 dark:text-sage-300 dark:border-sage-800'
-            }`}
+            className="hidden sm:flex items-center gap-1.5 rounded border px-3 py-1.5 text-xs font-semibold uppercase tracking-wide shadow-2xs transition-colors"
+            style={{
+              backgroundColor: aqiStyle.bg,
+              borderColor: aqiStyle.border,
+              color: aqiStyle.text,
+            }}
           >
-            {isHazardous ? (
-              <ShieldAlert className="h-3.5 w-3.5 shrink-0" />
-            ) : (
-              <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
-            )}
+            <StatusIcon className="h-3.5 w-3.5 shrink-0" />
             <span>Episode: {aqiCategory}</span>
           </div>
 
