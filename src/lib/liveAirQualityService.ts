@@ -114,6 +114,7 @@ export async function fetchLiveCityData(
     const liveWindDir = degreesToCompass(windDeg);
 
     const isCoastal = preset.id === 'mumbai';
+    const isLowSmog = preset.id === 'mumbai' || preset.id === 'bengaluru' || calculatedAqi <= 120 || livePm25 <= 45;
 
     // Inversion status dynamic classification
     let liveInversionStatus = preset.inversionStatus;
@@ -140,7 +141,7 @@ export async function fetchLiveCityData(
       calculatedAqi,
       preset.ventilationStartHour,
       preset.ventilationEndHour,
-      isCoastal
+      isLowSmog
     );
 
     return {

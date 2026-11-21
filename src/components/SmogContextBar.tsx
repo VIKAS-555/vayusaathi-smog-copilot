@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CitySmogContext } from '../types';
-import { CITY_PRESETS } from '../data/cityPresets';
+import { CITY_PRESETS, getHourlyGuidance } from '../data/cityPresets';
 import { 
   Wind, 
   Thermometer, 
@@ -35,15 +35,37 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   onRefreshLive,
   isFetchingLive = false,
 }) => {
+  const [selectedHour, setSelectedHour] = useState<number>(() => {
+    const midVent = Math.round((currentCity.ventilationStartHour + currentCity.ventilationEndHour) / 2);
+    return Number.isFinite(midVent) ? midVent : 13;
+  });
   const [hoveredHour, setHoveredHour] = useState<number | null>(null);
   const [showCustomInputs, setShowCustomInputs] = useState<boolean>(false);
 
-  // Maximum PM2.5 in diurnal curve for relative bar heights
-  const maxPm25 = Math.max(...currentCity.diurnalCurve.map(p => p.pm25), 350);
+  // Sync selectedHour when switching cities so it targets the new city's safe window
+  useEffect(() => {
+    const midVent = Math.round((currentCity.ventilationStartHour + currentCity.ventilationEndHour) / 2);
+    setSelectedHour(Number.isFinite(midVent) ? midVent : 13);
+  }, [currentCity.id, currentCity.ventilationStartHour, currentCity.ventilationEndHour]);
 
-  const hoveredPoint = hoveredHour !== null 
-    ? currentCity.diurnalCurve.find(p => p.hour === hoveredHour) 
-    : null;
+  // Dynamic PM2.5 peak scaling: uses a proportional ceiling so clean cities (e.g. Bengaluru, PM2.5 42)
+  // render legible, dynamic bar trajectories rather than collapsing into flat slivers.
+  const peakPm25InCurve = Math.max(...currentCity.diurnalCurve.map(p => p.pm25), 10);
+  const maxPm25 = Math.max(peakPm25InCurve * 1.15, 60);
+
+  const activeHour = hoveredHour !== null ? hoveredHour : selectedHour;
+  const activePoint = currentCity.diurnalCurve.find(p => p.hour === activeHour) 
+    || currentCity.diurnalCurve[0]
+    || {
+      hour: 12,
+      timeLabel: '12:00',
+      pm25: currentCity.pm25,
+      aqi: currentCity.currentAQI,
+      inversionRisk: 'Low' as const,
+      isSafeVentilationWindow: true,
+    };
+
+  const activeGuidance = getHourlyGuidance(activePoint);
 
   return (
     <div className="rounded-lg border border-stone-300 bg-white p-5 shadow-xs">
@@ -335,130 +357,243 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
       </div>
 
       {/* 24-Hour Diurnal Smog & Ventilation Curve */}
-      <div className="mt-5 rounded border border-stone-200 bg-stone-50 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+      <div className="mt-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-900/50 p-4 sm:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">
           <div>
-            <h3 className="text-sm font-bold text-ink flex items-center gap-1.5">
+            <h3 className="text-sm font-bold text-ink dark:text-stone-100 flex items-center gap-1.5">
               <span>24-Hour Diurnal Inversion & Ventilation Curve</span>
-              <span className="font-mono text-xs font-normal text-ink-muted">· Hourly PM2.5 Trapping Profile</span>
+              <span className="font-mono text-xs font-normal text-ink-muted dark:text-stone-400">· Hourly Trapping & Airing Timeline</span>
             </h3>
-            <p className="text-xs text-ink-muted">
+            <p className="text-xs text-ink-muted dark:text-stone-400 mt-0.5">
               {currentCity.currentAQI > 200
-                ? 'Cold surface air traps pollutants early morning and late night. Midday solar heating triggers convection and temporary dilution.'
-                : 'Steady convective mixing and airflow maintain healthy dispersion throughout daytime hours.'}
+                ? 'Surface thermal cooling traps pollutants overnight and early morning. Midday solar heating triggers convection and temporary dilution.'
+                : 'Healthy atmospheric convection and steady wind maintain continuous natural air renewal throughout daytime hours.'}
             </p>
           </div>
 
           {/* Quiet Status Badges in Diurnal Legend */}
-          <div className="flex flex-wrap items-center gap-2.5 text-xs">
-            <div className="flex items-center gap-1.5 rounded border border-sage-200 bg-sage-50/90 px-2.5 py-1 text-sage-800 font-medium">
-              <Sun className="h-3.5 w-3.5 text-sage-700 shrink-0" />
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <div className="flex items-center gap-1.5 rounded-md border border-sage-300 dark:border-sage-800 bg-sage-50 dark:bg-sage-950/80 px-2.5 py-1 text-sage-800 dark:text-sage-200 font-medium">
+              <Sun className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />
               <span>Safe Ventilation ({currentCity.safeVentilationWindows})</span>
             </div>
 
             {currentCity.currentAQI > 200 ? (
-              <div className="flex items-center gap-1.5 rounded border border-terracotta-200 bg-terracotta-50/90 px-2.5 py-1 text-terracotta-800 font-medium">
-                <CloudFog className="h-3.5 w-3.5 text-terracotta-700 shrink-0" />
-                <span>Inversion Boundary Peak</span>
+              <div className="flex items-center gap-1.5 rounded-md border border-terracotta-200 dark:border-terracotta-800 bg-terracotta-50 dark:bg-terracotta-950/80 px-2.5 py-1 text-terracotta-800 dark:text-terracotta-200 font-medium">
+                <CloudFog className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />
+                <span>Cold Trap Window</span>
               </div>
             ) : (
-              <div className="flex items-center gap-1.5 rounded border border-stone-200 bg-stone-100 px-2.5 py-1 text-ink-muted font-medium">
+              <div className="flex items-center gap-1.5 rounded-md border border-stone-200 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-ink-muted dark:text-stone-300 font-medium">
                 <Activity className="h-3.5 w-3.5 text-stone-500 shrink-0" />
-                <span>Normal Convective Mixing</span>
+                <span>Natural Airflow Active</span>
               </div>
             )}
           </div>
         </div>
 
-        {/* Diurnal Bar Visualization */}
-        <div className="pt-2 pb-1">
-          <div className="flex items-end gap-1 h-32 w-full">
-            {currentCity.diurnalCurve.map((point) => {
-              const heightPercent = Math.max(12, Math.round((point.pm25 / maxPm25) * 100));
-              const isHovered = hoveredHour === point.hour;
+        {/* Timeline Corridor Highlight Indicator */}
+        <div className="mb-2 flex items-center justify-between text-[11px] font-mono text-ink-muted dark:text-stone-400 border-b border-stone-200 dark:border-stone-800 pb-1.5">
+          <span className="flex items-center gap-1">
+            <span className="h-1.5 w-1.5 rounded-full bg-stone-400" />
+            00:00 Midnight
+          </span>
+          <span className="flex items-center gap-1 font-semibold text-sage-700 dark:text-sage-300">
+            <Sun className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400" />
+            Airing Corridor: {currentCity.safeVentilationWindows}
+          </span>
+          <span className="flex items-center gap-1">
+            23:00 Night
+            <span className="h-1.5 w-1.5 rounded-full bg-stone-400" />
+          </span>
+        </div>
 
-              let barBg = 'bg-stone-300';
+        {/* Diurnal Bar Visualization: All 24 Hours (00 through 23) */}
+        <div className="pt-2 pb-1">
+          <div className="flex items-end gap-1 sm:gap-1.5 h-36 w-full">
+            {currentCity.diurnalCurve.map((point) => {
+              const heightPercent = Math.max(16, Math.min(100, Math.round((point.pm25 / maxPm25) * 100)));
+              const isHovered = hoveredHour === point.hour;
+              const isSelected = selectedHour === point.hour;
+              const isActive = isHovered || isSelected;
+
+              // Distinct bar colors based on safe ventilation corridor vs inversion risk
+              let barColor = 'bg-stone-300 dark:bg-stone-600';
               if (point.isSafeVentilationWindow) {
-                barBg = isHovered ? 'bg-sage-700' : 'bg-sage-600';
+                barColor = isActive 
+                  ? 'bg-sage-600 dark:bg-sage-400' 
+                  : 'bg-sage-500/90 dark:bg-sage-500';
               } else if (point.inversionRisk === 'Severe') {
-                barBg = isHovered ? 'bg-terracotta-700' : 'bg-terracotta-500';
+                barColor = isActive 
+                  ? 'bg-terracotta-600 dark:bg-terracotta-400' 
+                  : 'bg-terracotta-500/90 dark:bg-terracotta-500';
               } else if (point.inversionRisk === 'High') {
-                barBg = isHovered ? 'bg-terracotta-600' : 'bg-terracotta-400';
+                barColor = isActive 
+                  ? 'bg-amber-600 dark:bg-amber-400' 
+                  : 'bg-amber-500/90 dark:bg-amber-500';
+              } else {
+                barColor = isActive 
+                  ? 'bg-stone-500 dark:bg-stone-300' 
+                  : 'bg-stone-300 dark:bg-stone-600';
               }
+
+              // Window corridor framing
+              const isWindowStart = point.hour === currentCity.ventilationStartHour;
+              const isWindowEnd = point.hour === currentCity.ventilationEndHour;
 
               return (
                 <div
                   key={point.hour}
-                  className="flex-1 flex flex-col items-center h-full justify-end cursor-pointer group"
+                  onClick={() => setSelectedHour(point.hour)}
                   onMouseEnter={() => setHoveredHour(point.hour)}
                   onMouseLeave={() => setHoveredHour(null)}
+                  className="relative flex-1 flex flex-col items-center h-full justify-end cursor-pointer group select-none"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      setSelectedHour(point.hour);
+                    }
+                  }}
+                  aria-label={`${point.timeLabel}: PM2.5 ${point.pm25} µg/m³, ${point.isSafeVentilationWindow ? 'Safe Ventilation Window' : `Inversion ${point.inversionRisk}`}`}
                 >
+                  {/* Slot Track Background: Gives every hour (00-23) distinct structural baseline and highlights the ventilation corridor */}
                   <div
-                    style={{ height: `${heightPercent}%` }}
-                    className={`w-full rounded-t transition-all duration-150 ${barBg} ${
-                      isHovered ? 'ring-2 ring-ink ring-offset-1 scale-y-105' : ''
+                    className={`absolute inset-x-0 top-0 bottom-6 rounded-t transition-colors ${
+                      point.isSafeVentilationWindow
+                        ? `bg-sage-100/70 dark:bg-sage-950/60 border-t-2 border-sage-500 dark:border-sage-400 ${
+                            isWindowStart ? 'border-l-2 border-sage-500 dark:border-sage-400 rounded-tl' : ''
+                          } ${
+                            isWindowEnd ? 'border-r-2 border-sage-500 dark:border-sage-400 rounded-tr' : ''
+                          }`
+                        : 'bg-stone-200/40 dark:bg-stone-800/40'
+                    } ${
+                      isActive ? 'ring-1 ring-ink/30 dark:ring-white/30' : ''
                     }`}
                   />
-                  <span className="mt-1.5 text-[9px] font-mono text-ink-muted">
-                    {point.hour % 3 === 0 ? point.timeLabel.split(':')[0] : ''}
+
+                  {/* Filled Bar */}
+                  <div
+                    style={{ height: `${heightPercent}%` }}
+                    className={`relative z-1 w-full rounded-t transition-all duration-150 ${barColor} ${
+                      isActive
+                        ? 'ring-2 ring-ink dark:ring-stone-100 ring-offset-1 scale-y-105 shadow-xs'
+                        : 'hover:opacity-95'
+                    }`}
+                  />
+
+                  {/* Selection Pin Indicator below bar */}
+                  {isSelected && (
+                    <div className="absolute bottom-6 z-2 -mb-1 w-1.5 h-1.5 rotate-45 bg-ink dark:bg-stone-100" />
+                  )}
+
+                  {/* Hour Axis Label: Clearly marked intervals + 23 at the far right boundary */}
+                  <span
+                    className={`mt-1.5 text-[10px] font-mono leading-none transition-colors ${
+                      isActive
+                        ? 'font-bold text-ink dark:text-stone-100 scale-110'
+                        : 'text-ink-muted dark:text-stone-400'
+                    }`}
+                  >
+                    {point.hour === 0 ? '00' :
+                     point.hour === 3 ? '03' :
+                     point.hour === 6 ? '06' :
+                     point.hour === 9 ? '09' :
+                     point.hour === 12 ? '12' :
+                     point.hour === 15 ? '15' :
+                     point.hour === 18 ? '18' :
+                     point.hour === 21 ? '21' :
+                     point.hour === 23 ? '23' : ''}
                   </span>
                 </div>
               );
             })}
           </div>
 
-          {/* Dynamic Hover Tooltip / Detail Callout with Crisp Line Icons */}
-          <div className="mt-3 min-h-[38px] rounded border border-stone-200 bg-white px-3 py-2 text-xs flex flex-wrap items-center justify-between gap-2">
-            {hoveredPoint ? (
-              <>
-                <div className="flex items-center gap-2">
-                  <span className="font-mono font-bold text-ink text-sm">
-                    {hoveredPoint.timeLabel}
+          {/* Dynamic Detail Card with Plain-English Takeaway for Selected/Hovered Hour */}
+          <div className="mt-3.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800/90 p-3.5 shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-200/80 dark:border-stone-700 pb-2.5">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-base font-bold text-ink dark:text-stone-100">
+                  {activePoint.timeLabel}
+                </span>
+                <span className="text-stone-300 dark:text-stone-600">·</span>
+                <span className="font-mono text-sm font-semibold text-ink dark:text-stone-200">
+                  PM2.5: {activePoint.pm25} µg/m³
+                </span>
+                <span className="font-mono text-xs text-ink-muted dark:text-stone-400">
+                  (AQI ~{activePoint.aqi})
+                </span>
+
+                {/* Calibrated Condition Badge: No False "Severe" on Clean Hours */}
+                {activePoint.isSafeVentilationWindow ? (
+                  <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-sage-100 text-sage-800 border border-sage-300 dark:bg-sage-950/80 dark:text-sage-200 dark:border-sage-700">
+                    <Sun className="h-3 w-3 shrink-0" />
+                    <span>Safe Ventilation Window</span>
                   </span>
-                  <span className="font-mono text-ink font-semibold">
-                    PM2.5: {hoveredPoint.pm25} µg/m³
+                ) : activePoint.inversionRisk === 'Low' ? (
+                  <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-emerald-50 text-emerald-800 border border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-200 dark:border-emerald-800">
+                    <CheckCircle2 className="h-3 w-3 shrink-0" />
+                    <span>Low Trapping · Clean Air</span>
                   </span>
-                  <span className="font-mono text-ink-muted">
-                    (AQI ~{hoveredPoint.aqi})
+                ) : activePoint.inversionRisk === 'Moderate' ? (
+                  <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-950/60 dark:text-amber-200 dark:border-amber-800">
+                    <Activity className="h-3 w-3 shrink-0" />
+                    <span>Inversion: Moderate</span>
                   </span>
-                  <span
-                    className={`rounded px-1.5 py-0.5 text-[10px] font-bold uppercase flex items-center gap-1 ${
-                      hoveredPoint.isSafeVentilationWindow
-                        ? 'bg-sage-100 text-sage-800'
-                        : 'bg-terracotta-100 text-terracotta-800'
-                    }`}
-                  >
-                    {hoveredPoint.isSafeVentilationWindow ? (
-                      <>
-                        <Sun className="h-3 w-3" />
-                        <span>Safe Ventilation</span>
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="h-3 w-3" />
-                        <span>Inversion: {hoveredPoint.inversionRisk}</span>
-                      </>
-                    )}
+                ) : activePoint.inversionRisk === 'High' ? (
+                  <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-orange-50 text-orange-800 border border-orange-200 dark:bg-orange-950/60 dark:text-orange-200 dark:border-orange-800">
+                    <CloudFog className="h-3 w-3 shrink-0" />
+                    <span>Inversion: High Trapping</span>
                   </span>
-                </div>
-                {hoveredPoint.notes && (
-                  <span className="text-xs text-ink-muted flex items-center gap-1">
-                    <Activity className="h-3 w-3 text-ink-muted shrink-0" />
-                    <span>{hoveredPoint.notes}</span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-mono font-bold uppercase tracking-wide bg-terracotta-50 text-terracotta-800 border border-terracotta-200 dark:bg-terracotta-950/60 dark:text-terracotta-200 dark:border-terracotta-800">
+                    <Lock className="h-3 w-3 shrink-0" />
+                    <span>Inversion: Severe Smog Trap</span>
                   </span>
                 )}
-              </>
-            ) : (
-              <div className="flex flex-wrap items-center justify-between w-full text-xs text-ink-muted gap-2">
-                <span className="leading-relaxed">
-                  Hover over any hourly bar to inspect modeled micro-particulate concentration and inversion risk.
-                </span>
-                <span className="font-semibold text-sage-700 flex items-center gap-1 shrink-0 whitespace-nowrap">
-                  <Sun className="h-3.5 w-3.5 text-sage-600" />
-                  <span>Recommended Daily Ventilation: {currentCity.safeVentilationWindows}</span>
-                </span>
               </div>
-            )}
+
+              <span className="text-[11px] text-ink-muted dark:text-stone-400 font-mono">
+                {hoveredHour !== null ? 'Previewing hover' : 'Selected hour (tap any bar to inspect)'}
+              </span>
+            </div>
+
+            {/* 3 Structured Plain-English Action Guidance Cards */}
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {/* Card 1: Windows & Ventilation */}
+              <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
+                  <Wind className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />
+                  <span>Windows & Airing</span>
+                </div>
+                <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
+                  {activeGuidance.ventilation}
+                </p>
+              </div>
+
+              {/* Card 2: Outdoor & Exercise */}
+              <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
+                  <Activity className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />
+                  <span>Outdoor & Exercise</span>
+                </div>
+                <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
+                  {activeGuidance.outdoor}
+                </p>
+              </div>
+
+              {/* Card 3: Atmospheric Inversion Context */}
+              <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5 sm:col-span-2 lg:col-span-1">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
+                  <ShieldAlert className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400 shrink-0" />
+                  <span>Atmospheric Context</span>
+                </div>
+                <p className="text-xs text-ink-muted dark:text-stone-300 leading-relaxed">
+                  {activeGuidance.atmosphere}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

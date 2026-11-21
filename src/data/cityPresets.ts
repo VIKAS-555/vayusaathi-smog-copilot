@@ -1,5 +1,92 @@
 import { CitySmogContext, DiurnalHourPoint } from '../types';
 
+export function calculateInversionRisk(
+  pm25: number,
+  aqi: number,
+  mult: number
+): 'Low' | 'Moderate' | 'High' | 'Severe' {
+  // 1. Clean air condition: regardless of atmospheric layer, low particulate mass means low trapping hazard
+  if (pm25 <= 35 || aqi <= 60) {
+    return 'Low';
+  }
+  // 2. Satisfactory/Moderate air condition
+  if (pm25 <= 60 || aqi <= 100) {
+    return mult >= 1.30 ? 'Moderate' : 'Low';
+  }
+  // 3. Elevated/Poor air condition
+  if (pm25 <= 120 || aqi <= 200) {
+    if (mult >= 1.25) return 'High';
+    if (mult <= 0.75) return 'Low';
+    return 'Moderate';
+  }
+  // 4. High to Hazardous air condition (PM2.5 > 120 or AQI > 200)
+  if (mult >= 1.25 || pm25 >= 250) {
+    return 'Severe';
+  }
+  if (mult >= 1.10 || pm25 >= 180) {
+    return 'High';
+  }
+  if (mult <= 0.75) {
+    return 'Low';
+  }
+  return 'Moderate';
+}
+
+export function getHourlyGuidance(point: {
+  hour: number;
+  pm25: number;
+  aqi: number;
+  inversionRisk: 'Low' | 'Moderate' | 'High' | 'Severe';
+  isSafeVentilationWindow: boolean;
+}): {
+  ventilation: string;
+  outdoor: string;
+  atmosphere: string;
+} {
+  // Clean air scenario (Low concentration / minimal smog)
+  if (point.pm25 <= 35 || point.aqi <= 60) {
+    return {
+      ventilation: 'Safe to open windows anytime for natural fresh air renewal.',
+      outdoor: 'Ideal conditions for morning jogs, runs, and outdoor activities.',
+      atmosphere: 'Clean air layer with unobstructed natural dispersion.',
+    };
+  }
+
+  // Active Safe Ventilation Window
+  if (point.isSafeVentilationWindow) {
+    return {
+      ventilation: 'Optimal airing window. Open opposite windows for 30–45 min to flush indoor CO₂ and stale air.',
+      outdoor: 'Safest time for outdoor errands, brisk walks, or school sports with lower surface PM2.5.',
+      atmosphere: 'Solar heating warms the ground, breaking the nocturnal inversion cap and lifting pollutants.',
+    };
+  }
+
+  // Severe Inversion
+  if (point.inversionRisk === 'Severe') {
+    return {
+      ventilation: 'Keep all windows tightly shut. Run indoor HEPA purifier on continuous medium/high mode.',
+      outdoor: 'Avoid intense outdoor cardio (running, cycling). If commuting, wear a snug N95 mask.',
+      atmosphere: 'Dense cold surface layer traps vehicle exhaust and smoke right near breathing level.',
+    };
+  }
+
+  // High Inversion
+  if (point.inversionRisk === 'High') {
+    return {
+      ventilation: 'Keep windows and exterior doors closed to block smog ingress and vehicle soot.',
+      outdoor: 'Limit prolonged outdoor workouts; sensitive groups, children, and seniors should stay indoors.',
+      atmosphere: 'Surface cooling suppresses vertical mixing, concentrating particulate matter.',
+    };
+  }
+
+  // Moderate
+  return {
+    ventilation: 'Brief 10–15 min cross-breeze is permissible if away from high-traffic roadways.',
+    outdoor: 'Light outdoor walking is fine; avoid heavy exertion directly adjacent to busy rush-hour roads.',
+    atmosphere: 'Moderate convective airflow; particulate levels fluctuate with traffic rush.',
+  };
+}
+
 export function generateDiurnalCurve(
   basePm25: number,
   baseAqi: number,
@@ -7,9 +94,11 @@ export function generateDiurnalCurve(
   ventEnd: number = 15,
   isLowSmogCity: boolean = false
 ): DiurnalHourPoint[] {
-  // If low smog city (e.g., Bengaluru with good airflow or Mumbai with maritime breeze):
+  // If clean baseline or low smog city (e.g., Bengaluru or Mumbai):
   // Diurnal variation is mild, driven mainly by peak traffic rush rather than cold surface inversion trapping.
-  if (isLowSmogCity) {
+  const isCleanBaseline = isLowSmogCity || baseAqi <= 120 || basePm25 <= 45;
+
+  if (isCleanBaseline) {
     const mildMultipliers = [
       0.85, 0.82, 0.80, 0.82, 0.88, // 00:00 - 04:00 (clean night baseline)
       0.95, 1.10, 1.18, 1.12, 1.00, // 05:00 - 09:00 (morning traffic peak)
@@ -23,13 +112,11 @@ export function generateDiurnalCurve(
       const aqi = Math.min(500, Math.round(baseAqi * mult));
       const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
       
-      const inversionRisk: 'Low' | 'Moderate' | 'High' | 'Severe' = 
-        mult >= 1.15 ? 'Moderate' : 'Low';
-
+      const inversionRisk = calculateInversionRisk(pm25, aqi, mult);
       const isSafeVentilationWindow = hour >= ventStart && hour <= ventEnd;
 
       let notes = undefined;
-      if (hour === 8) notes = 'Mild morning traffic rush';
+      if (hour === 8) notes = 'Mild morning commute traffic';
       if (hour === 13) notes = 'Active solar convective mixing';
       if (hour === 18) notes = 'Evening commute rush';
 
@@ -62,17 +149,18 @@ export function generateDiurnalCurve(
     const aqi = Math.min(500, Math.round(baseAqi * mult));
     const timeLabel = `${hour.toString().padStart(2, '0')}:00`;
     
-    let inversionRisk: 'Low' | 'Moderate' | 'High' | 'Severe' = 'Moderate';
-    if (mult >= 1.35) inversionRisk = 'Severe';
-    else if (mult >= 1.15) inversionRisk = 'High';
-    else if (mult <= 0.75) inversionRisk = 'Low';
-
+    // Calibrated: Inversion hazard is determined by BOTH atmospheric trapping multiplier and absolute particulate mass
+    const inversionRisk = calculateInversionRisk(pm25, aqi, mult);
     const isSafeVentilationWindow = hour >= ventStart && hour <= ventEnd;
 
     let notes = undefined;
-    if (hour === 6) notes = 'Peak overnight cold pool & inversion ceiling';
-    if (hour === 13) notes = 'Optimal daytime solar dispersion window';
-    if (hour === 20) notes = 'Evening thermal re-inversion begins';
+    if (hour === 6) {
+      notes = pm25 <= 35 ? 'Cool morning air with clear dispersion' : 'Peak overnight cold pool & inversion ceiling';
+    } else if (hour === 13) {
+      notes = 'Optimal daytime solar dispersion window';
+    } else if (hour === 20) {
+      notes = pm25 <= 35 ? 'Pleasant evening with stable airflow' : 'Evening thermal re-inversion begins';
+    }
 
     return {
       hour,
