@@ -683,7 +683,244 @@ export const CityPanoramicBackdrop: React.FC<CityPanoramicBackdropProps> = ({
     );
   }
 
-  // 8. Universal Pan-Indian Metro Horizon (Fallback)
+  // 8. Chennai: Kapaleeshwarar Temple Gopuram + Ripon Building + Central Railway Station + Marina Coast
+  if (normalizedId.includes('chennai') || normalizedId.includes('madras')) {
+    return (
+      <svg
+        viewBox="0 0 1200 240"
+        preserveAspectRatio="xMidYMax slice"
+        className={`${className} transition-all duration-700 pointer-events-none select-none`}
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Chennai heritage Dravidian and coastal architectural skyline silhouette"
+      >
+        {clouds}
+        <g style={{ color: fill }} opacity={isDark ? '0.24' : '0.28'}>
+          <rect x="90" y="150" width="80" height="90" fill="currentColor" />
+          <rect x="220" y="130" width="70" height="110" fill="currentColor" />
+          <rect x="920" y="140" width="90" height="100" fill="currentColor" />
+        </g>
+        <g style={{ color: fill }} opacity={isDark ? '0.85' : '0.75'}>
+          <rect x="0" y="234" width="1200" height="6" fill="currentColor" />
+
+          {/* 1. MARINA LIGHTHOUSE & COASTLINE (Left, x=60 to x=280) */}
+          <polygon points="120,236 135,76 150,76 165,236" fill="currentColor" />
+          <rect x="130" y="66" width="25" height="10" fill="currentColor" />
+          <path d="M128 66 C128 48 157 48 157 66 Z" fill="currentColor" />
+          <line x1="142" y1="48" x2="142" y2="30" stroke="currentColor" strokeWidth="2.5" />
+          <rect x="175" y="180" width="90" height="56" fill="currentColor" />
+
+          {/* 2. KAPALEESHWARAR TEMPLE GOPURAM (Center, x=360 to x=620) */}
+          {/* Stepped Base Plinth */}
+          <rect x="390" y="226" width="200" height="10" fill="currentColor" />
+          <rect x="410" y="216" width="160" height="10" fill="currentColor" />
+          {/* Main Tapering Pyramidal Dravidian Tower */}
+          <polygon points="410,216 450,68 530,68 570,216" fill="currentColor" />
+          {/* 5 Stepped Cornice Tiers */}
+          <rect x="418" y="184" width="144" height="6" rx="1" fill="currentColor" />
+          <rect x="428" y="154" width="124" height="6" rx="1" fill="currentColor" />
+          <rect x="438" y="124" width="104" height="6" rx="1" fill="currentColor" />
+          <rect x="448" y="96" width="84" height="5" rx="1" fill="currentColor" />
+          <rect x="454" y="74" width="72" height="5" rx="1" fill="currentColor" />
+          {/* Crown Barrel-Vault Sala Roof */}
+          <path d="M446 68 C446 44 534 44 534 68 Z" fill="currentColor" />
+          {/* Row of Golden Kalasam Spires */}
+          <line x1="462" y1="44" x2="462" y2="28" stroke="currentColor" strokeWidth="2.5" />
+          <line x1="476" y1="42" x2="476" y2="24" stroke="currentColor" strokeWidth="2.5" />
+          <line x1="490" y1="40" x2="490" y2="20" stroke="currentColor" strokeWidth="3" />
+          <line x1="504" y1="42" x2="504" y2="24" stroke="currentColor" strokeWidth="2.5" />
+          <line x1="518" y1="44" x2="518" y2="28" stroke="currentColor" strokeWidth="2.5" />
+          {/* Monumental Portal Gateway Arch Opening */}
+          <path d="M470 236 L470 176 C470 156 510 156 510 176 L510 236 Z" fill="currentColor" opacity="0.3" />
+
+          {/* 3. CHENNAI CENTRAL RAILWAY STATION & RIPON BUILDING (Right, x=680 to x=1140) */}
+          <rect x="700" y="172" width="240" height="64" fill="currentColor" />
+          {/* Victorian Gothic Clock Tower */}
+          <rect x="780" y="86" width="50" height="150" fill="currentColor" />
+          <circle cx="805" cy="118" r="9" fill="currentColor" opacity="0.3" />
+          <polygon points="775,86 805,32 835,86" fill="currentColor" />
+          <line x1="805" y1="32" x2="805" y2="16" stroke="currentColor" strokeWidth="3" />
+          {/* Ripon Building White Classical Domes */}
+          <rect x="940" y="160" width="170" height="76" fill="currentColor" />
+          <path d="M960 160 C960 128 1010 128 1010 160 Z" fill="currentColor" />
+          <path d="M1020 160 C1020 108 1090 108 1090 160 Z" fill="currentColor" />
+          <line x1="1055" y1="108" x2="1055" y2="88" stroke="currentColor" strokeWidth="2.5" />
+        </g>
+      </svg>
+    );
+  }
+
+  // 9. Hyderabad: Charminar + Hussain Sagar Buddha + Golconda Fort
+  if (normalizedId.includes('hyderabad') || normalizedId.includes('secunderabad')) {
+    return (
+      <svg
+        viewBox="0 0 1200 240"
+        preserveAspectRatio="xMidYMax slice"
+        className={`${className} transition-all duration-700 pointer-events-none select-none`}
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Hyderabad Charminar and Deccan architectural skyline silhouette"
+      >
+        {clouds}
+        <g style={{ color: fill }} opacity={isDark ? '0.24' : '0.28'}>
+          <rect x="100" y="140" width="80" height="100" fill="currentColor" />
+          <rect x="240" y="120" width="70" height="120" fill="currentColor" />
+          <rect x="960" y="130" width="100" height="110" fill="currentColor" />
+        </g>
+        <g style={{ color: fill }} opacity={isDark ? '0.85' : '0.75'}>
+          <rect x="0" y="234" width="1200" height="6" fill="currentColor" />
+
+          {/* 1. HUSSAIN SAGAR MONOLITHIC BUDDHA (Left, x=80 to x=260) */}
+          <rect x="120" y="218" width="100" height="18" fill="currentColor" />
+          <polygon points="135,218 145,188 195,188 205,218" fill="currentColor" />
+          <rect x="160" y="130" width="20" height="58" rx="4" fill="currentColor" />
+          <circle cx="170" cy="116" r="10" fill="currentColor" />
+          <line x1="170" y1="106" x2="170" y2="98" stroke="currentColor" strokeWidth="3" />
+
+          {/* 2. CHARMINAR (Center, x=360 to x=720) */}
+          {/* Main Central Block */}
+          <rect x="420" y="126" width="240" height="110" fill="currentColor" />
+          {/* Four Grand Arches Opening */}
+          <path d="M470 236 L470 165 C470 125 610 125 610 165 L610 236 Z" fill="currentColor" opacity="0.3" />
+          {/* Upper Double-Deck Arcade */}
+          <rect x="415" y="112" width="250" height="14" fill="currentColor" />
+          <rect x="430" y="96" width="220" height="16" fill="currentColor" />
+          {/* Left Corner Minaret Tower */}
+          <polygon points="380,236 394,48 408,48 420,236" fill="currentColor" />
+          <rect x="388" y="170" width="24" height="6" rx="1" fill="currentColor" />
+          <rect x="390" y="120" width="20" height="5" rx="1" fill="currentColor" />
+          <rect x="392" y="76" width="16" height="5" rx="1" fill="currentColor" />
+          <path d="M392 48 C392 30 410 30 410 48 Z" fill="currentColor" />
+          <line x1="401" y1="30" x2="401" y2="16" stroke="currentColor" strokeWidth="2.5" />
+          {/* Inner Left Minaret */}
+          <polygon points="424,126 430,48 442,48 446,126" fill="currentColor" />
+          <path d="M428 48 C428 32 444 32 444 48 Z" fill="currentColor" />
+          <line x1="436" y1="32" x2="436" y2="18" stroke="currentColor" strokeWidth="2" />
+          {/* Inner Right Minaret */}
+          <polygon points="634,126 638,48 650,48 656,126" fill="currentColor" />
+          <path d="M636 48 C636 32 652 32 652 48 Z" fill="currentColor" />
+          <line x1="644" y1="32" x2="644" y2="18" stroke="currentColor" strokeWidth="2" />
+          {/* Right Corner Minaret Tower */}
+          <polygon points="660,236 672,48 686,48 700,236" fill="currentColor" />
+          <rect x="668" y="170" width="24" height="6" rx="1" fill="currentColor" />
+          <rect x="670" y="120" width="20" height="5" rx="1" fill="currentColor" />
+          <rect x="672" y="76" width="16" height="5" rx="1" fill="currentColor" />
+          <path d="M672 48 C672 30 690 30 690 48 Z" fill="currentColor" />
+          <line x1="681" y1="30" x2="681" y2="16" stroke="currentColor" strokeWidth="2.5" />
+
+          {/* 3. GOLCONDA FORT RAMPARTS (Right, x=780 to x=1160) */}
+          <path d="M780 236 L780 180 L810 180 L810 160 L850 160 L850 180 L890 180 L890 150 L940 150 L940 180 L990 180 L990 140 L1050 140 L1050 180 L1110 180 L1110 155 L1160 155 L1160 236 Z" fill="currentColor" />
+          <path d="M865 150 C865 132 895 132 895 150 Z" fill="currentColor" />
+          <path d="M1010 140 C1010 120 1045 120 1045 140 Z" fill="currentColor" />
+        </g>
+      </svg>
+    );
+  }
+
+  // 10. Ahmedabad: Sidi Saiyyed Mosque Tree of Life + Adalaj Stepwell + Atal Pedestrian Bridge
+  if (normalizedId.includes('ahmedabad') || normalizedId.includes('amdavad')) {
+    return (
+      <svg
+        viewBox="0 0 1200 240"
+        preserveAspectRatio="xMidYMax slice"
+        className={`${className} transition-all duration-700 pointer-events-none select-none`}
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Ahmedabad heritage architectural skyline silhouette"
+      >
+        {clouds}
+        <g style={{ color: fill }} opacity={isDark ? '0.24' : '0.28'}>
+          <rect x="80" y="140" width="70" height="100" fill="currentColor" />
+          <rect x="190" y="120" width="80" height="120" fill="currentColor" />
+          <rect x="940" y="130" width="80" height="110" fill="currentColor" />
+        </g>
+        <g style={{ color: fill }} opacity={isDark ? '0.85' : '0.75'}>
+          <rect x="0" y="234" width="1200" height="6" fill="currentColor" />
+
+          {/* 1. ATAL PEDESTRIAN BRIDGE (Left, x=60 to x=360) */}
+          <path d="M70 236 Q210 120 350 236 Z" fill="currentColor" opacity="0.3" />
+          <path d="M80 236 Q210 140 340 236" stroke="currentColor" strokeWidth="4" fill="none" />
+          <line x1="140" y1="190" x2="140" y2="236" stroke="currentColor" strokeWidth="2.5" />
+          <line x1="210" y1="160" x2="210" y2="236" stroke="currentColor" strokeWidth="3" />
+          <line x1="280" y1="190" x2="280" y2="236" stroke="currentColor" strokeWidth="2.5" />
+
+          {/* 2. SIDI SAIYYED MOSQUE JALI ARCHES (Center, x=390 to x=720) */}
+          {/* Main Stone Wall Facade */}
+          <rect x="410" y="120" width="280" height="116" fill="currentColor" />
+          {/* Left Semi-Circular Jaali Arch */}
+          <path d="M430 236 L430 170 C430 130 520 130 520 170 L520 236 Z" fill="currentColor" opacity="0.3" />
+          {/* Right Semi-Circular Jaali Arch (Tree of Life) */}
+          <path d="M570 236 L570 170 C570 130 660 130 660 170 L660 236 Z" fill="currentColor" opacity="0.3" />
+          {/* Flanking Ornate Minaret Turrets */}
+          <polygon points="390,236 400,80 412,80 422,236" fill="currentColor" />
+          <path d="M400 80 C400 62 412 62 412 80 Z" fill="currentColor" />
+          <line x1="406" y1="62" x2="406" y2="46" stroke="currentColor" strokeWidth="2" />
+          <polygon points="678,236 688,80 700,80 710,236" fill="currentColor" />
+          <path d="M688 80 C688 62 700 62 700 80 Z" fill="currentColor" />
+          <line x1="694" y1="62" x2="694" y2="46" stroke="currentColor" strokeWidth="2" />
+
+          {/* 3. ADALAJ STEPWELL PAVILIONS (Right, x=760 to x=1160) */}
+          <rect x="780" y="170" width="200" height="66" fill="currentColor" />
+          <polygon points="800,170 840,140 880,170" fill="currentColor" />
+          <polygon points="900,170 940,140 980,170" fill="currentColor" />
+          <rect x="1000" y="140" width="130" height="96" fill="currentColor" />
+          <path d="M1020 140 C1020 110 1080 110 1080 140 Z" fill="currentColor" />
+        </g>
+      </svg>
+    );
+  }
+
+  // 11. Pune: Shaniwar Wada Delhi Darwaja + Aga Khan Palace + Sinhagad Fort
+  if (normalizedId.includes('pune') || normalizedId.includes('poona')) {
+    return (
+      <svg
+        viewBox="0 0 1200 240"
+        preserveAspectRatio="xMidYMax slice"
+        className={`${className} transition-all duration-700 pointer-events-none select-none`}
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Pune Shaniwar Wada and Maratha architectural skyline silhouette"
+      >
+        {clouds}
+        <g style={{ color: fill }} opacity={isDark ? '0.24' : '0.28'}>
+          <polygon points="60,236 180,140 300,236" fill="currentColor" />
+          <rect x="940" y="130" width="90" height="110" fill="currentColor" />
+        </g>
+        <g style={{ color: fill }} opacity={isDark ? '0.85' : '0.75'}>
+          <rect x="0" y="234" width="1200" height="6" fill="currentColor" />
+
+          {/* 1. SINHAGAD FORT RIDGE (Left, x=40 to x=320) */}
+          <polygon points="40,236 160,110 240,150 320,236" fill="currentColor" />
+          <rect x="150" y="96" width="20" height="14" fill="currentColor" />
+          <line x1="160" y1="96" x2="160" y2="76" stroke="currentColor" strokeWidth="2.5" />
+
+          {/* 2. SHANIWAR WADA (DELHI GATE & BASTIONS) (Center, x=380 to x=720) */}
+          {/* Main Heavy Basalt Rampart Wall */}
+          <rect x="410" y="128" width="260" height="108" fill="currentColor" />
+          {/* Left Semi-Circular Fortified Bastion */}
+          <path d="M410 236 L410 110 C410 88 470 88 470 110 L470 236 Z" fill="currentColor" />
+          {/* Right Semi-Circular Fortified Bastion */}
+          <path d="M610 236 L610 110 C610 88 670 88 670 110 L670 236 Z" fill="currentColor" />
+          {/* Grand Pointed Arched Delhi Darwaja Opening */}
+          <path d="M500 236 L500 160 C500 136 580 136 580 160 L580 236 Z" fill="currentColor" opacity="0.3" />
+          {/* Overhanging Machicolation Jharokhas & Battlements */}
+          <rect x="480" y="112" width="120" height="16" fill="currentColor" />
+          <rect x="490" y="96" width="100" height="16" fill="currentColor" />
+          <polygon points="480,96 540,68 600,96" fill="currentColor" />
+          <line x1="540" y1="68" x2="540" y2="48" stroke="currentColor" strokeWidth="3" />
+
+          {/* 3. AGA KHAN PALACE (Right, x=760 to x=1160) */}
+          <rect x="780" y="160" width="280" height="76" fill="currentColor" />
+          {/* Italianate Arcades */}
+          <path d="M810 236 L810 185 C810 165 850 165 850 185 L850 236 Z" fill="currentColor" opacity="0.3" />
+          <path d="M870 236 L870 185 C870 165 910 165 910 185 L910 236 Z" fill="currentColor" opacity="0.3" />
+          <path d="M930 236 L930 185 C930 165 970 165 970 185 L970 236 Z" fill="currentColor" opacity="0.3" />
+          <path d="M990 236 L990 185 C990 165 1030 165 1030 185 L1030 236 Z" fill="currentColor" opacity="0.3" />
+          {/* Graceful Central Cupola Dome */}
+          <path d="M900 160 C900 114 960 114 960 160 Z" fill="currentColor" />
+          <line x1="930" y1="114" x2="930" y2="92" stroke="currentColor" strokeWidth="2.5" />
+        </g>
+      </svg>
+    );
+  }
+
+  // 12. Universal Pan-Indian Metro Horizon (Fallback)
   return (
     <svg
       viewBox="0 0 1200 240"

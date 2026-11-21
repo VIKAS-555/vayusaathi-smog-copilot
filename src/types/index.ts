@@ -2,6 +2,7 @@ export type AQICategory =
   | 'Good' 
   | 'Moderate' 
   | 'Poor' 
+  | 'Unhealthy'
   | 'Very Poor' 
   | 'Severe' 
   | 'Hazardous';

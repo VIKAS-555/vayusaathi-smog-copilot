@@ -20,7 +20,8 @@ import {
   Lock,
   RefreshCw,
   Radio,
-  ExternalLink
+  ExternalLink,
+  ArrowUpRight
 } from 'lucide-react';
 
 interface SmogContextBarProps {
@@ -85,117 +86,116 @@ export function getAtmosphereState(city: CitySmogContext): AtmosphereState {
 
 function getAtmosphereBannerStyle(city: CitySmogContext, isDark: boolean) {
   const state = getAtmosphereState(city);
-  const aqiStyle = getAQIStyle(city.currentAQI, isDark, city.aqiCategory);
 
-  if (state === 'humid') {
-    return {
-      background: isDark
-        ? 'linear-gradient(135deg, rgba(20, 26, 36, 0.96) 0%, rgba(16, 20, 28, 0.94) 55%, rgba(12, 16, 22, 0.98) 100%)'
-        : 'linear-gradient(135deg, rgba(240, 244, 248, 0.97) 0%, rgba(234, 240, 246, 0.92) 55%, rgba(228, 236, 244, 0.98) 100%)',
-      borderColor: isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(100, 116, 139, 0.3)',
-      skylineColor: isDark ? '#94A3B8' : '#475569',
-      badgeBg: isDark ? 'rgba(71, 85, 105, 0.35)' : '#E2E8F0',
-      badgeBorder: isDark ? 'rgba(148, 163, 184, 0.45)' : '#CBD5E1',
-      badgeColor: isDark ? '#E2E8F0' : '#1E293B',
-      badgeLabel: 'Moist Maritime Mist',
-      weatherLabel: 'Moist Mist',
-      tagline: 'High moisture promotes secondary chemical aerosol & fog condensation',
-      icon: <Droplets className="h-6 w-6 text-blue-400 shrink-0" />,
-    };
-  }
-
-  // Graded atmospheric banner corresponding to the 6 AQI tiers
   switch (state) {
     case 'clean':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(16, 36, 28, 0.96) 0%, rgba(12, 26, 20, 0.94) 55%, rgba(8, 20, 16, 0.98) 100%)'
-          : 'linear-gradient(135deg, rgba(236, 247, 242, 0.97) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(228, 244, 236, 0.98) 100%)',
-        borderColor: aqiStyle.border,
-        skylineColor: aqiStyle.skyline,
-        badgeBg: aqiStyle.bg,
-        badgeBorder: aqiStyle.border,
-        badgeColor: aqiStyle.text,
-        badgeLabel: 'Good Air · Healthy Mixing',
-        weatherLabel: 'Clear Skies',
-        tagline: 'Fresh ambient airflow across regional topography · Minimal trapping',
-        icon: <Sun className="h-6 w-6 text-emerald-400 shrink-0" />,
+        background: 'linear-gradient(135deg, #0d1f23 0%, #123138 45%, #071518 100%)',
+        borderColor: 'rgba(52, 211, 153, 0.35)',
+        skylineColor: '#10B981',
+        categoryBg: 'rgba(16, 185, 129, 0.22)',
+        categoryBorder: 'rgba(52, 211, 153, 0.45)',
+        categoryText: '#6ee7b7',
+        categoryLabel: 'Good',
+        weatherLabel: 'Clear',
+        icon: (
+          <svg viewBox="0 0 24 24" className="h-6 w-6 text-emerald-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="5" />
+            <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+          </svg>
+        ),
       };
     case 'moderate':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(20, 34, 24, 0.96) 0%, rgba(16, 26, 18, 0.94) 55%, rgba(10, 20, 14, 0.98) 100%)'
-          : 'linear-gradient(135deg, rgba(242, 248, 243, 0.97) 0%, rgba(236, 244, 238, 0.92) 55%, rgba(230, 240, 233, 0.98) 100%)',
-        borderColor: aqiStyle.border,
-        skylineColor: aqiStyle.skyline,
-        badgeBg: aqiStyle.bg,
-        badgeBorder: aqiStyle.border,
-        badgeColor: aqiStyle.text,
-        badgeLabel: 'Moderate Air · Regular Dispersion',
+        background: 'linear-gradient(135deg, #102117 0%, #173625 45%, #0a160f 100%)',
+        borderColor: 'rgba(250, 204, 21, 0.35)',
+        skylineColor: '#EAB308',
+        categoryBg: 'rgba(234, 179, 8, 0.22)',
+        categoryBorder: 'rgba(250, 204, 21, 0.45)',
+        categoryText: '#fef08a',
+        categoryLabel: 'Moderate',
         weatherLabel: 'Fair Airflow',
-        tagline: 'Daytime surface heating supporting regular atmospheric air renewal',
-        icon: <Sun className="h-6 w-6 text-lime-400 shrink-0" />,
+        icon: (
+          <svg viewBox="0 0 24 24" className="h-6 w-6 text-yellow-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+        ),
       };
     case 'haze':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(38, 26, 14, 0.96) 0%, rgba(26, 18, 10, 0.94) 55%, rgba(20, 14, 8, 0.98) 100%)'
-          : 'linear-gradient(135deg, rgba(254, 248, 236, 0.97) 0%, rgba(252, 242, 224, 0.92) 55%, rgba(250, 238, 218, 0.98) 100%)',
-        borderColor: aqiStyle.border,
-        skylineColor: aqiStyle.skyline,
-        badgeBg: aqiStyle.bg,
-        badgeBorder: aqiStyle.border,
-        badgeColor: aqiStyle.text,
-        badgeLabel: 'Poor · Photochemical Haze',
+        background: 'linear-gradient(135deg, #27160a 0%, #43220e 45%, #170e06 100%)',
+        borderColor: 'rgba(251, 146, 60, 0.35)',
+        skylineColor: '#F97316',
+        categoryBg: 'rgba(249, 115, 22, 0.22)',
+        categoryBorder: 'rgba(251, 146, 60, 0.45)',
+        categoryText: '#fdba74',
+        categoryLabel: 'Poor',
         weatherLabel: 'Photochemical Haze',
-        tagline: 'Moderate sunlight-driven aerosol stagnation · Boundary layer declining',
-        icon: <CloudFog className="h-6 w-6 text-amber-400 shrink-0" />,
+        icon: (
+          <svg viewBox="0 0 24 24" className="h-6 w-6 text-amber-400 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+            <line x1="4" y1="21" x2="20" y2="21" />
+          </svg>
+        ),
       };
     case 'unhealthy':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(44, 20, 24, 0.96) 0%, rgba(28, 14, 16, 0.94) 55%, rgba(20, 10, 12, 0.98) 100%)'
-          : 'linear-gradient(135deg, rgba(254, 244, 240, 0.97) 0%, rgba(250, 236, 230, 0.92) 55%, rgba(248, 230, 222, 0.98) 100%)',
-        borderColor: aqiStyle.border,
-        skylineColor: aqiStyle.skyline,
-        badgeBg: aqiStyle.bg,
-        badgeBorder: aqiStyle.border,
-        badgeColor: aqiStyle.text,
-        badgeLabel: 'Unhealthy Stagnation',
-        weatherLabel: 'Smoky Haze',
-        tagline: 'Cool ground layer trapping vehicular and combustion particulates',
-        icon: <CloudFog className="h-6 w-6 text-orange-400 shrink-0" />,
+        background: 'linear-gradient(135deg, #28111c 0%, #44172a 45%, #180d14 100%)',
+        borderColor: 'rgba(251, 113, 133, 0.35)',
+        skylineColor: '#F43F5E',
+        categoryBg: 'rgba(244, 63, 94, 0.25)',
+        categoryBorder: 'rgba(251, 113, 133, 0.45)',
+        categoryText: '#fda4af',
+        categoryLabel: 'Unhealthy',
+        weatherLabel: 'Smoky haze',
+        icon: (
+          <svg viewBox="0 0 24 24" className="h-6 w-6 text-rose-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.25" />
+            <line x1="4" y1="19" x2="20" y2="19" strokeWidth="2" />
+            <line x1="7" y1="22" x2="17" y2="22" strokeWidth="2" />
+          </svg>
+        ),
       };
     case 'smog':
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(46, 16, 20, 0.96) 0%, rgba(28, 12, 14, 0.94) 55%, rgba(20, 8, 10, 0.98) 100%)'
-          : 'linear-gradient(135deg, rgba(254, 242, 242, 0.97) 0%, rgba(252, 235, 235, 0.92) 55%, rgba(250, 228, 228, 0.98) 100%)',
-        borderColor: aqiStyle.border,
-        skylineColor: aqiStyle.skyline,
-        badgeBg: aqiStyle.bg,
-        badgeBorder: aqiStyle.border,
-        badgeColor: aqiStyle.text,
-        badgeLabel: 'Severe Thermal Inversion',
-        weatherLabel: 'Winter Smog',
-        tagline: 'Dense particulate blanket trapped close to ground · Cold surface boundary',
-        icon: <Flame className="h-6 w-6 text-red-400 shrink-0" />,
+        background: 'linear-gradient(135deg, #1c1026 0%, #351647 45%, #150d1e 100%)',
+        borderColor: 'rgba(192, 132, 252, 0.35)',
+        skylineColor: '#A855F7',
+        categoryBg: 'rgba(168, 85, 247, 0.25)',
+        categoryBorder: 'rgba(192, 132, 252, 0.45)',
+        categoryText: '#d8b4fe',
+        categoryLabel: 'Severe',
+        weatherLabel: 'Smog',
+        icon: (
+          <svg viewBox="0 0 24 24" className="h-6 w-6 text-purple-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.3" />
+            <line x1="4" y1="19" x2="20" y2="19" strokeWidth="2" />
+            <line x1="7" y1="22" x2="17" y2="22" strokeWidth="2" />
+          </svg>
+        ),
       };
     case 'hazardous':
     default:
       return {
-        background: isDark
-          ? 'linear-gradient(135deg, rgba(36, 14, 42, 0.96) 0%, rgba(24, 10, 28, 0.94) 55%, rgba(18, 8, 22, 0.98) 100%)'
-          : 'linear-gradient(135deg, rgba(248, 240, 252, 0.97) 0%, rgba(244, 235, 248, 0.92) 55%, rgba(240, 228, 246, 0.98) 100%)',
-        borderColor: aqiStyle.border,
-        skylineColor: aqiStyle.skyline,
-        badgeBg: aqiStyle.bg,
-        badgeBorder: aqiStyle.border,
-        badgeColor: aqiStyle.text,
-        badgeLabel: 'Hazardous Smog Emergency',
+        background: 'linear-gradient(135deg, #2a0b10 0%, #46111a 45%, #17070a 100%)',
+        borderColor: 'rgba(248, 113, 113, 0.4)',
+        skylineColor: '#DC2626',
+        categoryBg: 'rgba(220, 38, 38, 0.25)',
+        categoryBorder: 'rgba(248, 113, 113, 0.45)',
+        categoryText: '#fca5a5',
+        categoryLabel: 'Hazardous',
         weatherLabel: 'Severe Smog',
-        tagline: 'Critical particulate trapping across regional airshed · Emergency episode',
-        icon: <ShieldAlert className="h-6 w-6 text-purple-400 shrink-0" />,
+        icon: (
+          <svg viewBox="0 0 24 24" className="h-6 w-6 text-red-300 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M17.5 16H9a6 6 0 1 1 5.75-7.75A4.5 4.5 0 0 1 17.5 16Z" fill="currentColor" fillOpacity="0.3" />
+            <line x1="3" y1="19" x2="21" y2="19" strokeWidth="2" />
+            <line x1="6" y1="22" x2="18" y2="22" strokeWidth="2" />
+          </svg>
+        ),
       };
   }
 }
@@ -204,8 +204,12 @@ export function getCityLandmarkName(cityId: string): string {
   const id = (cityId || '').toLowerCase();
   if (id.includes('delhi')) return 'India Gate';
   if (id.includes('bengaluru') || id.includes('bangalore')) return 'Vidhana Soudha';
-  if (id.includes('mumbai') || id.includes('bombay')) return 'Gateway of India';
+  if (id.includes('chennai') || id.includes('madras')) return 'Kapaleeshwarar Temple';
+  if (id.includes('hyderabad')) return 'Charminar';
   if (id.includes('kolkata') || id.includes('calcutta')) return 'Victoria Memorial';
+  if (id.includes('mumbai') || id.includes('bombay')) return 'Gateway of India';
+  if (id.includes('ahmedabad')) return 'Sidi Saiyyed Jaali';
+  if (id.includes('pune')) return 'Shaniwar Wada';
   if (id.includes('lucknow')) return 'Rumi Darwaza';
   if (id.includes('gurugram') || id.includes('gurgaon')) return 'Cyber City Horizon';
   if (id.includes('noida')) return 'Express Towers & Stupa';
@@ -364,67 +368,59 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
             {/* Left Column: Live AQI readout + continuous rainbow spectrum gauge */}
             <div className="lg:col-span-7 flex flex-col justify-center">
-              {/* Live AQI tag */}
-              <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-ink-muted dark:text-stone-300 mb-1">
-                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse shrink-0" />
-                <span>Live AQI</span>
-                <span className="text-black/30 dark:text-white/30">·</span>
-                <span className="text-ink dark:text-stone-100 font-semibold">{currentCity.name}</span>
-              </div>
-
-              {/* AQI Number + Tier Pill */}
-              <div className="flex flex-wrap items-baseline gap-3 sm:gap-4 my-1">
-                <div className="flex items-baseline gap-2">
-                  <span 
-                    className="font-mono text-5xl sm:text-6xl font-black tracking-tight drop-shadow-sm tabular-nums"
-                    style={{ color: cityAqiStyle.text }}
-                  >
-                    {currentCity.currentAQI}
-                  </span>
-                  <span className="font-mono text-xs sm:text-sm font-bold text-ink-muted dark:text-stone-400">
-                    AQI (CPCB)
-                  </span>
+              {/* Top Row: Live AQI tag + "Air Quality is" + Category Pill */}
+              <div className="flex flex-wrap items-center gap-3 text-xs mb-1">
+                <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-stone-200">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-500 animate-pulse shrink-0 shadow-sm shadow-rose-500/50" />
+                  <span>Live AQI</span>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <span className="text-xs uppercase tracking-wide font-medium text-ink-muted dark:text-stone-400">
-                    Air Quality is
-                  </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs text-stone-300 font-medium">Air Quality is</span>
                   <span
-                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs sm:text-sm font-bold border shadow-xs transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-bold border backdrop-blur-md shadow-xs transition-colors"
                     style={{
-                      backgroundColor: cityAqiStyle.bg,
-                      borderColor: cityAqiStyle.border,
-                      color: cityAqiStyle.text,
+                      backgroundColor: bannerStyle.categoryBg,
+                      borderColor: bannerStyle.categoryBorder,
+                      color: bannerStyle.categoryText,
                     }}
                   >
-                    <CityStatusIcon className="h-3.5 w-3.5 shrink-0" />
                     <span>{currentCity.aqiCategory}</span>
                   </span>
                 </div>
               </div>
 
-              {/* PM2.5 and PM10 Metrics Readouts */}
-              <div className="flex flex-wrap items-center gap-2.5 my-2.5">
-                <div className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-mono font-medium bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xs">
-                  <span className="text-ink-muted dark:text-stone-300">PM2.5 :</span>
-                  <strong className="text-ink dark:text-stone-100 font-bold">{currentCity.pm25} µg/m³</strong>
+              {/* AQI Number + CPCB Tag */}
+              <div className="flex items-baseline gap-2 my-1">
+                <span 
+                  className="font-mono text-5xl sm:text-6xl font-black tracking-tight drop-shadow-md tabular-nums"
+                  style={{ color: bannerStyle.skylineColor }}
+                >
+                  {currentCity.currentAQI}
+                </span>
+                <span className="font-mono text-xs sm:text-sm font-semibold text-stone-300/80">
+                  AQI (CPCB)
+                </span>
+              </div>
+
+              {/* Core PM2.5 and PM10 Metrics Readouts */}
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 my-2 text-xs sm:text-sm font-mono text-stone-200">
+                <div>
+                  <span className="text-stone-400 font-normal">PM2.5 : </span>
+                  <strong className="text-white font-bold">{currentCity.pm25} µg/m³</strong>
                 </div>
-                <div className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-mono font-medium bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 backdrop-blur-xs">
-                  <span className="text-ink-muted dark:text-stone-300">PM10 :</span>
-                  <strong className="text-ink dark:text-stone-100 font-bold">{currentCity.pm10} µg/m³</strong>
+                <div>
+                  <span className="text-stone-400 font-normal">PM10 : </span>
+                  <strong className="text-white font-bold">{currentCity.pm10} µg/m³</strong>
                 </div>
-                <span className="text-[11px] font-mono text-ink-muted dark:text-stone-400">
-                  {currentCity.pm25 <= 15
-                    ? "Within WHO annual limit"
-                    : `${(currentCity.pm25 / 15).toFixed(1)}x WHO guideline`}
+                <span className="text-[11px] font-mono text-stone-400">
+                  Dominant: <strong className="text-stone-200 font-semibold">{currentCity.dominantPollutant}</strong>
                 </span>
               </div>
 
               {/* Continuous Graded Horizontal Rainbow Spectrum Gauge Bar */}
-              <div className="w-full max-w-xl mt-3 pt-2">
+              <div className="w-full max-w-xl mt-3 pt-1">
                 {/* Spectrum Tier Labels */}
-                <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-mono font-semibold text-ink-muted dark:text-stone-300 mb-1 px-0.5">
+                <div className="flex justify-between items-center text-[10px] sm:text-[11px] font-mono font-medium text-stone-300 mb-1 px-0.5">
                   <span>Good</span>
                   <span>Moderate</span>
                   <span>Poor</span>
@@ -434,7 +430,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                 </div>
 
                 {/* The Continuous Color Bar with Indicator Thumb Pin */}
-                <div className="relative w-full h-3 sm:h-3.5 rounded-full overflow-visible shadow-xs p-0.5 bg-black/15 dark:bg-black/40 border border-black/15 dark:border-white/15">
+                <div className="relative w-full h-3 sm:h-3.5 rounded-full overflow-visible shadow-xs p-0.5 bg-black/40 border border-white/15">
                   {/* Gradient Track */}
                   <div 
                     className="w-full h-full rounded-full"
@@ -452,86 +448,86 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                       <div className="h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-white dark:bg-stone-900 border-2 border-stone-800 dark:border-white shadow-md flex items-center justify-center animate-pulse">
                         <div 
                           className="h-2 w-2 sm:h-2.5 sm:w-2.5 rounded-full" 
-                          style={{ backgroundColor: cityAqiStyle.text }}
+                          style={{ backgroundColor: bannerStyle.skylineColor }}
                         />
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Scale Ticks Below Bar */}
-                <div className="flex justify-between items-center text-[10px] font-mono font-medium text-ink-muted dark:text-stone-400 mt-1 px-1">
+                {/* Scale Ticks Below Bar (0, 50, 100, 150, 200, 300, 301+) */}
+                <div className="flex justify-between items-center text-[10px] font-mono font-medium text-stone-400 mt-1 px-1">
                   <span>0</span>
                   <span>50</span>
                   <span>100</span>
                   <span>150</span>
                   <span>200</span>
                   <span>300</span>
-                  <span>400+</span>
+                  <span>301+</span>
                 </div>
               </div>
             </div>
 
             {/* Right Column: Frosted Glass Weather Card */}
             <div className="lg:col-span-5 flex justify-end w-full">
-              <div className="w-full rounded-2xl border border-white/40 dark:border-white/15 bg-white/40 dark:bg-stone-900/60 backdrop-blur-md p-4 sm:p-5 shadow-lg flex flex-col justify-between transition-all">
-                {/* Weather Header: Icon + Temp + Condition + Landmark Pill */}
-                <div className="flex items-center justify-between gap-3 pb-3 border-b border-black/10 dark:border-white/10">
+              <div className="w-full rounded-2xl border border-white/20 bg-white/10 dark:bg-black/30 backdrop-blur-md p-4 sm:p-5 shadow-xl flex flex-col justify-between text-white transition-all">
+                {/* Weather Header: Icon + Temp + Condition + Top-Right Arrow */}
+                <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/15">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 sm:p-2.5 rounded-xl bg-white/60 dark:bg-white/10 shadow-xs border border-white/40 dark:border-white/10">
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-white/15 backdrop-blur-xs border border-white/20 shadow-xs">
                       {bannerStyle.icon}
                     </div>
                     <div>
-                      <div className="font-mono text-2xl sm:text-3xl font-extrabold text-ink dark:text-stone-100 tabular-nums">
-                        {currentCity.temperatureC}°C
+                      <div className="font-mono text-2xl sm:text-3xl font-extrabold text-white tabular-nums">
+                        {Math.round(currentCity.temperatureC)}°C
                       </div>
-                      <div className="text-xs sm:text-sm font-semibold text-ink-muted dark:text-stone-200">
+                      <div className="text-xs sm:text-sm font-semibold text-white/90">
                         {bannerStyle.weatherLabel}
                       </div>
                     </div>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-1 rounded-md bg-black/5 dark:bg-white/10 border border-black/10 dark:border-white/10 text-ink-muted dark:text-stone-300 text-right">
-                    <span>{getCityLandmarkName(currentCity.id)}</span>
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-1 rounded-md bg-white/10 border border-white/15 text-stone-200 text-right">
+                      <span>{getCityLandmarkName(currentCity.id)}</span>
+                    </span>
+                    <div className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all cursor-pointer">
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </div>
+                  </div>
                 </div>
 
-                {/* Atmospheric Sub-Metrics (Humidity, Wind, Inversion) */}
+                {/* Atmospheric Sub-Metrics (Humidity, Wind Speed, UV Index) */}
                 <div className="grid grid-cols-3 gap-2 pt-3 text-center">
                   <div className="flex flex-col items-center">
-                    <div className="flex items-center gap-1 text-[11px] font-mono font-medium text-ink-muted dark:text-stone-400">
-                      <Droplets className="h-3 w-3 text-blue-500" />
+                    <div className="flex items-center gap-1 text-[11px] font-mono font-medium text-stone-300">
+                      <Droplets className="h-3.5 w-3.5 text-cyan-400" />
                       <span>Humidity</span>
                     </div>
-                    <div className="font-mono text-sm sm:text-base font-bold text-ink dark:text-stone-100 mt-0.5">
+                    <div className="font-mono text-sm sm:text-base font-bold text-white mt-0.5">
                       {currentCity.humidityPercent} %
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-center border-x border-black/10 dark:border-white/10 px-1">
-                    <div className="flex items-center gap-1 text-[11px] font-mono font-medium text-ink-muted dark:text-stone-400">
-                      <Wind className="h-3 w-3 text-emerald-500" />
-                      <span>Wind</span>
+                  <div className="flex flex-col items-center border-x border-white/15 px-1">
+                    <div className="flex items-center gap-1 text-[11px] font-mono font-medium text-stone-300">
+                      <Wind className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Wind Speed</span>
                     </div>
-                    <div className="font-mono text-sm sm:text-base font-bold text-ink dark:text-stone-100 mt-0.5">
-                      {currentCity.windSpeedKmh} <span className="text-[10px] font-sans font-normal">{currentCity.windDirection}</span>
+                    <div className="font-mono text-sm sm:text-base font-bold text-white mt-0.5">
+                      {currentCity.windSpeedKmh} <span className="text-[10px] font-sans font-normal">km/h</span>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-center">
-                    <div className="flex items-center gap-1 text-[11px] font-mono font-medium text-ink-muted dark:text-stone-400">
-                      <ShieldAlert className="h-3 w-3 text-amber-500" />
-                      <span>Inversion</span>
+                    <div className="flex items-center gap-1 text-[11px] font-mono font-medium text-stone-300">
+                      <Sun className="h-3.5 w-3.5 text-amber-400" />
+                      <span>UV Index</span>
                     </div>
-                    <div className="font-mono text-xs sm:text-sm font-bold text-ink dark:text-stone-100 mt-0.5 truncate max-w-full">
-                      {currentCity.currentAQI > 200 ? "Trap Active" : "Normal Air"}
+                    <div className="font-mono text-sm sm:text-base font-bold text-white mt-0.5">
+                      0
                     </div>
                   </div>
-                </div>
-
-                {/* Plain-English Meteorological Mechanism Tag */}
-                <div className="mt-3 pt-2 border-t border-black/10 dark:border-white/10 text-[11px] text-ink-muted dark:text-stone-300 font-medium">
-                  {bannerStyle.tagline}
                 </div>
               </div>
             </div>
@@ -588,109 +584,6 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
       )}
 
-      {/* Streamlined Atmospheric & Public Health Benchmark Strip */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 mb-5">
-        {/* Benchmark 1: WHO Public Health Exposure Guideline */}
-        <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-4 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
-              WHO Exposure Guideline
-            </span>
-            <span
-              className="rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide flex items-center gap-1 shadow-2xs"
-              style={{
-                backgroundColor: cityAqiStyle.bg,
-                borderColor: cityAqiStyle.border,
-                color: cityAqiStyle.text,
-              }}
-            >
-              <CityStatusIcon className="h-3 w-3 shrink-0" />
-              <span>{currentCity.aqiCategory}</span>
-            </span>
-          </div>
-          <div className="my-2.5 flex items-baseline gap-2">
-            <span className="font-mono text-2xl sm:text-3xl font-extrabold text-ink dark:text-stone-100 tabular-nums">
-              {currentCity.pm25 <= 15 ? "Safe" : `${(currentCity.pm25 / 15).toFixed(1)}x`}
-            </span>
-            <span className="text-xs text-ink-muted dark:text-stone-400">
-              {currentCity.pm25 <= 15 ? "Under WHO 24h ceiling" : "Above WHO 24h limit (15 µg/m³)"}
-            </span>
-          </div>
-          <div className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-2 flex items-center justify-between">
-            <span>Dominant: <strong className="text-ink dark:text-stone-200 font-semibold">{currentCity.dominantPollutant}</strong></span>
-            <span className="font-mono text-[10px]">Direct cellular uptake</span>
-          </div>
-        </div>
-
-        {/* Benchmark 2: Atmospheric Boundary & Inversion Physics */}
-        <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-4 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
-              Atmospheric Boundary Layer
-            </span>
-            <span
-              className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono font-bold whitespace-nowrap border shadow-2xs"
-              style={{
-                backgroundColor: cityAqiStyle.bg,
-                borderColor: cityAqiStyle.border,
-                color: cityAqiStyle.text,
-              }}
-            >
-              {currentCity.currentAQI > 200 ? (
-                <>
-                  <ArrowDownToLine className="h-3 w-3 shrink-0" />
-                  <span>Thermal Lid Active</span>
-                </>
-              ) : (
-                <>
-                  <ArrowUpFromLine className="h-3 w-3 shrink-0" />
-                  <span>Free Convection</span>
-                </>
-              )}
-            </span>
-          </div>
-          <div className="my-2.5 flex items-center gap-2">
-            <ShieldAlert className="h-5 w-5 shrink-0" style={{ color: cityAqiStyle.text }} />
-            <span className="text-xs sm:text-sm font-bold text-ink dark:text-stone-100 leading-snug">
-              {currentCity.inversionStatus}
-            </span>
-          </div>
-          <div className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-2">
-            {currentCity.currentAQI > 300
-              ? "Cold air capping vehicular smoke & dust under 200m"
-              : currentCity.currentAQI > 200
-              ? "Nighttime thermal cooling slowing dispersion"
-              : "Solar convection dispersing particulates above 1200m"}
-          </div>
-        </div>
-
-        {/* Benchmark 3: Dispersive Airflow & Natural Air Renewal */}
-        <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-4 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
-              Dispersive Airflow Corridor
-            </span>
-            <span className="rounded bg-stone-200 dark:bg-stone-700 px-1.5 py-0.5 text-[10px] font-mono font-bold text-ink dark:text-stone-200">
-              {currentCity.windDirection} Flow
-            </span>
-          </div>
-          <div className="my-2.5 flex items-baseline gap-2 font-mono">
-            <Wind className="h-4 w-4 text-ink-muted dark:text-stone-400 shrink-0" />
-            <span className="text-2xl sm:text-3xl font-extrabold text-ink dark:text-stone-100 tabular-nums">
-              {currentCity.windSpeedKmh}
-            </span>
-            <span className="text-xs text-ink-muted dark:text-stone-400 font-sans">
-              km/h · Safe Window: <strong className="text-ink dark:text-stone-100 font-mono">{currentCity.safeVentilationWindows}</strong>
-            </span>
-          </div>
-          <div className="text-[11px] text-ink-muted dark:text-stone-400 border-t border-stone-200/80 dark:border-stone-700/80 pt-2">
-            {currentCity.windSpeedKmh < 6
-              ? "Calm boundary winds impede particulate flushing"
-              : "Active surface currents accelerating ambient air renewal"}
-          </div>
-        </div>
-      </div>
-      
       {/* 24-Hour Diurnal Smog & Ventilation Curve */}
       <div className="mt-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-900/50 p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">

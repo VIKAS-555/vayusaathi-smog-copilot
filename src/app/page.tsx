@@ -11,6 +11,7 @@ import { SmogContextBar } from '@/components/SmogContextBar';
 import { HouseholdProfiler } from '@/components/HouseholdProfiler';
 import { ImpactScorecard } from '@/components/ImpactScorecard';
 import { CigaretteEquivalenceCard } from '@/components/CigaretteEquivalenceCard';
+import { MetroCitiesGrid } from '@/components/MetroCitiesGrid';
 import { ActionPlanTabs } from '@/components/ActionPlanTabs';
 import { RwaBulletinModal } from '@/components/RwaBulletinModal';
 import { ExplanationModal } from '@/components/ExplanationModal';
@@ -193,7 +194,14 @@ export default function Home() {
       />
 
       {/* Main Two-Column Workstation Container */}
-      <div className="mx-auto max-w-7xl w-full flex-1 p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-7xl w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
+        {/* India's Metro Cities Air Quality Index (8 Major Hubs) */}
+        <MetroCitiesGrid
+          cities={CITY_PRESETS}
+          currentCityId={currentCity.id}
+          onSelectCity={handleSelectCity}
+        />
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
           {/* LEFT COLUMN: Sticky Household Profiler & Live Impact Scorecard (5 cols on lg) */}
