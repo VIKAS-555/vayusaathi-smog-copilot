@@ -19,7 +19,8 @@ import {
   Sunrise,
   Sunset,
   Sun,
-  Check
+  Check,
+  Info
 } from 'lucide-react';
 
 interface HouseholdProfilerProps {
@@ -128,11 +129,61 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
     sub: string;
     icon: React.ReactNode;
   }[] = [
-    { id: 'solo-petrol-car', label: 'Solo Car', sub: 'AC recirc', icon: <Car className="h-3.5 w-3.5" /> },
-    { id: 'metro-public-transit', label: 'Metro / Transit', sub: 'Filtered rail', icon: <Train className="h-3.5 w-3.5" /> },
-    { id: 'two-wheeler', label: 'Two-Wheeler', sub: 'Direct exposure', icon: <Bike className="h-3.5 w-3.5" /> },
-    { id: 'carpool-cab', label: 'Shared Cab', sub: 'Carpool', icon: <Users className="h-3.5 w-3.5" /> },
-    { id: 'work-from-home', label: 'WFH', sub: 'Zero commute', icon: <Laptop className="h-3.5 w-3.5" /> },
+    { id: 'solo-petrol-car', label: 'Solo Car', sub: 'AC Recirc', icon: <Car className="h-4 w-4" /> },
+    { id: 'metro-public-transit', label: 'Metro / Transit', sub: 'Filtered Rail', icon: <Train className="h-4 w-4" /> },
+    { id: 'two-wheeler', label: 'Two-Wheeler / Auto', sub: 'Direct Exposure', icon: <Bike className="h-4 w-4" /> },
+    { id: 'carpool-cab', label: 'Shared Cab', sub: 'Carpool', icon: <Users className="h-4 w-4" /> },
+    { id: 'work-from-home', label: 'WFH / Walk', sub: 'Zero Transit', icon: <Laptop className="h-4 w-4" /> },
+  ];
+
+  // Commute Exposure Profiles (PM2.5 filtration vs tailpipe intake)
+  const getCommuteExposureDetails = (mode: CommuteMode) => {
+    switch (mode) {
+      case 'solo-petrol-car':
+        return {
+          title: 'Cabin Air Recirculation Model',
+          badge: 'Moderate Shielding (-65% PM2.5)',
+          badgeClasses: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
+          description: 'Cabin AC in recirc mode shields ~65% of roadway PM2.5 with a clean cabin filter, but tailpipe fumes and CO2 build up during stop-and-go traffic crawl.',
+        };
+      case 'metro-public-transit':
+        return {
+          title: 'Filtered Transit Corridor',
+          badge: 'Optimal Defense (-85% PM2.5)',
+          badgeClasses: 'bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border-teal-200 dark:border-teal-800',
+          description: 'Air-conditioned metro cars with high-volume filtration offer the lowest particulate intake per commuter-km and produce zero direct roadway emissions.',
+        };
+      case 'two-wheeler':
+        return {
+          title: 'Open Roadway Exposure',
+          badge: 'Direct Intake (3.2× Exposure)',
+          badgeClasses: 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border-rose-200 dark:border-rose-800',
+          description: 'Open-air riders face direct tailpipe exhaust plumes and resuspended road dust at breathing height. Tight-fitting N95 respirator strongly advised.',
+        };
+      case 'carpool-cab':
+        return {
+          title: 'Shared Fleet & Recirc Ingress',
+          badge: 'Shared Footprint (-60% PM2.5)',
+          badgeClasses: 'bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border-sky-200 dark:border-sky-800',
+          description: 'Shared vehicular footprint cuts citywide congestion emissions; keep cabin AC recirculating to prevent outside truck and bus exhaust ingress.',
+        };
+      case 'work-from-home':
+        return {
+          title: 'Zero Transit Corridor',
+          badge: '100% Roadway Avoided',
+          badgeClasses: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800',
+          description: 'Completely eliminates roadway toxic micro-environments and traffic exhaust spikes; indoor air quality depends on home envelope & filtration.',
+        };
+    }
+  };
+
+  // Quick Distance Preset Pills for Rapid Mobile Tapping
+  const DISTANCE_PRESETS = [
+    { km: 6, label: '6 km', tag: 'Local' },
+    { km: 16, label: '16 km', tag: 'City Core' },
+    { km: 24, label: '24 km', tag: 'Typical' },
+    { km: 36, label: '36 km', tag: 'Suburban' },
+    { km: 50, label: '50 km', tag: 'Cross-NCR' },
   ];
 
   // 3. Outdoor Workout / Stroll Habit Options Definition
@@ -466,7 +517,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
         </div>
       </div>
 
-      {/* 4. DAILY COMMUTE MODE: Compact Option Tiles + Distance Stepper/Slider */}
+      {/* 4. DAILY COMMUTE MODE & DISTANCE: Tactile Option Tiles + Dynamic Exposure Note + Distance Presets */}
       <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-bold text-ink dark:text-stone-200 flex items-center gap-1.5">
@@ -478,7 +529,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           </span>
         </div>
 
-        {/* Compact Commute Option Tiles */}
+        {/* Tactile Commute Option Tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
           {COMMUTE_OPTIONS.map((opt) => {
             const isSelected = profile.commuteMode === opt.id;
@@ -487,17 +538,17 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 key={opt.id}
                 type="button"
                 onClick={() => onChangeProfile({ ...profile, commuteMode: opt.id })}
-                className={`rounded-xl p-2 border text-center transition-all flex flex-col items-center justify-between min-h-[58px] ${
+                className={`rounded-xl p-2 sm:p-2.5 border text-center transition-all flex flex-col items-center justify-between min-h-[62px] ${
                   isSelected
-                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-xs'
+                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-xs ring-1 ring-ink/10 dark:ring-stone-100/20'
                     : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
                 }`}
               >
-                <div className="flex items-center gap-1 text-[11px] font-bold leading-tight">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold leading-tight">
                   {opt.icon}
                   <span>{opt.label}</span>
                 </div>
-                <span className={`text-[9.5px] font-mono ${
+                <span className={`text-[9.5px] font-mono mt-1 ${
                   isSelected ? 'text-stone-300 dark:text-stone-600 font-semibold' : 'text-ink-muted dark:text-stone-400'
                 }`}>
                   {opt.sub}
@@ -507,7 +558,32 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           })}
         </div>
 
-        {/* Round-Trip Commute Distance with +/- 5km Steppers + Slider */}
+        {/* Dynamic Transit Air Exposure Profile Note */}
+        {(() => {
+          const exposure = getCommuteExposureDetails(profile.commuteMode);
+          return (
+            <div className="mt-2.5 rounded-xl border border-stone-200/90 dark:border-stone-700/80 bg-white/70 dark:bg-stone-900/60 p-2.5 sm:p-3 flex items-start gap-2.5 transition-all">
+              <div className="mt-0.5 shrink-0 rounded-md p-1 bg-stone-100 dark:bg-stone-800 text-ink-muted dark:text-stone-300">
+                <Info className="h-3.5 w-3.5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="text-[11px] font-bold text-ink dark:text-stone-200">
+                    {exposure.title}
+                  </span>
+                  <span className={`text-[9.5px] font-mono px-2 py-0.5 rounded-full font-semibold border ${exposure.badgeClasses}`}>
+                    {exposure.badge}
+                  </span>
+                </div>
+                <p className="text-[11.5px] leading-relaxed text-ink-muted dark:text-stone-400">
+                  {exposure.description}
+                </p>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* Round-Trip Commute Distance with Quick Presets, Steppers & Slider */}
         <div className="mt-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-3">
           <div className="flex items-center justify-between text-xs mb-2">
             <span className="text-ink-muted dark:text-stone-400 font-medium">Round-trip distance:</span>
@@ -546,6 +622,37 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
             style={{ '--slider-pct': `${Math.min(100, Math.max(0, (profile.dailyCommuteKm / 80) * 100))}%` } as React.CSSProperties}
             title={`${profile.dailyCommuteKm} km round-trip distance`}
           />
+
+          {/* Quick Distance Preset Pills */}
+          <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-2 border-t border-stone-200/70 dark:border-stone-700/70">
+            <span className="text-[10px] font-mono text-ink-muted dark:text-stone-400 mr-1">Presets:</span>
+            {DISTANCE_PRESETS.map((p) => {
+              const isActive = profile.dailyCommuteKm === p.km;
+              return (
+                <button
+                  key={p.km}
+                  type="button"
+                  onClick={() => onChangeProfile({ ...profile, dailyCommuteKm: p.km })}
+                  className={`text-[10.5px] px-2 py-0.5 rounded-lg border transition-all font-mono ${
+                    isActive
+                      ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 font-bold shadow-2xs'
+                      : 'bg-white dark:bg-stone-900/90 text-ink-muted dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-stone-400 dark:hover:border-stone-500 font-medium'
+                  }`}
+                >
+                  {p.label} <span className="text-[9px] opacity-75">({p.tag})</span>
+                </button>
+              );
+            })}
+            {profile.commuteMode === 'work-from-home' && profile.dailyCommuteKm > 0 && (
+              <button
+                type="button"
+                onClick={() => onChangeProfile({ ...profile, dailyCommuteKm: 0 })}
+                className="text-[10px] px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-800 bg-indigo-50/70 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-mono ml-auto hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-colors"
+              >
+                Set 0 km (WFH)
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
