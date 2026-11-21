@@ -225,3 +225,18 @@ export function getAQIStyle(aqi: number, isDark: boolean, category?: string) {
     skyline: mode.skyline,
   };
 }
+
+/**
+ * Calculates continuous position (0% - 100%) along the 6-tier AQI spectrum bar.
+ * Tiers: Good (0-50), Moderate (51-100), Poor (101-200), Unhealthy (201-300), Severe (301-400), Hazardous (401-500).
+ */
+export function getSpectrumPercentage(aqi: number): number {
+  if (aqi <= 0) return 2;
+  if (aqi <= 50) return 2 + (aqi / 50) * 14.6;
+  if (aqi <= 100) return 16.6 + ((aqi - 50) / 50) * 16.7;
+  if (aqi <= 200) return 33.3 + ((aqi - 100) / 100) * 16.7;
+  if (aqi <= 300) return 50.0 + ((aqi - 200) / 100) * 16.6;
+  if (aqi <= 400) return 66.6 + ((aqi - 300) / 100) * 16.7;
+  return Math.min(98, 83.3 + ((aqi - 400) / 100) * 14.7);
+}
+
