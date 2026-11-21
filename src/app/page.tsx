@@ -10,6 +10,7 @@ import { Masthead } from '@/components/Masthead';
 import { SmogContextBar } from '@/components/SmogContextBar';
 import { HouseholdProfiler } from '@/components/HouseholdProfiler';
 import { ImpactScorecard } from '@/components/ImpactScorecard';
+import { CigaretteEquivalenceCard } from '@/components/CigaretteEquivalenceCard';
 import { ActionPlanTabs } from '@/components/ActionPlanTabs';
 import { RwaBulletinModal } from '@/components/RwaBulletinModal';
 import { ExplanationModal } from '@/components/ExplanationModal';
@@ -223,6 +224,14 @@ export default function Home() {
               onCustomUpdate={handleCustomCityUpdate}
               onRefreshLive={() => fetchLiveStation(currentCity)}
               isFetchingLive={isFetchingLive}
+              isDarkMode={isDarkMode}
+            />
+
+            {/* Dedicated Cigarette Equivalence & Quick Protection Card */}
+            <CigaretteEquivalenceCard
+              currentCity={currentCity}
+              impact={impact}
+              adoptedActionCount={adoptedActionIds.length}
               isDarkMode={isDarkMode}
             />
 
