@@ -88,6 +88,83 @@ function getTrackAppearance(
   };
 }
 
+export type AtmosphereState = 'clean' | 'haze' | 'smog' | 'humid';
+
+export function getAtmosphereState(city: CitySmogContext): AtmosphereState {
+  if (city.currentAQI > 200 || city.pm25 > 100) {
+    return 'smog';
+  }
+  if (city.humidityPercent >= 75) {
+    return 'humid';
+  }
+  if (city.currentAQI > 100 || city.pm25 > 40) {
+    return 'haze';
+  }
+  return 'clean';
+}
+
+function getAtmosphereBannerStyle(state: AtmosphereState, isDark: boolean) {
+  switch (state) {
+    case 'clean':
+      return {
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(20, 36, 30, 0.95) 0%, rgba(24, 32, 29, 0.92) 55%, rgba(18, 30, 26, 0.88) 100%)'
+          : 'linear-gradient(135deg, rgba(235, 247, 242, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(228, 242, 235, 0.85) 100%)',
+        borderColor: isDark ? 'rgba(61, 168, 135, 0.4)' : 'rgba(35, 107, 86, 0.3)',
+        skylineColor: isDark ? '#3DA887' : '#236B56',
+        badgeClass: isDark
+          ? 'bg-sage-950/80 text-sage-200 border-sage-800'
+          : 'bg-sage-100/90 text-sage-800 border-sage-300',
+        badgeLabel: 'Clean Daylight Air · Healthy Convective Mixing',
+        tagline: 'Fresh ambient airflow across regional topography · Low trapping',
+        icon: <Sun className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />,
+      };
+    case 'haze':
+      return {
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(38, 31, 20, 0.95) 0%, rgba(28, 24, 18, 0.92) 55%, rgba(33, 26, 17, 0.88) 100%)'
+          : 'linear-gradient(135deg, rgba(254, 247, 235, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(253, 240, 219, 0.85) 100%)',
+        borderColor: isDark ? 'rgba(245, 158, 11, 0.35)' : 'rgba(217, 119, 6, 0.3)',
+        skylineColor: isDark ? '#FBBF24' : '#B45309',
+        badgeClass: isDark
+          ? 'bg-amber-950/80 text-amber-200 border-amber-800'
+          : 'bg-amber-100/90 text-amber-900 border-amber-300',
+        badgeLabel: 'Photochemical Haze · Ambient Particulate Accumulation',
+        tagline: 'Moderate sunlight-driven aerosol stagnation · Boundary layer declining',
+        icon: <CloudFog className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 shrink-0" />,
+      };
+    case 'humid':
+      return {
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(22, 28, 36, 0.95) 0%, rgba(20, 24, 28, 0.92) 55%, rgba(18, 25, 32, 0.88) 100%)'
+          : 'linear-gradient(135deg, rgba(238, 242, 246, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(230, 236, 242, 0.85) 100%)',
+        borderColor: isDark ? 'rgba(148, 163, 184, 0.35)' : 'rgba(100, 116, 139, 0.3)',
+        skylineColor: isDark ? '#94A3B8' : '#475569',
+        badgeClass: isDark
+          ? 'bg-slate-900/80 text-slate-200 border-slate-700'
+          : 'bg-slate-100/90 text-slate-800 border-slate-300',
+        badgeLabel: 'Moist Maritime Mist · High Relative Humidity',
+        tagline: 'High moisture promotes secondary chemical aerosol & fog condensation',
+        icon: <Droplets className="h-3.5 w-3.5 text-slate-600 dark:text-slate-400 shrink-0" />,
+      };
+    case 'smog':
+    default:
+      return {
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(38, 24, 20, 0.95) 0%, rgba(26, 20, 19, 0.92) 55%, rgba(34, 22, 19, 0.88) 100%)'
+          : 'linear-gradient(135deg, rgba(253, 242, 238, 0.95) 0%, rgba(246, 245, 240, 0.92) 55%, rgba(250, 232, 226, 0.85) 100%)',
+        borderColor: isDark ? 'rgba(242, 122, 85, 0.4)' : 'rgba(196, 81, 44, 0.35)',
+        skylineColor: isDark ? '#F27A55' : '#C4512C',
+        badgeClass: isDark
+          ? 'bg-terracotta-950/80 text-terracotta-200 border-terracotta-800'
+          : 'bg-terracotta-100/90 text-terracotta-900 border-terracotta-300',
+        badgeLabel: 'Severe Thermal Inversion · Ground Particulate Trap',
+        tagline: 'Dense particulate blanket trapped close to ground · Cold surface boundary',
+        icon: <Flame className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />,
+      };
+  }
+}
+
 export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   currentCity,
   onSelectCity,
@@ -127,78 +204,148 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
     };
 
   const activeGuidance = getHourlyGuidance(activePoint);
+  const atmosphereState = getAtmosphereState(currentCity);
+  const bannerStyle = getAtmosphereBannerStyle(atmosphereState, isDarkMode);
 
   return (
     <div className="rounded-lg border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-4 sm:p-5 shadow-xs">
-      {/* City Presets & Live Telemetry Bar */}
-      <div className="flex flex-col gap-3 border-b border-stone-200 dark:border-stone-800 pb-3.5">
-        {/* Horizontally scrollable chip strip on mobile, flex-wrap on tablet/desktop */}
-        <div className="flex items-center gap-2 overflow-hidden w-full">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400 shrink-0">
-            Station:
-          </span>
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
-            {CITY_PRESETS.map((preset) => {
-              const isActive = preset.id === currentCity.id;
-              return (
-                <button
-                  key={preset.id}
-                  onClick={() => onSelectCity(preset)}
-                  className={`rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors shrink-0 min-h-[32px] flex items-center ${
-                    isActive
-                      ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs'
-                      : 'bg-stone-100 dark:bg-stone-800 text-ink-muted dark:text-stone-300 hover:bg-stone-200 hover:text-ink'
-                  }`}
-                >
-                  {preset.name.split(' (')[0]}
-                </button>
-              );
-            })}
-          </div>
+      {/* Atmospheric Station & Weather Horizon Banner */}
+      <div 
+        className="relative overflow-hidden rounded-xl border p-4 sm:p-5 transition-all duration-700 ease-in-out shadow-xs mb-4"
+        style={{
+          background: bannerStyle.background,
+          borderColor: bannerStyle.borderColor,
+        }}
+      >
+        {/* Subtle Architectural Skyline Silhouette at Horizon */}
+        <div 
+          className="absolute inset-x-0 bottom-0 pointer-events-none select-none overflow-hidden h-20 sm:h-24"
+          aria-hidden="true"
+          style={{
+            maskImage: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 65%, rgba(0,0,0,0) 100%)',
+            WebkitMaskImage: 'linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 65%, rgba(0,0,0,0) 100%)',
+            color: bannerStyle.skylineColor,
+          }}
+        >
+          <svg 
+            viewBox="0 0 1200 100" 
+            fill="currentColor" 
+            className="w-full h-full opacity-80" 
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            {/* Distant background skyline (subtle depth) */}
+            <path 
+              opacity="0.3"
+              d="M0 100 L0 55 L35 55 L35 42 L65 42 L65 55 L110 55 L110 32 L130 32 L130 20 L135 20 L135 32 L160 32 L160 55 L210 55 L210 40 L235 40 L235 55 L290 55 L290 28 L320 28 L320 55 L370 55 L370 48 L440 48 L440 55 L510 55 L510 36 L545 36 L545 55 L610 55 L610 44 L660 44 L660 55 L720 55 L720 25 L755 25 L755 55 L820 55 L820 38 L865 38 L865 55 L930 55 L930 18 L945 18 L945 8 L950 8 L950 18 L980 18 L980 55 L1040 55 L1040 34 L1080 34 L1080 55 L1130 55 L1130 45 L1200 45 L1200 100 Z" 
+            />
+            {/* Foreground architectural civic skyline (monuments, metro viaduct, contemporary buildings) */}
+            <path 
+              opacity="0.85"
+              d="M0 100 L0 68 L25 68 L25 50 L55 50 L55 68 L80 68 L80 38 L92 38 L92 24 L96 24 L96 38 L120 38 L120 68 L145 68 C155 62 170 62 180 68 L195 68 L195 44 L225 44 L225 30 L245 30 L245 44 L265 44 L265 68 L290 68 C295 64 305 64 310 68 L330 68 L345 68 L345 35 L355 35 L355 30 L395 30 L395 35 L405 35 L405 68 L390 68 L390 48 C390 42 360 42 360 48 L360 68 L345 68 L420 68 C430 60 445 60 455 68 L470 68 L470 42 L500 42 L500 68 L520 68 L520 56 L530 56 L530 68 L540 68 L540 52 L680 52 L680 68 L670 68 L670 56 L660 56 L660 68 L610 68 L610 56 L600 56 L600 68 L550 68 L550 56 L540 56 L540 68 L695 68 L695 28 L725 28 L725 68 L740 68 C750 62 765 62 775 68 L790 68 L790 48 C790 35 830 35 830 48 L830 68 L845 68 L845 36 L875 36 L875 68 L890 68 L890 22 L895 22 L895 6 L897 6 L897 22 L915 22 L915 68 L935 68 C945 60 960 60 970 68 L985 68 L985 40 L1015 40 L1015 26 L1035 26 L1035 40 L1055 40 L1055 68 L1075 68 C1085 63 1095 63 1105 68 L1120 68 L1120 48 L1160 48 L1160 68 L1200 68 L1200 100 Z" 
+            />
+          </svg>
         </div>
 
-        {/* Data Source Provenance & Action Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-2 w-full pt-0.5">
-          {/* Status Badge */}
-          {currentCity.dataSource === 'live' ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-sage-300 dark:border-sage-800 bg-sage-50 dark:bg-sage-950/80 px-2.5 py-1 text-[11px] font-medium text-sage-800 dark:text-sage-200 shadow-2xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-sage-600 animate-pulse shrink-0" />
-              <span>Live Station Feed</span>
-              <span className="font-mono text-ink-muted dark:text-stone-400 font-normal">· {currentCity.lastUpdatedText || 'Live'}</span>
+        {/* Content Layer with z-10 */}
+        <div className="relative z-10 flex flex-col gap-3">
+          {/* Station Selection Chips Strip */}
+          <div className="flex items-center gap-2 overflow-hidden w-full">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400 shrink-0">
+              Station:
             </span>
-          ) : currentCity.dataSource === 'manual' ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/80 px-2.5 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-200 shadow-2xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-amber-600 shrink-0" />
-              <span>Manual Overrides Active</span>
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 dark:border-stone-700 bg-stone-100 dark:bg-stone-800 px-2.5 py-1 text-[11px] font-medium text-ink-muted dark:text-stone-300 shadow-2xs">
-              <span className="h-1.5 w-1.5 rounded-full bg-stone-400 shrink-0" />
-              <span>Station Baseline Snapshot</span>
-            </span>
-          )}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+              {CITY_PRESETS.map((preset) => {
+                const isActive = preset.id === currentCity.id;
+                return (
+                  <button
+                    key={preset.id}
+                    onClick={() => onSelectCity(preset)}
+                    className={`rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-colors shrink-0 min-h-[32px] flex items-center ${
+                      isActive
+                        ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs'
+                        : 'bg-white/80 dark:bg-stone-800/90 text-ink-muted dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:text-ink border border-stone-200/80 dark:border-stone-700/80'
+                    }`}
+                  >
+                    {preset.name.split(' (')[0]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
-          <div className="flex items-center gap-1.5">
-            {/* Live Sync Button */}
-            {onRefreshLive && (
-              <button
-                onClick={onRefreshLive}
-                disabled={isFetchingLive}
-                className="flex items-center gap-1 rounded border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 px-2.5 py-1 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 disabled:opacity-50 transition-colors shadow-2xs min-h-[30px]"
-                title="Poll live WMO / CPCB satellite & station telemetry"
-              >
-                <RefreshCw className={`h-3 w-3 text-ink-muted dark:text-stone-400 ${isFetchingLive ? 'animate-spin text-ink' : ''}`} />
-                <span>{isFetchingLive ? 'Syncing…' : 'Sync Live'}</span>
-              </button>
+          {/* Station Identity & Weather Tagline */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 pt-1 border-t border-stone-300/40 dark:border-stone-700/40">
+            <div>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-sm sm:text-base font-bold tracking-tight text-ink dark:text-stone-100 flex items-center gap-1.5">
+                  <span>{currentCity.name}</span>
+                </h2>
+                <span className="font-mono text-[11px] text-ink-muted dark:text-stone-400">
+                  {currentCity.latitude.toFixed(2)}°N, {currentCity.longitude.toFixed(2)}°E
+                </span>
+                <span className="text-stone-300 dark:text-stone-600 hidden sm:inline">·</span>
+                <span className="font-mono text-[11px] text-ink dark:text-stone-300 font-semibold hidden sm:inline">
+                  {currentCity.temperatureC}°C · {currentCity.humidityPercent}% RH · {currentCity.windSpeedKmh} km/h {currentCity.windDirection}
+                </span>
+              </div>
+              <p className="text-xs text-ink-muted dark:text-stone-400 font-medium mt-0.5">
+                {bannerStyle.tagline}
+              </p>
+            </div>
+
+            {/* Weather / AQI Condition Badge */}
+            <div className="flex items-center gap-2 shrink-0">
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold border shadow-2xs whitespace-nowrap ${bannerStyle.badgeClass}`}>
+                {bannerStyle.icon}
+                <span>{bannerStyle.badgeLabel}</span>
+              </span>
+            </div>
+          </div>
+
+          {/* Data Source Provenance & Action Controls */}
+          <div className="flex flex-wrap items-center justify-between gap-2 w-full pt-1 border-t border-stone-300/40 dark:border-stone-700/40">
+            {/* Status Badge */}
+            {currentCity.dataSource === 'live' ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-sage-300 dark:border-sage-800 bg-white/90 dark:bg-stone-900/90 px-2.5 py-1 text-[11px] font-medium text-sage-800 dark:text-sage-200 shadow-2xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-sage-600 animate-pulse shrink-0" />
+                <span>Live Station Feed</span>
+                <span className="font-mono text-ink-muted dark:text-stone-400 font-normal">· {currentCity.lastUpdatedText || 'Live'}</span>
+              </span>
+            ) : currentCity.dataSource === 'manual' ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 dark:border-amber-800 bg-white/90 dark:bg-stone-900/90 px-2.5 py-1 text-[11px] font-medium text-amber-800 dark:text-amber-200 shadow-2xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-amber-600 shrink-0" />
+                <span>Manual Overrides Active</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 dark:border-stone-700 bg-white/90 dark:bg-stone-900/90 px-2.5 py-1 text-[11px] font-medium text-ink-muted dark:text-stone-300 shadow-2xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-stone-400 shrink-0" />
+                <span>Station Baseline Snapshot</span>
+              </span>
             )}
 
-            <button
-              onClick={() => setShowCustomInputs(!showCustomInputs)}
-              className="flex items-center gap-1 rounded border border-stone-300 dark:border-stone-700 bg-stone-50 dark:bg-stone-800 px-2.5 py-1 text-[11px] font-medium text-ink-muted dark:text-stone-300 hover:text-ink hover:bg-stone-100 transition-colors min-h-[30px]"
-            >
-              <Sliders className="h-3 w-3" />
-              <span>{showCustomInputs ? 'Hide Overrides' : 'Overrides'}</span>
-            </button>
+            <div className="flex items-center gap-1.5">
+              {/* Live Sync Button */}
+              {onRefreshLive && (
+                <button
+                  onClick={onRefreshLive}
+                  disabled={isFetchingLive}
+                  className="flex items-center gap-1 rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 px-2.5 py-1 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 disabled:opacity-50 transition-colors shadow-2xs min-h-[30px]"
+                  title="Poll live WMO / CPCB satellite & station telemetry"
+                >
+                  <RefreshCw className={`h-3 w-3 text-ink-muted dark:text-stone-400 ${isFetchingLive ? 'animate-spin text-ink' : ''}`} />
+                  <span>{isFetchingLive ? 'Syncing…' : 'Sync Live'}</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => setShowCustomInputs(!showCustomInputs)}
+                className="flex items-center gap-1 rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 px-2.5 py-1 text-[11px] font-medium text-ink-muted dark:text-stone-300 hover:text-ink hover:bg-stone-100 transition-colors min-h-[30px]"
+              >
+                <Sliders className="h-3 w-3" />
+                <span>{showCustomInputs ? 'Hide Overrides' : 'Overrides'}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
