@@ -93,54 +93,72 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           </div>
         </div>
 
-        <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+        <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
           {profile.members.map((member, idx) => (
             <div
               key={member.id}
-              className="flex items-center justify-between gap-2 rounded border border-stone-200 bg-stone-50/70 p-2 text-xs"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded border border-stone-200 dark:border-stone-700 bg-stone-50/70 dark:bg-stone-800/60 p-2.5 sm:p-2 text-xs"
             >
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-ink">
-                  #{idx + 1} {member.role}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => toggleMemberSensitivity(member.id)}
-                  className={`flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
-                    member.hasRespiratorySensitivity
-                      ? 'border border-terracotta-300 bg-terracotta-50 text-terracotta-700 font-bold'
-                      : 'border border-stone-200 bg-white text-ink-muted hover:text-ink'
-                  }`}
-                  title="Toggle Asthma / Bronchitis / Allergy sensitivity"
-                >
-                  <HeartPulse className="h-3 w-3" />
-                  <span>{member.hasRespiratorySensitivity ? 'Respiratory Sensitivity' : 'Normal'}</span>
-                </button>
-              </div>
+              {/* Row 1 on mobile: Member Role + Sensitivity Badge + Delete (on mobile) */}
+              <div className="flex items-center justify-between sm:justify-start gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-ink dark:text-stone-200">
+                    #{idx + 1} {member.role}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => toggleMemberSensitivity(member.id)}
+                    className={`flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-medium transition-colors min-h-[26px] ${
+                      member.hasRespiratorySensitivity
+                        ? 'border border-terracotta-300 bg-terracotta-50 text-terracotta-700 dark:bg-terracotta-950/70 dark:text-terracotta-300 dark:border-terracotta-800 font-bold'
+                        : 'border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 text-ink-muted dark:text-stone-400 hover:text-ink'
+                    }`}
+                    title="Toggle Asthma / Bronchitis / Allergy sensitivity"
+                  >
+                    <HeartPulse className="h-3 w-3 shrink-0" />
+                    <span>{member.hasRespiratorySensitivity ? 'Sensitive' : 'Normal'}</span>
+                  </button>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] text-ink-muted">
-                  {member.hoursOutdoorsPerDay}h out
-                </span>
-                <input
-                  type="range"
-                  min="0"
-                  max="8"
-                  value={member.hoursOutdoorsPerDay}
-                  onChange={(e) => updateMemberOutdoorHours(member.id, Number(e.target.value))}
-                  className="w-14 accent-ink"
-                  title="Hours outdoors per day"
-                />
+                {/* Mobile-only trash icon aligned to right */}
                 {profile.members.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeMember(member.id)}
-                    className="text-stone-400 hover:text-terracotta-600 p-0.5"
+                    className="sm:hidden text-stone-400 hover:text-terracotta-600 p-1 min-h-[30px] min-w-[30px] flex items-center justify-center"
                     title="Remove member"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 )}
+              </div>
+
+              {/* Row 2 on mobile: Outdoors Slider with Clear Label */}
+              <div className="flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0 border-t sm:border-0 border-stone-200/60 dark:border-stone-700/60">
+                <span className="text-[11px] text-ink-muted dark:text-stone-400 font-mono">
+                  Outdoor: <strong>{member.hoursOutdoorsPerDay}h</strong>
+                </span>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="range"
+                    min="0"
+                    max="8"
+                    value={member.hoursOutdoorsPerDay}
+                    onChange={(e) => updateMemberOutdoorHours(member.id, Number(e.target.value))}
+                    className="w-24 sm:w-16 accent-ink"
+                    title="Hours outdoors per day"
+                  />
+                  {profile.members.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeMember(member.id)}
+                      className="hidden sm:inline-flex text-stone-400 hover:text-terracotta-600 p-0.5"
+                      title="Remove member"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

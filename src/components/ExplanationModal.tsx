@@ -10,23 +10,23 @@ export const ExplanationModal: React.FC<ExplanationModalProps> = ({ isOpen, onCl
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-      <div className="relative w-full max-w-2xl rounded-lg border border-stone-300 bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between border-b border-stone-200 pb-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs">
+      <div className="relative w-full max-w-2xl rounded-lg border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 sm:p-6 shadow-xl max-h-[92vh] overflow-y-auto">
+        <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3 sm:pb-4">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-sage-600" />
+            <ShieldCheck className="h-5 w-5 text-sage-600 dark:text-sage-400 shrink-0" />
             <div>
-              <h3 className="text-base font-bold text-ink">
+              <h3 className="text-sm sm:text-base font-bold text-ink dark:text-stone-100">
                 Deterministic Environmental Math Engine
               </h3>
-              <p className="text-xs text-ink-muted">
+              <p className="text-[11px] sm:text-xs text-ink-muted dark:text-stone-400">
                 Zero-hallucination physics & clinical inhalation exposure calculations.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded p-1 text-stone-400 hover:text-ink hover:bg-stone-100"
+            className="rounded p-1 text-stone-400 hover:text-ink hover:bg-stone-100 dark:hover:bg-stone-800 min-h-[32px] min-w-[32px] flex items-center justify-center"
           >
             <X className="h-5 w-5" />
           </button>

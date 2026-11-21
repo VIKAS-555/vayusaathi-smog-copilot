@@ -61,14 +61,54 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
         </div>
       </div>
 
-      {/* Clean Single-Row Editorial Tab Navigation (No Circular Badges, Simple Underline) */}
-      <div className="flex border-b border-stone-200 gap-6 sm:gap-8 overflow-x-auto">
+      {/* Responsive Tab Navigation: Clean 3-Segmented Bar on Mobile, Underline on Desktop */}
+      {/* Mobile Segmented Control (<sm) */}
+      <div className="grid grid-cols-3 gap-1 p-1 bg-stone-100 dark:bg-stone-800/90 rounded-lg text-center sm:hidden mb-4">
+        <button
+          onClick={() => setActiveTab('routine')}
+          className={`py-2 px-1 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all flex flex-col items-center justify-center gap-0.5 min-h-[42px] ${
+            activeTab === 'routine'
+              ? 'bg-white dark:bg-stone-900 text-ink dark:text-stone-100 shadow-2xs'
+              : 'text-ink-muted dark:text-stone-400 hover:text-ink'
+          }`}
+        >
+          <Clock className="h-3.5 w-3.5 shrink-0" />
+          <span>Routine</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('iaq')}
+          className={`py-2 px-1 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all flex flex-col items-center justify-center gap-0.5 min-h-[42px] ${
+            activeTab === 'iaq'
+              ? 'bg-white dark:bg-stone-900 text-ink dark:text-stone-100 shadow-2xs'
+              : 'text-ink-muted dark:text-stone-400 hover:text-ink'
+          }`}
+        >
+          <Wrench className="h-3.5 w-3.5 shrink-0" />
+          <span>Hacks ({iaqAdoptedCount})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('sustainable')}
+          className={`py-2 px-1 text-[11px] font-bold uppercase tracking-wider rounded-md transition-all flex flex-col items-center justify-center gap-0.5 min-h-[42px] ${
+            activeTab === 'sustainable'
+              ? 'bg-white dark:bg-stone-900 text-ink dark:text-stone-100 shadow-2xs'
+              : 'text-ink-muted dark:text-stone-400 hover:text-ink'
+          }`}
+        >
+          <Leaf className="h-3.5 w-3.5 shrink-0" />
+          <span>Swaps ({sustainableAdoptedCount})</span>
+        </button>
+      </div>
+
+      {/* Desktop Single-Row Editorial Tabs (>=sm) */}
+      <div className="hidden sm:flex border-b border-stone-200 dark:border-stone-800 gap-6 sm:gap-8 overflow-x-auto">
         <button
           onClick={() => setActiveTab('routine')}
           className={`pb-3 text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === 'routine'
-              ? 'text-ink font-bold border-ink'
-              : 'text-ink-muted hover:text-ink font-medium border-transparent'
+              ? 'text-ink dark:text-stone-100 font-bold border-ink dark:border-stone-100'
+              : 'text-ink-muted dark:text-stone-400 hover:text-ink font-medium border-transparent'
           }`}
         >
           <Clock className="h-3.5 w-3.5" />
@@ -79,13 +119,13 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
           onClick={() => setActiveTab('iaq')}
           className={`pb-3 text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === 'iaq'
-              ? 'text-ink font-bold border-ink'
-              : 'text-ink-muted hover:text-ink font-medium border-transparent'
+              ? 'text-ink dark:text-stone-100 font-bold border-ink dark:border-stone-100'
+              : 'text-ink-muted dark:text-stone-400 hover:text-ink font-medium border-transparent'
           }`}
         >
           <Wrench className="h-3.5 w-3.5" />
           <span>Indoor Air Quality Hacks</span>
-          <span className="font-mono text-[11px] text-ink-muted font-normal">
+          <span className="font-mono text-[11px] text-ink-muted dark:text-stone-400 font-normal">
             ({iaqAdoptedCount}/{iaqHacks.length})
           </span>
         </button>
@@ -94,13 +134,13 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
           onClick={() => setActiveTab('sustainable')}
           className={`pb-3 text-xs uppercase tracking-wider whitespace-nowrap transition-all border-b-2 flex items-center gap-1.5 ${
             activeTab === 'sustainable'
-              ? 'text-ink font-bold border-ink'
-              : 'text-ink-muted hover:text-ink font-medium border-transparent'
+              ? 'text-ink dark:text-stone-100 font-bold border-ink dark:border-stone-100'
+              : 'text-ink-muted dark:text-stone-400 hover:text-ink font-medium border-transparent'
           }`}
         >
           <Leaf className="h-3.5 w-3.5" />
           <span>Sustainable Alternatives</span>
-          <span className="font-mono text-[11px] text-ink-muted font-normal">
+          <span className="font-mono text-[11px] text-ink-muted dark:text-stone-400 font-normal">
             ({sustainableAdoptedCount}/{sustainableActions.length})
           </span>
         </button>
@@ -122,16 +162,39 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                 <div key={index} className="py-3.5 grid grid-cols-1 md:grid-cols-12 gap-3 text-xs items-start">
                   {/* Time & Phase Badge with Quiet Line Icons */}
                   <div className="md:col-span-3">
-                    <span className="font-mono text-sm font-bold text-ink block">
-                      {slot.timeWindow}
-                    </span>
+                    <div className="flex items-center justify-between md:block">
+                      <span className="font-mono text-sm font-bold text-ink dark:text-stone-100 block">
+                        {slot.timeWindow}
+                      </span>
+
+                      {/* Mobile Window Guidance Badge (shows right beside time on phone screens) */}
+                      <span
+                        className={`md:hidden rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1 ${
+                          isVentilationAction
+                            ? 'border border-sage-300 bg-sage-50 text-sage-800 dark:bg-sage-950/80 dark:text-sage-200 dark:border-sage-700'
+                            : isSealAction
+                            ? 'border border-terracotta-200 bg-terracotta-50 text-terracotta-800 dark:bg-terracotta-950/80 dark:text-terracotta-200 dark:border-terracotta-800'
+                            : 'border border-stone-200 bg-stone-100 text-ink-muted dark:bg-stone-800 dark:text-stone-300'
+                        }`}
+                      >
+                        {isVentilationAction ? (
+                          <Wind className="h-3 w-3 text-sage-700 shrink-0" />
+                        ) : isSealAction ? (
+                          <Lock className="h-3 w-3 text-terracotta-700 shrink-0" />
+                        ) : (
+                          <Shield className="h-3 w-3 text-stone-500 shrink-0" />
+                        )}
+                        <span>{slot.windowAction}</span>
+                      </span>
+                    </div>
+
                     <span
                       className={`inline-flex items-center gap-1 mt-1 rounded px-2 py-0.5 text-[10px] font-semibold uppercase ${
                         isVentilationAction
-                          ? 'bg-sage-100 text-sage-800'
+                          ? 'bg-sage-100 text-sage-800 dark:bg-sage-950/60 dark:text-sage-300'
                           : isSealAction
-                          ? 'bg-terracotta-100 text-terracotta-800'
-                          : 'bg-stone-200 text-ink-muted'
+                          ? 'bg-terracotta-100 text-terracotta-800 dark:bg-terracotta-950/60 dark:text-terracotta-300'
+                          : 'bg-stone-200 text-ink-muted dark:bg-stone-800 dark:text-stone-400'
                       }`}
                     >
                       {slot.phase.includes('Smog Peak') ? (
@@ -151,32 +214,32 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
 
                   {/* Operational Recommendations with Clean Alignment */}
                   <div className="md:col-span-6 space-y-2">
-                    <p className="text-ink font-medium leading-relaxed">
+                    <p className="text-ink dark:text-stone-200 font-medium leading-relaxed">
                       {slot.recommendation}
                     </p>
 
                     <div className="flex flex-col sm:grid sm:grid-cols-[105px_1fr] gap-1 sm:gap-2 text-[11px] items-baseline">
-                      <span className="font-semibold text-ink">Transit/Outdoor:</span>
-                      <span className="text-ink-muted leading-relaxed">{slot.commuteOrOutdoorGuidance}</span>
+                      <span className="font-semibold text-ink dark:text-stone-300">Transit/Outdoor:</span>
+                      <span className="text-ink-muted dark:text-stone-400 leading-relaxed">{slot.commuteOrOutdoorGuidance}</span>
                     </div>
 
                     {slot.vulnerableCareNote && (
-                      <div className="flex flex-col sm:grid sm:grid-cols-[105px_1fr] gap-1 sm:gap-2 text-[11px] items-baseline rounded bg-stone-50 border border-stone-200 p-2.5">
-                        <span className="font-semibold text-ink">Vulnerable Care:</span>
-                        <span className="text-ink-muted leading-relaxed">{slot.vulnerableCareNote}</span>
+                      <div className="flex flex-col sm:grid sm:grid-cols-[105px_1fr] gap-1 sm:gap-2 text-[11px] items-baseline rounded bg-stone-50 dark:bg-stone-900/60 border border-stone-200 dark:border-stone-800 p-2.5">
+                        <span className="font-semibold text-ink dark:text-stone-300">Vulnerable Care:</span>
+                        <span className="text-ink-muted dark:text-stone-400 leading-relaxed">{slot.vulnerableCareNote}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Window Guidance Action with Strict Crisp Line Icons (Zero Emojis) */}
-                  <div className="md:col-span-3 flex md:justify-end items-start">
+                  {/* Window Guidance Action: Desktop Only (Rendered Beside Time on Mobile) */}
+                  <div className="hidden md:flex md:col-span-3 md:justify-end items-start">
                     <span
                       className={`rounded px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5 ${
                         isVentilationAction
-                          ? 'border border-sage-300 bg-sage-50 text-sage-800'
+                          ? 'border border-sage-300 bg-sage-50 text-sage-800 dark:bg-sage-950/80 dark:text-sage-200 dark:border-sage-700'
                           : isSealAction
-                          ? 'border border-terracotta-200 bg-terracotta-50 text-terracotta-800'
-                          : 'border border-stone-200 bg-stone-100 text-ink-muted'
+                          ? 'border border-terracotta-200 bg-terracotta-50 text-terracotta-800 dark:bg-terracotta-950/80 dark:text-terracotta-200 dark:border-terracotta-800'
+                          : 'border border-stone-200 bg-stone-100 text-ink-muted dark:bg-stone-800 dark:text-stone-300'
                       }`}
                     >
                       {isVentilationAction ? (
@@ -255,27 +318,27 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       </h4>
                     </div>
 
-                    {/* True Tactile Interactive Toggle Switch */}
+                    {/* True Tactile Interactive Toggle Switch: Full-Width Mobile Touch Row, Inline on Desktop */}
                     <div
                       onClick={() => onToggleAction(hack.id)}
-                      className="flex items-center gap-2.5 cursor-pointer select-none py-1 px-2 rounded hover:bg-stone-100/60 transition-colors"
+                      className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 cursor-pointer select-none py-2 px-3 sm:py-1 sm:px-2 rounded-lg bg-stone-100/70 dark:bg-stone-800/60 sm:bg-transparent mt-2.5 sm:mt-0 min-h-[44px] transition-colors"
                       role="switch"
                       aria-checked={isAdopted}
                       title={isAdopted ? 'Click to deactivate habit' : 'Click to adopt habit'}
                     >
-                      <div className="text-right">
-                        <span className={`block text-[11px] font-bold uppercase tracking-wider ${isAdopted ? 'text-sage-700' : 'text-ink-muted'}`}>
+                      <div className="text-left sm:text-right">
+                        <span className={`block text-[11px] font-bold uppercase tracking-wider ${isAdopted ? 'text-sage-700 dark:text-sage-400' : 'text-ink-muted dark:text-stone-400'}`}>
                           {isAdopted ? 'Active' : 'Off'}
                         </span>
-                        <span className="block text-[10px] text-ink-muted">
-                          {isAdopted ? 'Habit Adopted' : 'Click to Adopt'}
+                        <span className="block text-[10px] text-ink-muted dark:text-stone-400">
+                          {isAdopted ? 'Habit Adopted' : 'Tap to Adopt'}
                         </span>
                       </div>
 
                       <button
                         type="button"
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          isAdopted ? 'bg-sage-600' : 'bg-stone-300'
+                          isAdopted ? 'bg-sage-600 dark:bg-sage-500' : 'bg-stone-300 dark:bg-stone-600'
                         }`}
                       >
                         <span
@@ -367,27 +430,27 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
                       </h4>
                     </div>
 
-                    {/* True Tactile Interactive Toggle Switch */}
+                    {/* True Tactile Interactive Toggle Switch: Full-Width Mobile Touch Row, Inline on Desktop */}
                     <div
                       onClick={() => onToggleAction(action.id)}
-                      className="flex items-center gap-2.5 cursor-pointer select-none py-1 px-2 rounded hover:bg-stone-100/60 transition-colors"
+                      className="w-full sm:w-auto flex items-center justify-between sm:justify-end gap-3 cursor-pointer select-none py-2 px-3 sm:py-1 sm:px-2 rounded-lg bg-stone-100/70 dark:bg-stone-800/60 sm:bg-transparent mt-2.5 sm:mt-0 min-h-[44px] transition-colors"
                       role="switch"
                       aria-checked={isAdopted}
                       title={isAdopted ? 'Click to deactivate policy' : 'Click to adopt policy'}
                     >
-                      <div className="text-right">
-                        <span className={`block text-[11px] font-bold uppercase tracking-wider ${isAdopted ? 'text-sage-700' : 'text-ink-muted'}`}>
+                      <div className="text-left sm:text-right">
+                        <span className={`block text-[11px] font-bold uppercase tracking-wider ${isAdopted ? 'text-sage-700 dark:text-sage-400' : 'text-ink-muted dark:text-stone-400'}`}>
                           {isAdopted ? 'Active' : 'Off'}
                         </span>
-                        <span className="block text-[10px] text-ink-muted">
-                          {isAdopted ? 'Policy Adopted' : 'Click to Adopt'}
+                        <span className="block text-[10px] text-ink-muted dark:text-stone-400">
+                          {isAdopted ? 'Policy Adopted' : 'Tap to Adopt'}
                         </span>
                       </div>
 
                       <button
                         type="button"
                         className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                          isAdopted ? 'bg-sage-600' : 'bg-stone-300'
+                          isAdopted ? 'bg-sage-600 dark:bg-sage-500' : 'bg-stone-300 dark:bg-stone-600'
                         }`}
                       >
                         <span

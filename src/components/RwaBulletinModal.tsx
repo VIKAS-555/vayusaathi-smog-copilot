@@ -81,59 +81,59 @@ When ${impact.communityFamiliesCount} families in our complex practice these eas
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-      <div className="relative w-full max-w-2xl rounded-lg border border-stone-300 bg-white p-6 shadow-xl max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs">
+      <div className="relative w-full max-w-2xl rounded-lg border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900 p-4 sm:p-6 shadow-xl max-h-[92vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-stone-200 pb-4">
+        <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3 sm:pb-4">
           <div className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-sage-600" />
+            <MessageSquare className="h-5 w-5 text-sage-600 dark:text-sage-400 shrink-0" />
             <div>
-              <h3 className="text-base font-bold text-ink">
-                RWA / Society WhatsApp Advisory Bulletin
+              <h3 className="text-sm sm:text-base font-bold text-ink dark:text-stone-100">
+                RWA / Society WhatsApp Advisory
               </h3>
-              <p className="text-xs text-ink-muted">
-                Pre-formatted for your apartment society or neighborhood WhatsApp group.
+              <p className="text-[11px] sm:text-xs text-ink-muted dark:text-stone-400">
+                Pre-formatted for your apartment society or neighborhood group.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded p-1 text-stone-400 hover:text-ink hover:bg-stone-100"
+            className="rounded p-1 text-stone-400 hover:text-ink hover:bg-stone-100 dark:hover:bg-stone-800 min-h-[32px] min-w-[32px] flex items-center justify-center"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Content Box */}
-        <div className="mt-4 flex-1 overflow-y-auto rounded border border-stone-200 bg-stone-50 p-4 font-mono text-xs leading-relaxed text-ink whitespace-pre-wrap select-all">
+        <div className="mt-3.5 flex-1 overflow-y-auto rounded border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-950/70 p-3.5 font-mono text-xs leading-relaxed text-ink dark:text-stone-200 whitespace-pre-wrap select-all">
           {bulletinText}
         </div>
 
         {/* Footer Actions */}
-        <div className="mt-4 flex items-center justify-between border-t border-stone-200 pt-4">
-          <span className="text-xs text-ink-muted">
+        <div className="mt-3.5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 border-t border-stone-200 dark:border-stone-800 pt-3">
+          <span className="text-[11px] text-ink-muted dark:text-stone-400">
             Formatted with WhatsApp bolding (*text*) and clear emojis.
           </span>
-          <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2">
             <button
               onClick={onClose}
-              className="rounded border border-stone-300 bg-white px-3 py-1.5 text-xs font-semibold text-ink hover:bg-stone-100"
+              className="rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 px-3 py-2 text-xs font-semibold text-ink dark:text-stone-200 hover:bg-stone-100 min-h-[38px] flex items-center justify-center"
             >
               Close
             </button>
             <button
               onClick={handleCopy}
-              className="flex items-center gap-1.5 rounded border border-sage-600 bg-sage-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-sage-700 transition-colors shadow-xs"
+              className="flex items-center justify-center gap-1.5 rounded border border-sage-600 bg-sage-600 px-3 sm:px-4 py-2 text-xs font-semibold text-white hover:bg-sage-700 transition-colors shadow-xs min-h-[38px]"
             >
               {copied ? (
                 <>
                   <Check className="h-4 w-4" />
-                  <span>Copied to Clipboard!</span>
+                  <span>Copied!</span>
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4" />
-                  <span>Copy WhatsApp Text</span>
+                  <span>Copy Text</span>
                 </>
               )}
             </button>

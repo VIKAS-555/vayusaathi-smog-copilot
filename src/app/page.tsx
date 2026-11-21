@@ -177,7 +177,7 @@ export default function Home() {
   const isHazardous = currentCity.currentAQI >= 400;
 
   return (
-    <main className="min-h-screen bg-stone-100 flex flex-col font-sans">
+    <main className="min-h-screen bg-stone-100 flex flex-col font-sans overflow-x-hidden">
       {/* Top Masthead */}
       <Masthead
         aqiCategory={currentCity.aqiCategory}
