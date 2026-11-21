@@ -129,11 +129,11 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
     sub: string;
     icon: React.ReactNode;
   }[] = [
-    { id: 'solo-petrol-car', label: 'Solo Car', sub: 'AC Recirc', icon: <Car className="h-4 w-4" /> },
-    { id: 'metro-public-transit', label: 'Metro / Transit', sub: 'Filtered Rail', icon: <Train className="h-4 w-4" /> },
-    { id: 'two-wheeler', label: 'Two-Wheeler / Auto', sub: 'Direct Exposure', icon: <Bike className="h-4 w-4" /> },
-    { id: 'carpool-cab', label: 'Shared Cab', sub: 'Carpool', icon: <Users className="h-4 w-4" /> },
-    { id: 'work-from-home', label: 'WFH / Walk', sub: 'Zero Transit', icon: <Laptop className="h-4 w-4" /> },
+    { id: 'solo-petrol-car', label: 'Solo Car', sub: 'AC recirculation', icon: <Car className="h-4 w-4" /> },
+    { id: 'metro-public-transit', label: 'Metro / Rail', sub: 'Filtered transit', icon: <Train className="h-4 w-4" /> },
+    { id: 'two-wheeler', label: 'Two-Wheeler', sub: 'Direct road exposure', icon: <Bike className="h-4 w-4" /> },
+    { id: 'carpool-cab', label: 'Shared Cab', sub: 'Carpool cabin', icon: <Users className="h-4 w-4" /> },
+    { id: 'work-from-home', label: 'WFH / Walk', sub: 'Zero daily commute', icon: <Laptop className="h-4 w-4" /> },
   ];
 
   // Commute Exposure Profiles (PM2.5 filtration vs tailpipe intake)
@@ -539,30 +539,47 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           </span>
         </div>
 
-        {/* Tactile Commute Option Tiles */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
-          {COMMUTE_OPTIONS.map((opt) => {
+        {/* Balanced 2-Column Grid of Horizontal Commute Mode Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {COMMUTE_OPTIONS.map((opt, idx) => {
             const isSelected = profile.commuteMode === opt.id;
+            const isLast = idx === COMMUTE_OPTIONS.length - 1;
             return (
               <button
                 key={opt.id}
                 type="button"
                 onClick={() => onChangeProfile({ ...profile, commuteMode: opt.id })}
-                className={`rounded-xl p-2 sm:p-2.5 border text-center transition-all flex flex-col items-center justify-between min-h-[62px] ${
+                className={`text-left rounded-xl p-2.5 sm:p-3 border transition-all flex items-center justify-between min-h-[52px] ${
+                  isLast ? 'sm:col-span-2' : ''
+                } ${
                   isSelected
-                    ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] shadow-xs ring-1 ring-ink/10 dark:ring-[#E6E2D6]/40'
+                    ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-sm'
                     : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
                 }`}
               >
-                <div className="flex items-center gap-1.5 text-[11px] font-bold leading-tight">
-                  {opt.icon}
-                  <span>{opt.label}</span>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className={`p-1.5 rounded-lg shrink-0 ${
+                    isSelected
+                      ? 'bg-white/20 text-white dark:bg-white/10 dark:text-stone-200 dark:border dark:border-white/20'
+                      : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
+                  }`}>
+                    {opt.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-xs leading-snug truncate">
+                      {opt.label}
+                    </div>
+                    <div className={`text-[10px] font-mono mt-0.5 truncate ${
+                      isSelected ? 'text-stone-300 dark:text-stone-300' : 'text-ink-muted dark:text-stone-400'
+                    }`}>
+                      {opt.sub}
+                    </div>
+                  </div>
                 </div>
-                <span className={`text-[9.5px] font-mono mt-1 ${
-                  isSelected ? 'text-stone-300 dark:text-stone-300 font-semibold' : 'text-ink-muted dark:text-stone-400'
-                }`}>
-                  {opt.sub}
-                </span>
+
+                {isSelected && (
+                  <Check className="h-3.5 w-3.5 shrink-0 text-white dark:text-stone-200 ml-2" />
+                )}
               </button>
             );
           })}
