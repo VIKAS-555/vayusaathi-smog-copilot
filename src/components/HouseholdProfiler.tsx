@@ -232,7 +232,17 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
   // Badge Style Helper
   const getBadgeClasses = (style: 'safe' | 'warning' | 'alert' | 'neutral', isSelected: boolean) => {
     if (isSelected) {
-      return 'bg-white/20 text-white border-white/30';
+      switch (style) {
+        case 'alert':
+          return 'bg-white/20 text-white border-white/30 dark:bg-rose-950/80 dark:text-rose-200 dark:border-rose-700/80';
+        case 'safe':
+          return 'bg-white/20 text-white border-white/30 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-700/80';
+        case 'warning':
+          return 'bg-white/20 text-white border-white/30 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-700/80';
+        case 'neutral':
+        default:
+          return 'bg-white/20 text-white border-white/30 dark:bg-stone-800 dark:text-stone-200 dark:border-stone-600';
+      }
     }
     switch (style) {
       case 'alert':
@@ -403,7 +413,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 onClick={() => onChangeProfile({ ...profile, homeType: opt.id })}
                 className={`text-left rounded-xl p-2.5 sm:p-3 border transition-all flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-sm'
+                    ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-sm'
                     : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
                 }`}
               >
@@ -411,7 +421,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                   <div className="flex items-center gap-2">
                     <div className={`p-1 rounded-md ${
                       isSelected
-                        ? 'bg-white/20 text-white dark:bg-stone-900/20 dark:text-stone-900'
+                        ? 'bg-white/20 text-white dark:bg-white/10 dark:text-stone-200 dark:border dark:border-white/20'
                         : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
                     }`}>
                       {opt.icon}
@@ -421,14 +431,14 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                         {opt.title}
                       </div>
                       <div className={`text-[10px] font-mono ${
-                        isSelected ? 'text-stone-300 dark:text-stone-600' : 'text-ink-muted dark:text-stone-400'
+                        isSelected ? 'text-stone-300 dark:text-stone-300' : 'text-ink-muted dark:text-stone-400'
                       }`}>
                         {opt.sub}
                       </div>
                     </div>
                   </div>
                   {isSelected && (
-                    <Check className="h-3.5 w-3.5 shrink-0" />
+                    <Check className="h-3.5 w-3.5 shrink-0 text-white dark:text-stone-200" />
                   )}
                 </div>
 
@@ -506,7 +516,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 onClick={() => onChangeProfile({ ...profile, purifierStatus: item.id as PurifierStatus })}
                 className={`rounded-lg border px-2 py-2 text-center text-xs font-semibold transition-all ${
                   isSelected
-                    ? 'border-ink bg-ink text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900 shadow-xs'
+                    ? 'border-ink bg-ink text-white dark:bg-[#242926] dark:text-stone-100 dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-xs'
                     : 'border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 text-ink-muted dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 hover:text-ink'
                 }`}
               >
@@ -540,7 +550,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 onClick={() => onChangeProfile({ ...profile, commuteMode: opt.id })}
                 className={`rounded-xl p-2 sm:p-2.5 border text-center transition-all flex flex-col items-center justify-between min-h-[62px] ${
                   isSelected
-                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-xs ring-1 ring-ink/10 dark:ring-stone-100/20'
+                    ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] shadow-xs ring-1 ring-ink/10 dark:ring-[#E6E2D6]/40'
                     : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
                 }`}
               >
@@ -549,7 +559,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                   <span>{opt.label}</span>
                 </div>
                 <span className={`text-[9.5px] font-mono mt-1 ${
-                  isSelected ? 'text-stone-300 dark:text-stone-600 font-semibold' : 'text-ink-muted dark:text-stone-400'
+                  isSelected ? 'text-stone-300 dark:text-stone-300 font-semibold' : 'text-ink-muted dark:text-stone-400'
                 }`}>
                   {opt.sub}
                 </span>
@@ -635,7 +645,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                   onClick={() => onChangeProfile({ ...profile, dailyCommuteKm: p.km })}
                   className={`text-[10.5px] px-2 py-0.5 rounded-lg border transition-all font-mono ${
                     isActive
-                      ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 font-bold shadow-2xs'
+                      ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 font-bold shadow-2xs'
                       : 'bg-white dark:bg-stone-900/90 text-ink-muted dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-stone-400 dark:hover:border-stone-500 font-medium'
                   }`}
                 >
@@ -678,14 +688,14 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 onClick={() => onChangeProfile({ ...profile, outdoorExerciseTime: opt.id })}
                 className={`text-left rounded-xl p-2.5 sm:p-3 border transition-all flex items-center justify-between ${
                   isSelected
-                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-sm'
+                    ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-sm'
                     : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <div className={`p-1.5 rounded-lg ${
                     isSelected
-                      ? 'bg-white/20 text-white dark:bg-stone-900/20 dark:text-stone-900'
+                      ? 'bg-white/20 text-white dark:bg-white/10 dark:text-stone-200 dark:border dark:border-white/20'
                       : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
                   }`}>
                     {opt.icon}
@@ -695,7 +705,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                       {opt.label}
                     </div>
                     <div className={`text-[10px] font-mono ${
-                      isSelected ? 'text-stone-300 dark:text-stone-600' : 'text-ink-muted dark:text-stone-400'
+                      isSelected ? 'text-stone-300 dark:text-stone-300' : 'text-ink-muted dark:text-stone-400'
                     }`}>
                       {opt.time}
                     </div>
@@ -710,7 +720,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                     {opt.badge}
                   </span>
                   {isSelected && (
-                    <Check className="h-3.5 w-3.5 shrink-0" />
+                    <Check className="h-3.5 w-3.5 shrink-0 text-white dark:text-stone-200" />
                   )}
                 </div>
               </button>
