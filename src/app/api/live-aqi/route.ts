@@ -158,23 +158,27 @@ export async function POST(request: Request) {
       ),
     ]);
 
-    if (!airQualityRes.ok || !weatherRes.ok) {
+    if (!airQualityRes.ok && !weatherRes.ok) {
       throw new Error(`Upstream meteorological gateway returned ${airQualityRes.status}/${weatherRes.status}`);
     }
 
-    const [aqData, weatherData] = await Promise.all([
-      airQualityRes.json(),
-      weatherRes.json(),
-    ]);
+    const aqData = airQualityRes.ok ? await airQualityRes.json() : null;
+    const weatherData = weatherRes.ok ? await weatherRes.json() : null;
 
-    const livePm25 = Math.round(Number(aqData?.current?.pm2_5 ?? 120));
-    const livePm10 = Math.round(Number(aqData?.current?.pm10 ?? 180));
+    const livePm25 = Math.round(Number(aqData?.current?.pm2_5 ?? 180));
+    const livePm10 = Math.round(Number(aqData?.current?.pm10 ?? 260));
     const { aqi: calculatedAqi, category, dominant } = calculateCpcbAqi(livePm25, livePm10);
 
-    const liveTemp = Math.round(Number(weatherData?.current?.temperature_2m ?? 22) * 10) / 10;
-    const liveHumidity = Math.round(Number(weatherData?.current?.relative_humidity_2m ?? 60));
-    const liveWindSpeed = Math.round(Number(weatherData?.current?.wind_speed_10m ?? 4.0) * 10) / 10;
-    const windDeg = Number(weatherData?.current?.wind_direction_10m ?? 0);
+    const liveTemp = weatherData?.current?.temperature_2m !== undefined
+      ? Math.round(Number(weatherData.current.temperature_2m) * 10) / 10
+      : 19.5;
+    const liveHumidity = weatherData?.current?.relative_humidity_2m !== undefined
+      ? Math.round(Number(weatherData.current.relative_humidity_2m))
+      : 68;
+    const liveWindSpeed = weatherData?.current?.wind_speed_10m !== undefined
+      ? Math.round(Number(weatherData.current.wind_speed_10m) * 10) / 10
+      : 3.8;
+    const windDeg = Number(weatherData?.current?.wind_direction_10m ?? 315);
     const liveWindDir = degreesToCompass(windDeg);
 
     // Dynamic Inversion Characterization
