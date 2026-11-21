@@ -216,7 +216,8 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               max="500"
               value={currentCity.currentAQI}
               onChange={(e) => onCustomUpdate?.({ currentAQI: Number(e.target.value) })}
-              className="w-full accent-ink"
+              className="editorial-slider w-full mt-1.5"
+              style={{ '--slider-pct': `${Math.min(100, Math.max(0, ((currentCity.currentAQI - 30) / (500 - 30)) * 100))}%` } as React.CSSProperties}
             />
           </div>
           <div>
@@ -229,7 +230,8 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               max="450"
               value={currentCity.pm25}
               onChange={(e) => onCustomUpdate?.({ pm25: Number(e.target.value) })}
-              className="w-full accent-ink"
+              className="editorial-slider w-full mt-1.5"
+              style={{ '--slider-pct': `${Math.min(100, Math.max(0, ((currentCity.pm25 - 15) / (450 - 15)) * 100))}%` } as React.CSSProperties}
             />
           </div>
           <div>
@@ -243,7 +245,8 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               step="0.5"
               value={currentCity.windSpeedKmh}
               onChange={(e) => onCustomUpdate?.({ windSpeedKmh: Number(e.target.value) })}
-              className="w-full accent-ink"
+              className="editorial-slider w-full mt-1.5"
+              style={{ '--slider-pct': `${Math.min(100, Math.max(0, ((currentCity.windSpeedKmh - 1) / (25 - 1)) * 100))}%` } as React.CSSProperties}
             />
           </div>
         </div>

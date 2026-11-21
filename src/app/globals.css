@@ -11,6 +11,10 @@
   --ink-muted: #52605A;
   --sage-accent: #236B56;
   --terracotta-accent: #C4512C;
+  --slider-fill: #18201D;
+  --slider-track: #DCD9D0;
+  --slider-thumb-bg: #FFFFFF;
+  --slider-thumb-border: #18201D;
 }
 
 .dark {
@@ -22,6 +26,10 @@
   --ink-muted: #90A09A;
   --sage-accent: #3DA887;
   --terracotta-accent: #F27A55;
+  --slider-fill: #3DA887;
+  --slider-track: #232E2A;
+  --slider-thumb-bg: #EDEDE8;
+  --slider-thumb-border: #3DA887;
 }
 
 body {
@@ -146,6 +154,105 @@ body {
 .dark select option {
   background-color: #1A221F !important;
   color: #EDEDE8 !important;
+}
+
+/* ==========================================================================
+   Range Sliders (Zero-Inversion Guaranteed in Light & Dark Modes)
+   ========================================================================== */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  height: 24px;
+  vertical-align: middle;
+}
+
+/* Ensure native accent-color is never dark black in dark mode */
+input[type="range"] {
+  accent-color: #18201D;
+}
+
+.dark input[type="range"] {
+  color-scheme: dark !important;
+  accent-color: #3DA887 !important;
+}
+
+/* Custom Editorial Sliders with mathematically verified left fill */
+input[type="range"].editorial-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--slider-fill) 0%,
+    var(--slider-fill) var(--slider-pct, 50%),
+    var(--slider-track) var(--slider-pct, 50%),
+    var(--slider-track) 100%
+  );
+  outline: none;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.dark input[type="range"].editorial-slider {
+  border: 1px solid #2B3833;
+}
+
+/* WebKit / Blink Track & Thumb */
+input[type="range"].editorial-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: transparent !important;
+  border: none !important;
+}
+
+input[type="range"].editorial-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background-color: var(--slider-thumb-bg);
+  border: 2px solid var(--slider-thumb-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  margin-top: -6px; /* (6px - 18px) / 2 */
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+}
+
+input[type="range"].editorial-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+input[type="range"].editorial-slider::-webkit-slider-thumb:active {
+  transform: scale(1.25);
+}
+
+/* Firefox Track, Progress & Thumb */
+input[type="range"].editorial-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--slider-track);
+  border: 1px solid var(--border-subtle);
+}
+
+input[type="range"].editorial-slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--slider-fill);
+}
+
+input[type="range"].editorial-slider::-moz-range-thumb {
+  height: 18px;
+  width: 18px;
+  border-radius: 50%;
+  background-color: var(--slider-thumb-bg);
+  border: 2px solid var(--slider-thumb-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
 }
 
 .dark ::-webkit-scrollbar-track {

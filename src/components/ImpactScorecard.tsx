@@ -151,7 +151,9 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
           step="10"
           value={societyFamilies}
           onChange={(e) => onUpdateSocietyFamilies(Number(e.target.value))}
-          className="w-full mt-2 accent-ink"
+          className="editorial-slider w-full mt-2"
+          style={{ '--slider-pct': `${Math.min(100, Math.max(0, ((societyFamilies - 10) / (300 - 10)) * 100))}%` } as React.CSSProperties}
+          title={`${societyFamilies} families in complex`}
         />
 
         <div className="mt-2.5 grid grid-cols-2 gap-2 text-xs">

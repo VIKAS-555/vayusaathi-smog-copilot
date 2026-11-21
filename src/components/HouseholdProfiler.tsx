@@ -281,7 +281,9 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           step="2"
           value={profile.dailyCommuteKm}
           onChange={(e) => onChangeProfile({ ...profile, dailyCommuteKm: Number(e.target.value) })}
-          className="w-full mt-1 accent-ink"
+          className="editorial-slider w-full mt-2"
+          style={{ '--slider-pct': `${Math.min(100, Math.max(0, (profile.dailyCommuteKm / 60) * 100))}%` } as React.CSSProperties}
+          title={`${profile.dailyCommuteKm} km round-trip distance`}
         />
       </div>
 
@@ -315,7 +317,9 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           step="10"
           value={profile.societySizeFamilies}
           onChange={(e) => onChangeProfile({ ...profile, societySizeFamilies: Number(e.target.value) })}
-          className="w-full accent-ink"
+          className="editorial-slider w-full mt-2"
+          style={{ '--slider-pct': `${Math.min(100, Math.max(0, ((profile.societySizeFamilies - 10) / (300 - 10)) * 100))}%` } as React.CSSProperties}
+          title={`${profile.societySizeFamilies} families in apartment complex`}
         />
         <span className="block mt-1 text-[11px] text-ink-muted">
           Scales community-wide diesel generator reduction & collective emission savings.
