@@ -1,6 +1,26 @@
 import React from 'react';
 import { HouseholdProfile, HouseholdMember, HomeType, PurifierStatus, CommuteMode } from '../types';
-import { Users, Home, Wind, Car, Plus, Minus, Trash2, HeartPulse, ShieldCheck } from 'lucide-react';
+import { 
+  Users, 
+  Home, 
+  Wind, 
+  Car, 
+  Plus, 
+  Minus, 
+  Trash2, 
+  HeartPulse, 
+  ShieldCheck,
+  Building2,
+  Building,
+  Trees,
+  Train,
+  Bike,
+  Laptop,
+  Sunrise,
+  Sunset,
+  Sun,
+  Check
+} from 'lucide-react';
 
 interface HouseholdProfilerProps {
   profile: HouseholdProfile;
@@ -58,22 +78,140 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
     updateMemberOutdoorHours(id, Math.max(0, current - 1));
   };
 
+  // 1. Dwelling Type Options Definition
+  const DWELLING_OPTIONS: {
+    id: HomeType;
+    title: string;
+    sub: string;
+    badge: string;
+    badgeStyle: 'safe' | 'warning' | 'alert' | 'neutral';
+    icon: React.ReactNode;
+  }[] = [
+    {
+      id: 'high-rise-apartment',
+      title: 'High-Rise Apt',
+      sub: 'Floor 5+',
+      badge: 'Lower ground dust',
+      badgeStyle: 'safe',
+      icon: <Building2 className="h-4 w-4" />,
+    },
+    {
+      id: 'low-rise-apartment',
+      title: 'Low-Rise Apt',
+      sub: 'Floors 1–4',
+      badge: 'Moderate street dust',
+      badgeStyle: 'warning',
+      icon: <Building className="h-4 w-4" />,
+    },
+    {
+      id: 'independent-house-street',
+      title: 'Street House',
+      sub: 'Road frontage',
+      badge: 'High dust ingress',
+      badgeStyle: 'alert',
+      icon: <Home className="h-4 w-4" />,
+    },
+    {
+      id: 'independent-house-interior',
+      title: 'Interior House',
+      sub: 'Lane buffer',
+      badge: 'Buffered microclimate',
+      badgeStyle: 'neutral',
+      icon: <Trees className="h-4 w-4" />,
+    },
+  ];
+
+  // 2. Commute Mode Options Definition
+  const COMMUTE_OPTIONS: {
+    id: CommuteMode;
+    label: string;
+    sub: string;
+    icon: React.ReactNode;
+  }[] = [
+    { id: 'solo-petrol-car', label: 'Solo Car', sub: 'AC recirc', icon: <Car className="h-3.5 w-3.5" /> },
+    { id: 'metro-public-transit', label: 'Metro / Transit', sub: 'Filtered rail', icon: <Train className="h-3.5 w-3.5" /> },
+    { id: 'two-wheeler', label: 'Two-Wheeler', sub: 'Direct exposure', icon: <Bike className="h-3.5 w-3.5" /> },
+    { id: 'carpool-cab', label: 'Shared Cab', sub: 'Carpool', icon: <Users className="h-3.5 w-3.5" /> },
+    { id: 'work-from-home', label: 'WFH', sub: 'Zero commute', icon: <Laptop className="h-3.5 w-3.5" /> },
+  ];
+
+  // 3. Outdoor Workout / Stroll Habit Options Definition
+  const EXERCISE_OPTIONS: {
+    id: 'None / Indoors' | 'Early Morning (05:00 - 08:00)' | 'Midday (12:00 - 15:00)' | 'Evening (18:00 - 21:00)';
+    label: string;
+    time: string;
+    badge: string;
+    badgeStyle: 'alert' | 'safe' | 'warning' | 'neutral';
+    icon: React.ReactNode;
+  }[] = [
+    {
+      id: 'Early Morning (05:00 - 08:00)',
+      label: 'Early Morning',
+      time: '05–08h',
+      badge: 'High Inversion',
+      badgeStyle: 'alert',
+      icon: <Sunrise className="h-3.5 w-3.5" />,
+    },
+    {
+      id: 'Midday (12:00 - 15:00)',
+      label: 'Midday',
+      time: '12–15h',
+      badge: 'Safe Window',
+      badgeStyle: 'safe',
+      icon: <Sun className="h-3.5 w-3.5" />,
+    },
+    {
+      id: 'Evening (18:00 - 21:00)',
+      label: 'Evening',
+      time: '18–21h',
+      badge: 'Re-Inversion',
+      badgeStyle: 'warning',
+      icon: <Sunset className="h-3.5 w-3.5" />,
+    },
+    {
+      id: 'None / Indoors',
+      label: 'Indoor Only',
+      time: 'Home / Gym',
+      badge: 'Zero Exposure',
+      badgeStyle: 'neutral',
+      icon: <Home className="h-3.5 w-3.5" />,
+    },
+  ];
+
+  // Badge Style Helper
+  const getBadgeClasses = (style: 'safe' | 'warning' | 'alert' | 'neutral', isSelected: boolean) => {
+    if (isSelected) {
+      return 'bg-white/20 text-white border-white/30';
+    }
+    switch (style) {
+      case 'alert':
+        return 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-800';
+      case 'safe':
+        return 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-800';
+      case 'warning':
+        return 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-800';
+      case 'neutral':
+      default:
+        return 'bg-stone-100 text-stone-600 border-stone-200 dark:bg-stone-800 dark:text-stone-300 dark:border-stone-700';
+    }
+  };
+
   return (
-    <div className="rounded-lg border border-stone-300 bg-white p-5 shadow-xs">
-      <div className="border-b border-stone-200 pb-3">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-ink flex items-center gap-2">
-          <Users className="h-4 w-4 text-ink-muted" />
-          <span>Household & Lifestyle Profiler</span>
+    <div className="rounded-2xl border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-5 sm:p-6 shadow-xs transition-colors">
+      <div className="border-b border-stone-200 dark:border-stone-800 pb-3">
+        <h2 className="text-sm font-bold uppercase tracking-wider text-ink dark:text-stone-100 flex items-center gap-2">
+          <Users className="h-4 w-4 text-ink-muted dark:text-stone-400" />
+          <span>Household &amp; Lifestyle Profiler</span>
         </h2>
-        <p className="mt-1 text-xs text-ink-muted">
-          Exposure calculation adapts to family age demographics, respiratory vulnerability, and building infiltration rates.
+        <p className="mt-1 text-xs text-ink-muted dark:text-stone-400">
+          Exposure calculation adapts to family age demographics, respiratory vulnerability, building envelope infiltration, and commute exposure.
         </p>
       </div>
 
-      {/* Household Members Manager */}
+      {/* 1. Household Members Manager */}
       <div className="mt-4">
         <div className="flex items-center justify-between mb-2">
-          <label className="text-xs font-bold text-ink">
+          <label className="text-xs font-bold text-ink dark:text-stone-200">
             Family Members ({profile.members.length})
           </label>
           <div className="flex items-center gap-1">
@@ -107,7 +245,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
               key={member.id}
               className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-2 text-xs transition-colors hover:border-stone-300 dark:hover:border-stone-600"
             >
-              {/* Row 1 on mobile: Member Role + Sensitivity Badge + Delete (on mobile) */}
+              {/* Row 1: Role + Sensitivity Badge */}
               <div className="flex items-center justify-between sm:justify-start gap-2">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-ink dark:text-stone-200">
@@ -128,7 +266,6 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                   </button>
                 </div>
 
-                {/* Mobile-only trash icon aligned to right */}
                 {profile.members.length > 1 && (
                   <button
                     type="button"
@@ -192,42 +329,116 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
         </div>
       </div>
 
-      {/* Dwelling Type & Air Sealing */}
-      <div className="mt-4 pt-3 border-t border-stone-200">
-        <label className="block text-xs font-bold text-ink mb-1.5 flex items-center gap-1.5">
-          <Home className="h-3.5 w-3.5 text-ink-muted" />
-          <span>Dwelling Type & Building Envelope</span>
-        </label>
-        <select
-          value={profile.homeType}
-          onChange={(e) => onChangeProfile({ ...profile, homeType: e.target.value as HomeType })}
-          className="w-full rounded border border-stone-300 bg-white px-2.5 py-1.5 text-xs text-ink focus:border-ink focus:outline-none"
-        >
-          <option value="high-rise-apartment">High-Rise Apartment (Floor 5+, lower ground dust)</option>
-          <option value="low-rise-apartment">Low-Rise Apartment (Floors 1-4)</option>
-          <option value="independent-house-street">Independent House (Street-facing, high dust infiltration)</option>
-          <option value="independent-house-interior">Independent House (Interior lane / green buffer)</option>
-        </select>
-
-        {/* Weatherstripping Checkbox */}
-        <div className="mt-2.5 flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="weatherstrip-toggle"
-            checked={profile.hasWindowWeatherstripping}
-            onChange={(e) => onChangeProfile({ ...profile, hasWindowWeatherstripping: e.target.checked })}
-            className="h-3.5 w-3.5 rounded border-stone-300 text-ink accent-ink"
-          />
-          <label htmlFor="weatherstrip-toggle" className="text-xs text-ink cursor-pointer">
-            Windows fitted with rubber/foam sealing tape
+      {/* 2. DWELLING TYPE: Clean 2x2 Grid of Selectable Cards + Tactile Window-Sealing Toggle Row */}
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-bold text-ink dark:text-stone-200 flex items-center gap-1.5">
+            <Home className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400" />
+            <span>Dwelling Type &amp; Building Envelope</span>
           </label>
+          <span className="text-[10px] font-mono text-ink-muted dark:text-stone-400">
+            Affects ambient infiltration
+          </span>
+        </div>
+
+        {/* 2x2 Grid of Dwelling Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {DWELLING_OPTIONS.map((opt) => {
+            const isSelected = profile.homeType === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => onChangeProfile({ ...profile, homeType: opt.id })}
+                className={`text-left rounded-xl p-2.5 sm:p-3 border transition-all flex flex-col justify-between ${
+                  isSelected
+                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-sm'
+                    : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <div className={`p-1 rounded-md ${
+                      isSelected
+                        ? 'bg-white/20 text-white dark:bg-stone-900/20 dark:text-stone-900'
+                        : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
+                    }`}>
+                      {opt.icon}
+                    </div>
+                    <div>
+                      <div className="font-bold text-xs leading-snug">
+                        {opt.title}
+                      </div>
+                      <div className={`text-[10px] font-mono ${
+                        isSelected ? 'text-stone-300 dark:text-stone-600' : 'text-ink-muted dark:text-stone-400'
+                      }`}>
+                        {opt.sub}
+                      </div>
+                    </div>
+                  </div>
+                  {isSelected && (
+                    <Check className="h-3.5 w-3.5 shrink-0" />
+                  )}
+                </div>
+
+                <div className="mt-1">
+                  <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-medium border ${getBadgeClasses(
+                    opt.badgeStyle,
+                    isSelected
+                  )}`}>
+                    {opt.badge}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Window Weatherstripping: Tactile Toggle Row */}
+        <div 
+          onClick={() => onChangeProfile({ ...profile, hasWindowWeatherstripping: !profile.hasWindowWeatherstripping })}
+          className="mt-2.5 flex items-center justify-between rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-3 cursor-pointer hover:border-stone-300 dark:hover:border-stone-600 transition-colors shadow-2xs"
+          role="switch"
+          aria-checked={profile.hasWindowWeatherstripping}
+        >
+          <div className="flex items-center gap-2.5">
+            <div className={`p-1.5 rounded-lg border ${
+              profile.hasWindowWeatherstripping
+                ? 'bg-sage-100 text-sage-800 border-sage-300 dark:bg-sage-950 dark:text-sage-200 dark:border-sage-800'
+                : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border-stone-200 dark:border-stone-700'
+            }`}>
+              <ShieldCheck className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-ink dark:text-stone-100 flex items-center gap-1.5">
+                <span>Window Weatherstripping Tape</span>
+                <span className="font-mono text-[10px] text-sage-700 dark:text-sage-300 font-bold">
+                  (-12% infiltration)
+                </span>
+              </div>
+              <div className="text-[11px] text-ink-muted dark:text-stone-400 font-medium">
+                Rubber / foam compression seals along windows &amp; exterior door cracks
+              </div>
+            </div>
+          </div>
+
+          {/* Smooth Sliding Toggle Switch */}
+          <div className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out ml-2 ${
+            profile.hasWindowWeatherstripping 
+              ? 'bg-sage-600 dark:bg-sage-500' 
+              : 'bg-stone-300 dark:bg-stone-700'
+          }`}>
+            <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+              profile.hasWindowWeatherstripping ? 'translate-x-4' : 'translate-x-0'
+            }`} />
+          </div>
         </div>
       </div>
 
-      {/* Air Purifier Equipment */}
-      <div className="mt-4 pt-3 border-t border-stone-200">
-        <label className="block text-xs font-bold text-ink mb-1.5 flex items-center gap-1.5">
-          <Wind className="h-3.5 w-3.5 text-ink-muted" />
+      {/* 3. Purification Equipment: Compact 3-Segment Selector */}
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+        <label className="block text-xs font-bold text-ink dark:text-stone-200 mb-1.5 flex items-center gap-1.5">
+          <Wind className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400" />
           <span>Purification Inventory</span>
         </label>
         <div className="grid grid-cols-3 gap-1.5">
@@ -235,80 +446,199 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
             { id: 'none', label: 'No Purifier' },
             { id: 'single-bedroom', label: '1 Bedroom' },
             { id: 'full-house', label: 'Multi-Room' },
-          ].map((item) => (
+          ].map((item) => {
+            const isSelected = profile.purifierStatus === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onChangeProfile({ ...profile, purifierStatus: item.id as PurifierStatus })}
+                className={`rounded-lg border px-2 py-2 text-center text-xs font-semibold transition-all ${
+                  isSelected
+                    ? 'border-ink bg-ink text-white dark:border-stone-100 dark:bg-stone-100 dark:text-stone-900 shadow-xs'
+                    : 'border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 text-ink-muted dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 hover:text-ink'
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 4. DAILY COMMUTE MODE: Compact Option Tiles + Distance Stepper/Slider */}
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-bold text-ink dark:text-stone-200 flex items-center gap-1.5">
+            <Car className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400" />
+            <span>Daily Commute Mode &amp; Distance</span>
+          </label>
+          <span className="text-[10px] font-mono text-ink-muted dark:text-stone-400">
+            Roadway exposure model
+          </span>
+        </div>
+
+        {/* Compact Commute Option Tiles */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+          {COMMUTE_OPTIONS.map((opt) => {
+            const isSelected = profile.commuteMode === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => onChangeProfile({ ...profile, commuteMode: opt.id })}
+                className={`rounded-xl p-2 border text-center transition-all flex flex-col items-center justify-between min-h-[58px] ${
+                  isSelected
+                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-xs'
+                    : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
+                }`}
+              >
+                <div className="flex items-center gap-1 text-[11px] font-bold leading-tight">
+                  {opt.icon}
+                  <span>{opt.label}</span>
+                </div>
+                <span className={`text-[9.5px] font-mono ${
+                  isSelected ? 'text-stone-300 dark:text-stone-600 font-semibold' : 'text-ink-muted dark:text-stone-400'
+                }`}>
+                  {opt.sub}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Round-Trip Commute Distance with +/- 5km Steppers + Slider */}
+        <div className="mt-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-3">
+          <div className="flex items-center justify-between text-xs mb-2">
+            <span className="text-ink-muted dark:text-stone-400 font-medium">Round-trip distance:</span>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => onChangeProfile({ ...profile, dailyCommuteKm: Math.max(0, profile.dailyCommuteKm - 5) })}
+                disabled={profile.dailyCommuteKm <= 0}
+                className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+                title="Decrease 5 km"
+              >
+                -5
+              </button>
+              <span className="font-mono font-bold text-ink dark:text-stone-100 text-sm tabular-nums min-w-[50px] text-center">
+                {profile.dailyCommuteKm} km
+              </span>
+              <button
+                type="button"
+                onClick={() => onChangeProfile({ ...profile, dailyCommuteKm: Math.min(80, profile.dailyCommuteKm + 5) })}
+                disabled={profile.dailyCommuteKm >= 80}
+                className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+                title="Increase 5 km"
+              >
+                +5
+              </button>
+            </div>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="80"
+            step="2"
+            value={profile.dailyCommuteKm}
+            onChange={(e) => onChangeProfile({ ...profile, dailyCommuteKm: Number(e.target.value) })}
+            className="editorial-slider w-full"
+            style={{ '--slider-pct': `${Math.min(100, Math.max(0, (profile.dailyCommuteKm / 80) * 100))}%` } as React.CSSProperties}
+            title={`${profile.dailyCommuteKm} km round-trip distance`}
+          />
+        </div>
+      </div>
+
+      {/* 5. OUTDOOR WORKOUT / STROLL HABIT: Visual Time-Window Cards with Risk Tags */}
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+        <div className="flex items-center justify-between mb-2">
+          <label className="text-xs font-bold text-ink dark:text-stone-200">
+            Outdoor Workout / Stroll Habit
+          </label>
+          <span className="text-[10px] font-mono text-ink-muted dark:text-stone-400">
+            Diurnal inversion exposure
+          </span>
+        </div>
+
+        {/* 2x2 Grid of Time Window Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {EXERCISE_OPTIONS.map((opt) => {
+            const isSelected = profile.outdoorExerciseTime === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => onChangeProfile({ ...profile, outdoorExerciseTime: opt.id })}
+                className={`text-left rounded-xl p-2.5 sm:p-3 border transition-all flex items-center justify-between ${
+                  isSelected
+                    ? 'bg-ink text-white dark:bg-stone-100 dark:text-stone-900 border-ink dark:border-stone-100 shadow-sm'
+                    : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <div className={`p-1.5 rounded-lg ${
+                    isSelected
+                      ? 'bg-white/20 text-white dark:bg-stone-900/20 dark:text-stone-900'
+                      : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
+                  }`}>
+                    {opt.icon}
+                  </div>
+                  <div>
+                    <div className="font-bold text-xs leading-snug">
+                      {opt.label}
+                    </div>
+                    <div className={`text-[10px] font-mono ${
+                      isSelected ? 'text-stone-300 dark:text-stone-600' : 'text-ink-muted dark:text-stone-400'
+                    }`}>
+                      {opt.time}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${getBadgeClasses(
+                    opt.badgeStyle,
+                    isSelected
+                  )}`}>
+                    {opt.badge}
+                  </span>
+                  {isSelected && (
+                    <Check className="h-3.5 w-3.5 shrink-0" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 6. Apartment Complex / Society Multiplier */}
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+        <div className="flex items-center justify-between text-xs mb-2">
+          <span className="font-bold text-ink dark:text-stone-200">Apartment Complex Size</span>
+          <div className="flex items-center gap-2">
             <button
-              key={item.id}
               type="button"
-              onClick={() => onChangeProfile({ ...profile, purifierStatus: item.id as PurifierStatus })}
-              className={`rounded border px-2 py-1.5 text-center text-xs font-medium transition-colors ${
-                profile.purifierStatus === item.id
-                  ? 'border-ink bg-ink text-white shadow-xs'
-                  : 'border-stone-200 bg-stone-50 text-ink-muted hover:bg-stone-100 hover:text-ink'
-              }`}
+              onClick={() => onChangeProfile({ ...profile, societySizeFamilies: Math.max(10, profile.societySizeFamilies - 10) })}
+              disabled={profile.societySizeFamilies <= 10}
+              className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+              title="Decrease 10 families"
             >
-              {item.label}
+              -10
             </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Daily Commute Mode & Distance */}
-      <div className="mt-4 pt-3 border-t border-stone-200">
-        <label className="block text-xs font-bold text-ink mb-1.5 flex items-center gap-1.5">
-          <Car className="h-3.5 w-3.5 text-ink-muted" />
-          <span>Daily Commute Mode & Distance</span>
-        </label>
-        <select
-          value={profile.commuteMode}
-          onChange={(e) => onChangeProfile({ ...profile, commuteMode: e.target.value as CommuteMode })}
-          className="w-full rounded border border-stone-300 bg-white px-2.5 py-1.5 text-xs text-ink focus:border-ink focus:outline-none"
-        >
-          <option value="solo-petrol-car">Solo Petrol/Diesel Car (AC recirc)</option>
-          <option value="two-wheeler">Two-Wheeler / Motorcycle (Direct exposure)</option>
-          <option value="metro-public-transit">Metro Rail / Electric Bus (Filtered transit)</option>
-          <option value="carpool-cab">Shared Cab / Carpool</option>
-          <option value="work-from-home">Work From Home / Minimal transit</option>
-        </select>
-
-        <div className="mt-2.5 flex items-center justify-between text-xs">
-          <span className="text-ink-muted">Round-trip distance:</span>
-          <span className="font-mono font-bold text-ink">{profile.dailyCommuteKm} km</span>
-        </div>
-        <input
-          type="range"
-          min="0"
-          max="60"
-          step="2"
-          value={profile.dailyCommuteKm}
-          onChange={(e) => onChangeProfile({ ...profile, dailyCommuteKm: Number(e.target.value) })}
-          className="editorial-slider w-full mt-2"
-          style={{ '--slider-pct': `${Math.min(100, Math.max(0, (profile.dailyCommuteKm / 60) * 100))}%` } as React.CSSProperties}
-          title={`${profile.dailyCommuteKm} km round-trip distance`}
-        />
-      </div>
-
-      {/* Outdoor Exercise Schedule */}
-      <div className="mt-4 pt-3 border-t border-stone-200">
-        <label className="block text-xs font-bold text-ink mb-1.5">
-          Outdoor Workout / Stroll Habit
-        </label>
-        <select
-          value={profile.outdoorExerciseTime}
-          onChange={(e) => onChangeProfile({ ...profile, outdoorExerciseTime: e.target.value as any })}
-          className="w-full rounded border border-stone-300 bg-white px-2.5 py-1.5 text-xs text-ink focus:border-ink focus:outline-none"
-        >
-          <option value="None / Indoors">None / Indoors Only (Safe)</option>
-          <option value="Early Morning (05:00 - 08:00)">Early Morning 05:00-08:00 (High Inversion Risk!)</option>
-          <option value="Midday (12:00 - 15:00)">Midday 12:00-15:00 (Lowest Inversion)</option>
-          <option value="Evening (18:00 - 21:00)">Evening 18:00-21:00 (Re-inversion Trapping)</option>
-        </select>
-      </div>
-
-      {/* Apartment / Society Scale Multiplier */}
-      <div className="mt-4 pt-3 border-t border-stone-200">
-        <div className="flex items-center justify-between text-xs mb-1">
-          <span className="font-bold text-ink">Apartment Complex Size</span>
-          <span className="font-mono font-bold text-ink">{profile.societySizeFamilies} families</span>
+            <span className="font-mono font-bold text-ink dark:text-stone-100 text-sm tabular-nums min-w-[70px] text-center">
+              {profile.societySizeFamilies} families
+            </span>
+            <button
+              type="button"
+              onClick={() => onChangeProfile({ ...profile, societySizeFamilies: Math.min(300, profile.societySizeFamilies + 10) })}
+              disabled={profile.societySizeFamilies >= 300}
+              className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+              title="Increase 10 families"
+            >
+              +10
+            </button>
+          </div>
         </div>
         <input
           type="range"
@@ -317,12 +647,12 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           step="10"
           value={profile.societySizeFamilies}
           onChange={(e) => onChangeProfile({ ...profile, societySizeFamilies: Number(e.target.value) })}
-          className="editorial-slider w-full mt-2"
+          className="editorial-slider w-full mt-1"
           style={{ '--slider-pct': `${Math.min(100, Math.max(0, ((profile.societySizeFamilies - 10) / (300 - 10)) * 100))}%` } as React.CSSProperties}
           title={`${profile.societySizeFamilies} families in apartment complex`}
         />
-        <span className="block mt-1 text-[11px] text-ink-muted">
-          Scales community-wide diesel generator reduction & collective emission savings.
+        <span className="block mt-1.5 text-[11px] text-ink-muted dark:text-stone-400">
+          Scales community-wide diesel generator reduction &amp; collective emission savings.
         </span>
       </div>
     </div>
