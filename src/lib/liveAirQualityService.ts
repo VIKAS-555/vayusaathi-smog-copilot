@@ -63,8 +63,10 @@ export function calculateCpcbAqi(pm25: number, pm10: number): {
 }
 
 /**
- * Fetches live atmospheric telemetry for a given station preset using Open-Meteo WMO / CPCB coordinates.
- * Features an automatic 4.5-second timeout and zero-latency graceful fallback to preset baseline data.
+ * Fetches live atmospheric telemetry for a given station preset.
+ * Priority 1: Render-hosted Server-Side Live API (/api/live-aqi) with CPCB/AQI.in integration and caching.
+ * Priority 2: Client-side Direct Open Telemetry Fallback (for static GitHub Pages hosting).
+ * Priority 3: Calibrated Station Preset Baseline (for offline/emergency mode).
  */
 export async function fetchLiveCityData(
   preset: CitySmogContext
@@ -76,25 +78,89 @@ export async function fetchLiveCityData(
     return { ...preset, dataSource: 'preset', lastUpdatedText: 'Preset Baseline' };
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 4500);
+  const isCoastal = preset.id === 'mumbai';
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-IN', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  });
+
+  // 1. Try Render server-side API endpoint (/api/live-aqi) first
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+    const apiRes = await fetch('/api/live-aqi', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ city: preset.id, lat, lon }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+
+    if (apiRes.ok) {
+      const liveJson = await apiRes.json();
+      if (liveJson.success) {
+        const livePm25 = Math.round(Number(liveJson.pm25 ?? preset.pm25));
+        const livePm10 = Math.round(Number(liveJson.pm10 ?? preset.pm10));
+        const liveAqi = Math.round(Number(liveJson.aqi ?? preset.currentAQI));
+        const category = (liveJson.category as AQICategory) || preset.aqiCategory;
+        const dominant = (liveJson.dominantPollutant as 'PM2.5' | 'PM10' | 'NO2') || preset.dominantPollutant;
+
+        const isLowSmog = preset.id === 'mumbai' || preset.id === 'bengaluru' || liveAqi <= 120 || livePm25 <= 45;
+
+        const liveDiurnalCurve = generateDiurnalCurve(
+          livePm25,
+          liveAqi,
+          preset.ventilationStartHour,
+          preset.ventilationEndHour,
+          isLowSmog
+        );
+
+        return {
+          ...preset,
+          currentAQI: liveAqi,
+          aqiCategory: category,
+          pm25: livePm25,
+          pm10: livePm10,
+          dominantPollutant: dominant,
+          temperatureC: Number(liveJson.temperatureC ?? preset.temperatureC),
+          humidityPercent: Number(liveJson.humidityPercent ?? preset.humidityPercent),
+          windSpeedKmh: Number(liveJson.windSpeedKmh ?? preset.windSpeedKmh),
+          windDirection: liveJson.windDirection || preset.windDirection,
+          inversionStatus: liveJson.inversionStatus || preset.inversionStatus,
+          diurnalCurve: liveDiurnalCurve,
+          dataSource: 'live',
+          lastUpdatedText: `${timeStr}`,
+        };
+      }
+    }
+  } catch (renderApiErr) {
+    // If running in static export mode or backend unreachable, fall through to client gateway
+    console.debug('[Live Telemetry] Render live API bypassed or offline, falling back to direct client stream:', renderApiErr);
+  }
+
+  // 2. Client-side direct telemetry gateway fallback (Open-Meteo / CPCB coordinates)
+  const fallbackController = new AbortController();
+  const fallbackTimeoutId = setTimeout(() => fallbackController.abort(), 4500);
 
   try {
     const [airQualityRes, weatherRes] = await Promise.all([
       fetch(
         `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm10,pm2_5,us_aqi,european_aqi`,
-        { signal: controller.signal }
+        { signal: fallbackController.signal }
       ),
       fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,wind_direction_10m`,
-        { signal: controller.signal }
+        { signal: fallbackController.signal }
       ),
     ]);
 
-    clearTimeout(timeoutId);
+    clearTimeout(fallbackTimeoutId);
 
     if (!airQualityRes.ok || !weatherRes.ok) {
-      throw new Error(`Meteorological API returned status: ${airQualityRes.status} / ${weatherRes.status}`);
+      throw new Error(`Direct telemetry gateway returned status: ${airQualityRes.status} / ${weatherRes.status}`);
     }
 
     const [aqData, weatherData] = await Promise.all([
@@ -113,7 +179,6 @@ export async function fetchLiveCityData(
     const windDeg = Number(weatherData?.current?.wind_direction_10m ?? 0);
     const liveWindDir = degreesToCompass(windDeg);
 
-    const isCoastal = preset.id === 'mumbai';
     const isLowSmog = preset.id === 'mumbai' || preset.id === 'bengaluru' || calculatedAqi <= 120 || livePm25 <= 45;
 
     // Inversion status dynamic classification
@@ -127,13 +192,6 @@ export async function fetchLiveCityData(
     } else {
       liveInversionStatus = 'Clear Natural Airflow';
     }
-
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
 
     // Recompute 24h diurnal curve with live baseline
     const liveDiurnalCurve = generateDiurnalCurve(

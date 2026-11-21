@@ -3,7 +3,7 @@ const isGithubPages = process.env.GITHUB_PAGES === 'true';
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
+  ...(isGithubPages ? { output: 'export' } : {}),
   basePath: isGithubPages ? '/vayusaathi-smog-copilot' : '',
   images: { unoptimized: true },
 };

@@ -11,3 +11,7 @@ services:
         value: 20
       - key: PORT
         value: 10000
+      - key: AQI_IN_TOKEN
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
