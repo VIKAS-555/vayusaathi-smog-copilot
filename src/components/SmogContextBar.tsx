@@ -31,7 +31,9 @@ import {
   Radio,
   ExternalLink,
   ArrowUpRight,
-  MapPin
+  MapPin,
+  Upload,
+  Download
 } from 'lucide-react';
 
 interface SmogContextBarProps {
@@ -183,13 +185,13 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   const bannerStyle = getAtmosphereBannerStyle(currentCity, isDarkMode);
 
   return (
-    <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-4 sm:p-5 shadow-xs transition-colors">
-      {/* Atmospheric Station & Weather Hero Banner */}
+    <div className="w-full mb-6">
+      {/* Atmospheric Station & Weather Hero Banner matching reference design */}
       <div 
-        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border p-4 sm:p-6 transition-all duration-300 ease-in-out shadow-md mb-5"
+        className="relative overflow-hidden rounded-3xl sm:rounded-[32px] border p-5 sm:p-7 transition-all duration-300 ease-in-out shadow-2xl"
         style={{
           background: bannerStyle.background,
-          borderColor: bannerStyle.borderColor,
+          borderColor: 'rgba(255, 255, 255, 0.12)',
         }}
       >
         {/* Soft dark protective radial scrim behind top-left AQI, PM2.5 & PM10 readouts */}
@@ -203,11 +205,11 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           aria-hidden="true"
         />
 
-        {/* Ambient atmospheric radial glow illuminating the central architectural landmark */}
+        {/* Ambient atmospheric radial spotlight illuminating the central architectural landmark from above */}
         <div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/4 -translate-y-1/2 w-[38rem] sm:w-[50rem] h-[22rem] sm:h-[28rem] rounded-full pointer-events-none z-0 select-none transition-all duration-700"
+          className="absolute -top-12 left-1/2 -translate-x-1/2 w-[38rem] sm:w-[52rem] h-[26rem] sm:h-[34rem] rounded-full pointer-events-none z-0 select-none transition-all duration-700"
           style={{
-            background: `radial-gradient(circle at 50% 45%, ${bannerStyle.accent}33 0%, ${bannerStyle.accent}14 45%, transparent 72%)`,
+            background: `radial-gradient(ellipse 65% 55% at 50% 25%, ${bannerStyle.accent}45 0%, ${bannerStyle.accent}1E 45%, transparent 75%)`,
           }}
           aria-hidden="true"
         />
@@ -228,70 +230,76 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
 
         {/* Content Layer (relative z-10) */}
         <div className="relative z-10 flex flex-col gap-4 sm:gap-5">
-          {/* Top Control Bar: Station Switcher Chips + Provenance Badge + Action Buttons */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-black/10 dark:border-white/10">
-            {/* Active Station Identity Header */}
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/10 border border-white/20 text-white shrink-0 shadow-2xs">
-                <MapPin className="h-4 w-4 text-emerald-400" />
-              </div>
-              <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 truncate">
-                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight truncate">
-                  {currentCity.name}
-                </h3>
-                <span className="font-mono text-[11px] sm:text-xs text-stone-300/80">
-                  · {currentCity.state}
-                </span>
-                {isLocationMatched && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/25 px-2 py-0.5 text-[10px] font-semibold text-emerald-300 backdrop-blur-xs shadow-2xs">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                    <span>Near You</span>
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Live Provenance Badge & Controls */}
-            <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
-              {currentCity.dataSource === "live" ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-sage-400/40 dark:border-sage-700/50 bg-white/80 dark:bg-stone-900/80 backdrop-blur-xs px-2.5 py-1 text-[11px] font-semibold text-sage-800 dark:text-sage-200 shadow-2xs">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <span>Live Station Feed</span>
-                  <span className="font-mono text-ink-muted dark:text-stone-400 font-normal">· {currentCity.lastUpdatedText || "Live"}</span>
-                </span>
-              ) : currentCity.dataSource === "manual" ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/40 dark:border-amber-700/50 bg-white/80 dark:bg-stone-900/80 backdrop-blur-xs px-2.5 py-1 text-[11px] font-semibold text-amber-800 dark:text-amber-200 shadow-2xs">
-                  <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
-                  <span>Manual Overrides</span>
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-black/10 dark:border-white/10 bg-white/80 dark:bg-stone-900/80 backdrop-blur-xs px-2.5 py-1 text-[11px] font-semibold text-ink-muted dark:text-stone-300 shadow-2xs">
-                  <span className="h-2 w-2 rounded-full bg-stone-400 shrink-0" />
-                  <span>Station Snapshot</span>
+          {/* Top Header Row matching reference design */}
+          <div className="flex items-center justify-between gap-3 pb-1">
+            {/* Active Station Identity */}
+            <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 truncate">
+              <h3 className="text-base sm:text-lg font-bold text-white tracking-tight truncate">
+                {currentCity.name}
+              </h3>
+              <span className="font-mono text-xs sm:text-sm text-stone-300/80">
+                · {currentCity.state}
+              </span>
+              {isLocationMatched && (
+                <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/25 px-2 py-0.5 text-[10px] font-semibold text-emerald-300 backdrop-blur-xs shadow-2xs">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Near You</span>
                 </span>
               )}
+            </div>
 
-              <div className="flex items-center gap-1.5">
-                {onRefreshLive && (
-                  <button
-                    onClick={onRefreshLive}
-                    disabled={isFetchingLive}
-                    className="flex items-center gap-1 rounded-lg border border-black/10 dark:border-white/10 bg-white/80 dark:bg-stone-800/80 backdrop-blur-xs px-2.5 py-1 text-[11px] font-semibold text-ink dark:text-stone-200 hover:bg-white dark:hover:bg-stone-700 disabled:opacity-50 transition-all shadow-2xs min-h-[30px]"
-                    title="Poll live WMO / CPCB satellite & station telemetry"
-                  >
-                    <RefreshCw className={`h-3 w-3 text-ink-muted dark:text-stone-400 ${isFetchingLive ? "animate-spin text-ink" : ""}`} />
-                    <span>{isFetchingLive ? "Syncing…" : "Sync Live"}</span>
-                  </button>
-                )}
-
+            {/* Quick Share & Download Action Buttons matching reference design */}
+            <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+              {onRefreshLive && (
                 <button
-                  onClick={() => setShowCustomInputs(!showCustomInputs)}
-                  className="flex items-center gap-1 rounded-lg border border-black/10 dark:border-white/10 bg-white/80 dark:bg-stone-800/80 backdrop-blur-xs px-2.5 py-1 text-[11px] font-semibold text-ink-muted dark:text-stone-300 hover:text-ink hover:bg-white dark:hover:bg-stone-700 transition-all min-h-[30px]"
+                  onClick={onRefreshLive}
+                  disabled={isFetchingLive}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-xs border border-white/10 transition-all shadow-2xs"
+                  title="Poll live WMO / CPCB satellite & station telemetry"
+                  aria-label="Sync Live"
                 >
-                  <Sliders className="h-3 w-3" />
-                  <span>{showCustomInputs ? "Hide Overrides" : "Overrides"}</span>
+                  <RefreshCw className={`h-4 w-4 ${isFetchingLive ? "animate-spin text-white" : ""}`} />
                 </button>
-              </div>
+              )}
+
+              <button
+                onClick={() => setShowCustomInputs(!showCustomInputs)}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-xs border border-white/10 transition-all shadow-2xs"
+                title="Manual Telemetry Overrides"
+                aria-label="Overrides"
+              >
+                <Sliders className="h-4 w-4" />
+              </button>
+
+              <button
+                onClick={() => {
+                  if (typeof navigator !== 'undefined' && navigator.share) {
+                    navigator.share({
+                      title: `${currentCity.name} AQI: ${currentCity.currentAQI}`,
+                      text: `Current air quality in ${currentCity.name} is ${currentCity.currentAQI} AQI (${currentCity.aqiCategory}). Dominant pollutant: ${currentCity.dominantPollutant}.`,
+                      url: window.location.href,
+                    }).catch(() => {});
+                  } else if (typeof navigator !== 'undefined') {
+                    navigator.clipboard.writeText(window.location.href);
+                  }
+                }}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/90 hover:text-white backdrop-blur-xs border border-white/15 transition-all shadow-xs"
+                title="Share Station Report"
+                aria-label="Share"
+              >
+                <Upload className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+              </button>
+
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') window.print();
+                }}
+                className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/90 hover:text-white backdrop-blur-xs border border-white/15 transition-all shadow-xs"
+                title="Download Air Quality Snapshot"
+                aria-label="Download"
+              >
+                <Download className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+              </button>
             </div>
           </div>
 
@@ -440,13 +448,9 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
-                    <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-1 rounded-md bg-white/10 border border-white/15 text-stone-200 text-right">
-                      <span>{getCityLandmarkName(currentCity.id)}</span>
-                    </span>
-                    <div className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white transition-all cursor-pointer">
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/10 hover:bg-white/15 border border-white/15 text-stone-200 text-xs font-mono shadow-2xs backdrop-blur-xs transition-colors">
+                    <span>{getCityLandmarkName(currentCity.id)}</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 text-stone-300" />
                   </div>
                 </div>
 

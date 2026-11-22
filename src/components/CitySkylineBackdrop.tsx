@@ -108,34 +108,11 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
   );
 
 
-  // Drafted Architectural Coordinate Grid & Horizon Datum Line
+  // Drafted Architectural Coordinate Grid Canvas with Soft Edge Radial Fade
   const draftedGridLayer = (
     <g className="transition-opacity duration-300 pointer-events-none select-none">
       {/* 36px Coordinate Grid Canvas */}
       <rect width="1200" height="240" fill={`url(#${gridPatternId})`} mask={`url(#${gridMaskId})`} />
-      
-      {/* Dashed Architectural Horizon Datum Line */}
-      <line
-        x1="0"
-        y1="202"
-        x2="1200"
-        y2="202"
-        stroke={strokeColor}
-        strokeWidth="1.2"
-        strokeDasharray="8 6"
-        strokeOpacity={isDark ? "0.45" : "0.38"}
-      />
-      <text
-        x="24"
-        y="198"
-        fill={strokeColor}
-        fontSize="8"
-        fontFamily="monospace"
-        fillOpacity={isDark ? "0.45" : "0.35"}
-        letterSpacing="1.5"
-      >
-        DATUM EL +0.00
-      </text>
     </g>
   );
 
@@ -626,10 +603,10 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
 
             {/* Circular Clock Face Section */}
             <rect x="600" y="60" width="80" height="34" rx="2" />
-            <circle cx="640" cy="77" r="13" strokeWidth="1.4" fill={isDark ? '#1A221F' : '#FFFFFF'} />
+            <circle cx="640" cy="77" r="13" strokeWidth="1.4" fill="rgba(0, 0, 0, 0.22)" />
             <circle cx="640" cy="77" r="10" strokeWidth="0.8" fill="none" strokeDasharray="2 2" />
-            <line x1="640" y1="77" x2="640" y2="69" strokeWidth="1.3" />
-            <line x1="640" y1="77" x2="646" y2="77" strokeWidth="1.3" />
+            <line x1="640" y1="77" x2="634" y2="70" strokeWidth="1.3" />
+            <line x1="640" y1="77" x2="646" y2="72" strokeWidth="1.3" />
 
             {/* Belfry Triple Arched Openings */}
             <rect x="612" y="38" width="56" height="22" rx="1" />
