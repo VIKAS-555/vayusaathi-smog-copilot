@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CitySmogContext } from '../types';
 import { CITY_PRESETS, getHourlyGuidance } from '../data/cityPresets';
-import { CityPanoramicBackdrop } from './CityPanoramicBackdrop';
+import { CitySkylineBackdrop } from './CitySkylineBackdrop';
 import { 
   getAQIStyle, 
   getAQITier, 
@@ -184,17 +184,17 @@ function getAtmosphereBannerStyle(city: CitySmogContext, isDark: boolean) {
 export function getCityLandmarkName(cityId: string): string {
   const id = (cityId || '').toLowerCase();
   if (id.includes('delhi')) return 'India Gate';
+  if (id.includes('gurugram') || id.includes('gurgaon')) return 'Cyber City';
+  if (id.includes('noida')) return 'Noida Skyline';
   if (id.includes('bengaluru') || id.includes('bangalore')) return 'Vidhana Soudha';
-  if (id.includes('chennai') || id.includes('madras')) return 'Kapaleeshwarar Temple';
-  if (id.includes('hyderabad')) return 'Charminar';
-  if (id.includes('kolkata') || id.includes('calcutta')) return 'Victoria Memorial';
   if (id.includes('mumbai') || id.includes('bombay')) return 'Gateway of India';
-  if (id.includes('ahmedabad')) return 'Sidi Saiyyed Jaali';
+  if (id.includes('kolkata') || id.includes('calcutta')) return 'Victoria Memorial';
+  if (id.includes('chennai') || id.includes('madras')) return 'Ripon Clock Tower';
+  if (id.includes('hyderabad')) return 'Charminar';
   if (id.includes('pune')) return 'Shaniwar Wada';
+  if (id.includes('ahmedabad')) return 'Sidi Saiyyed Arch';
   if (id.includes('lucknow')) return 'Rumi Darwaza';
-  if (id.includes('gurugram') || id.includes('gurgaon')) return 'Cyber City Horizon';
-  if (id.includes('noida')) return 'Express Towers & Stupa';
-  return 'Regional Metro Horizon';
+  return 'City Horizon';
 }
 
 export const SmogContextBar: React.FC<SmogContextBarProps> = ({
@@ -264,23 +264,36 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
     <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-4 sm:p-5 shadow-xs transition-colors">
       {/* Atmospheric Station & Weather Hero Banner */}
       <div 
-        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border p-4 sm:p-6 transition-all duration-700 ease-in-out shadow-md mb-5"
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl border p-4 sm:p-6 transition-all duration-300 ease-in-out shadow-md mb-5"
         style={{
           background: bannerStyle.background,
           borderColor: bannerStyle.borderColor,
         }}
       >
-        {/* Full-width Panoramic Architectural Skyline Silhouette at Horizon */}
+        {/* Subtle dark protective radial vignette behind top-left AQI, PM2.5 & PM10 readouts */}
         <div 
-          className="absolute inset-x-0 bottom-0 pointer-events-none select-none overflow-hidden h-32 sm:h-44 md:h-52 z-0"
+          className="absolute -top-12 -left-12 w-[28rem] sm:w-[38rem] h-[28rem] sm:h-[38rem] rounded-full pointer-events-none z-0 select-none"
+          style={{
+            background: isDarkMode
+              ? "radial-gradient(circle at 25% 25%, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0) 75%)"
+              : "radial-gradient(circle at 25% 25%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0) 75%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Full-width Architectural Outlined Skyline Backdrop with Depth */}
+        <div 
+          className="absolute inset-x-0 bottom-0 pointer-events-none select-none overflow-hidden h-36 sm:h-48 md:h-56 z-0 transition-opacity duration-300 ease-in-out"
           aria-hidden="true"
           style={{
-            maskImage: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 85%, rgba(0,0,0,0) 100%)",
-            WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.2) 85%, rgba(0,0,0,0) 100%)",
+            maskImage: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.2) 85%, rgba(0,0,0,0) 100%)",
+            WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.2) 85%, rgba(0,0,0,0) 100%)",
           }}
         >
-          <CityPanoramicBackdrop 
+          <CitySkylineBackdrop 
             cityId={currentCity.id} 
+            aqi={currentCity.currentAQI}
+            aqiCategory={currentCity.aqiCategory}
             skylineColor={bannerStyle.skylineColor} 
             isDark={isDarkMode} 
           />
