@@ -31,6 +31,8 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
   const gradLandmarkId = `landmarkGrad-${uid}`;
   const gradMistId = `horizonMist-${uid}`;
   const gradAccentId = `landmarkAccent-${uid}`;
+  const gridPatternId = `blueprintGrid-${uid}`;
+  const gridMaskId = `gridFadeMask-${uid}`;
 
   // Common floating atmospheric clouds (upper sky)
   const atmosphericClouds = (
@@ -59,6 +61,29 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
   // Common SVG Gradients Definition
   const defs = (
     <defs>
+      {/* 1. Architectural Blueprint Coordinate Grid (36px square lines) */}
+      <pattern id={gridPatternId} width="36" height="36" patternUnits="userSpaceOnUse">
+        <path
+          d="M 36 0 L 0 0 0 36"
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth="0.75"
+          strokeOpacity={isDark ? "0.22" : "0.18"}
+        />
+        <circle cx="0" cy="0" r="1.1" fill={strokeColor} fillOpacity={isDark ? "0.38" : "0.28"} />
+      </pattern>
+
+      {/* 2. Grid Soft Edge Radial Fade Mask */}
+      <mask id={gridMaskId}>
+        <radialGradient id={`${gridMaskId}-grad`} cx="55%" cy="45%" r="62%">
+          <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+          <stop offset="55%" stopColor="#FFFFFF" stopOpacity="0.65" />
+          <stop offset="85%" stopColor="#FFFFFF" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
+        </radialGradient>
+        <rect width="1200" height="240" fill={`url(#${gridMaskId}-grad)`} />
+      </mask>
+
       {/* Precision Landmark Translucent Fill (35% to 45% opacity) */}
       <linearGradient id={gradLandmarkId} x1="0%" y1="0%" x2="0%" y2="100%">
         <stop offset="0%" stopColor={strokeColor} stopOpacity="0.08" />
@@ -80,6 +105,38 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
         <stop offset="100%" stopColor={strokeColor} stopOpacity="0.04" />
       </linearGradient>
     </defs>
+  );
+
+
+  // Drafted Architectural Coordinate Grid & Horizon Datum Line
+  const draftedGridLayer = (
+    <g className="transition-opacity duration-300 pointer-events-none select-none">
+      {/* 36px Coordinate Grid Canvas */}
+      <rect width="1200" height="240" fill={`url(#${gridPatternId})`} mask={`url(#${gridMaskId})`} />
+      
+      {/* Dashed Architectural Horizon Datum Line */}
+      <line
+        x1="0"
+        y1="202"
+        x2="1200"
+        y2="202"
+        stroke={strokeColor}
+        strokeWidth="1.2"
+        strokeDasharray="8 6"
+        strokeOpacity={isDark ? "0.45" : "0.38"}
+      />
+      <text
+        x="24"
+        y="198"
+        fill={strokeColor}
+        fontSize="8"
+        fontFamily="monospace"
+        fillOpacity={isDark ? "0.45" : "0.35"}
+        letterSpacing="1.5"
+      >
+        DATUM EL +0.00
+      </text>
+    </g>
   );
 
   // Common Base Ground Mist Plane across all skylines
@@ -114,8 +171,8 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
             <line x1="800" y1="215" x2="1180" y2="215" strokeDasharray="3 3" />
           </g>
 
-          {/* Layer 2: Foreground Landmark Layer (strokeWidth="1.25", opacity: 0.40) */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          {/* Layer 2: Foreground Landmark Layer (strokeWidth="1.4", opacity: 0.40) */}
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* Rajpath Stone Parapet & Balustrade Walls */}
             <path d="M560 234 L560 216 L680 216 L680 234 Z" />
             <path d="M960 234 L960 216 L1080 216 L1080 234 Z" />
@@ -185,7 +242,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* Cyber Hub Chamfered Modern Glass Tower 1 */}
             <path d="M680 234 L680 62 L740 38 L770 55 L770 234 Z" />
             {/* Curtain wall grid lines */}
@@ -250,7 +307,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* Supernova Spira Iconic Landmark Tower */}
             <path d="M680 234 L710 40 L730 40 L760 234 Z" />
             <line x1="720" y1="40" x2="720" y2="18" strokeWidth="1.2" />
@@ -302,7 +359,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* VIDHANA SOUDHA - Neo-Dravidian Architectural Facade */}
             {/* Grand Stepped Foundation & Entrance Staircase */}
             <path d="M640 234 L660 216 L980 216 L1000 234 Z" />
@@ -367,7 +424,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* GATEWAY OF INDIA - Indo-Saracenic Basalt Triumphal Gateway */}
             {/* Base Plinth on the Apollo Bunder Seafront */}
             <path d="M680 234 L692 220 L908 220 L920 234 Z" />
@@ -433,7 +490,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* VICTORIA MEMORIAL - White Marble Classical Monument */}
             {/* Stepped Podium Base */}
             <rect x="620" y="218" width="220" height="16" />
@@ -485,71 +542,105 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
       );
     }
 
-    // 7. CHENNAI: Chennai Central / Ripon Building clock tower & coastal horizon
+    // 7. CHENNAI: Ripon Building & Chennai Central monumental clock tower
     if (normalizedId.includes('chennai') || normalizedId.includes('madras')) {
       return (
         <>
           {/* Layer 1: Background Horizon Layer */}
-          <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
-            {/* Distant Kapaleeshwarar Temple Dravidian Gopuram */}
-            <path d="M480 234 L505 110 L525 110 L550 234 Z" />
-            <line x1="495" y1="150" x2="535" y2="150" />
-            <line x1="500" y1="185" x2="530" y2="185" />
-            {/* Napier Bridge Arches on the Cooum */}
-            <path d="M570 234 Q595 210 620 234 Q645 210 670 234" />
+          <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.14" className="transition-all duration-300">
+            {/* Distant skyline towers on left */}
+            <rect x="280" y="150" width="35" height="84" />
+            <rect x="325" y="130" width="45" height="104" />
+            <rect x="380" y="145" width="40" height="89" />
+            <line x1="347" y1="130" x2="347" y2="105" />
+            {/* Distant skyline towers on right */}
+            <rect x="850" y="140" width="45" height="94" />
+            <rect x="905" y="120" width="55" height="114" />
+            <rect x="970" y="135" width="40" height="99" />
+            <line x1="932" y1="120" x2="932" y2="95" />
+            {/* Marina Beach Lighthouse & Horizon line */}
+            <line x1="950" y1="210" x2="1180" y2="210" strokeDasharray="6 3" />
+            <path d="M1020 234 L1035 110 L1045 110 L1060 234 Z" />
+            <rect x="1032" y="98" width="16" height="12" rx="1" />
+            <line x1="1040" y1="98" x2="1040" y2="88" strokeWidth="1.2" />
+            <line x1="1040" y1="88" x2="1140" y2="60" strokeDasharray="3 3" opacity="0.6" />
           </g>
 
-          {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
-            {/* RIPON BUILDING & CHENNAI CENTRAL MONUMENTAL CLOCK TOWER */}
+          {/* Layer 2: Foreground Landmark Layer (strokeWidth="1.4", opacity: 0.55/0.50) */}
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+            {/* RIPON BUILDING (CHENNAI CORPORATION HEADQUARTERS) */}
             {/* Base Foundation & Arcade Plinth */}
-            <rect x="640" y="218" width="280" height="16" />
+            <rect x="420" y="222" width="440" height="12" />
 
-            {/* Left Classical Roman-Corinthian Palace Wing */}
-            <rect x="650" y="130" width="95" height="88" />
-            <line x1="665" y1="130" x2="665" y2="218" strokeWidth="0.9" />
-            <line x1="685" y1="130" x2="685" y2="218" strokeWidth="0.9" />
-            <line x1="705" y1="130" x2="705" y2="218" strokeWidth="0.9" />
-            <line x1="725" y1="130" x2="725" y2="218" strokeWidth="0.9" />
-            {/* Upper Balustrade Pediments */}
-            <path d="M660 130 L675 115 L690 130 Z" />
-            <path d="M700 130 L715 115 L730 130 Z" />
+            {/* Left Classical Roman-Corinthian Colonnade Wing */}
+            <rect x="440" y="142" width="160" height="80" />
+            <line x1="440" y1="175" x2="600" y2="175" strokeWidth="0.9" />
+            {/* Upper Balustrade & Pediments */}
+            <line x1="435" y1="142" x2="605" y2="142" strokeWidth="1.2" />
+            <path d="M460 142 L475 128 L490 142 Z" />
+            <path d="M510 142 L525 128 L540 142 Z" />
+            <path d="M560 142 L575 128 L590 142 Z" />
+            {/* Arched windows / colonnade on ground and 1st floor */}
+            <path d="M455 222 L455 188 C455 178, 475 178, 475 188 L475 222" fill="none" strokeWidth="1" />
+            <path d="M485 222 L485 188 C485 178, 505 178, 505 188 L505 222" fill="none" strokeWidth="1" />
+            <path d="M515 222 L515 188 C515 178, 535 178, 535 188 L535 222" fill="none" strokeWidth="1" />
+            <path d="M545 222 L545 188 C545 178, 565 178, 565 188 L565 222" fill="none" strokeWidth="1" />
+            <path d="M575 222 L575 188 C575 178, 595 178, 595 188 L595 222" fill="none" strokeWidth="1" />
+            {/* Upper floor arched windows */}
+            <path d="M455 175 L455 152 C455 146, 475 146, 475 152 L475 175" fill="none" strokeWidth="0.9" />
+            <path d="M485 175 L485 152 C485 146, 505 146, 505 152 L505 175" fill="none" strokeWidth="0.9" />
+            <path d="M515 175 L515 152 C515 146, 535 146, 535 152 L535 175" fill="none" strokeWidth="0.9" />
+            <path d="M545 175 L545 152 C545 146, 565 146, 565 152 L565 175" fill="none" strokeWidth="0.9" />
+            <path d="M575 175 L575 152 C575 146, 595 146, 595 152 L595 175" fill="none" strokeWidth="0.9" />
 
-            {/* Right Classical Roman-Corinthian Palace Wing */}
-            <rect x="815" y="130" width="95" height="88" />
-            <line x1="835" y1="130" x2="835" y2="218" strokeWidth="0.9" />
-            <line x1="855" y1="130" x2="855" y2="218" strokeWidth="0.9" />
-            <line x1="875" y1="130" x2="875" y2="218" strokeWidth="0.9" />
-            <line x1="895" y1="130" x2="895" y2="218" strokeWidth="0.9" />
-            {/* Upper Balustrade Pediments */}
-            <path d="M830 130 L845 115 L860 130 Z" />
-            <path d="M870 130 L885 115 L900 130 Z" />
+            {/* Right Classical Roman-Corinthian Colonnade Wing */}
+            <rect x="680" y="142" width="160" height="80" />
+            <line x1="680" y1="175" x2="840" y2="175" strokeWidth="0.9" />
+            {/* Upper Balustrade & Pediments */}
+            <line x1="675" y1="142" x2="845" y2="142" strokeWidth="1.2" />
+            <path d="M690 142 L705 128 L720 142 Z" />
+            <path d="M740 142 L755 128 L770 142 Z" />
+            <path d="M790 142 L805 128 L820 142 Z" />
+            {/* Arched windows / colonnade on ground and 1st floor */}
+            <path d="M685 222 L685 188 C685 178, 705 178, 705 188 L705 222" fill="none" strokeWidth="1" />
+            <path d="M715 222 L715 188 C715 178, 735 178, 735 188 L735 222" fill="none" strokeWidth="1" />
+            <path d="M745 222 L745 188 C745 178, 765 178, 765 188 L765 222" fill="none" strokeWidth="1" />
+            <path d="M775 222 L775 188 C775 178, 795 178, 795 188 L795 222" fill="none" strokeWidth="1" />
+            <path d="M805 222 L805 188 C805 178, 825 178, 825 188 L825 222" fill="none" strokeWidth="1" />
+            {/* Upper floor arched windows */}
+            <path d="M685 175 L685 152 C685 146, 705 146, 705 152 L705 175" fill="none" strokeWidth="0.9" />
+            <path d="M715 175 L715 152 C715 146, 735 146, 735 152 L735 175" fill="none" strokeWidth="0.9" />
+            <path d="M745 175 L745 152 C745 146, 765 146, 765 152 L765 175" fill="none" strokeWidth="0.9" />
+            <path d="M775 175 L775 152 C775 146, 795 146, 795 152 L795 175" fill="none" strokeWidth="0.9" />
+            <path d="M805 175 L805 152 C805 146, 825 146, 825 152 L825 175" fill="none" strokeWidth="0.9" />
 
-            {/* Towering 43-Meter Central Clock Tower */}
-            <rect x="745" y="80" width="70" height="138" />
+            {/* Towering 43-Meter Central Ripon Clock Tower */}
+            <rect x="595" y="98" width="90" height="124" />
             {/* Grand Arched Entrance Porch */}
-            <path d="M760 218 L760 175 C760 155, 800 155, 800 175 L800 218 Z" />
+            <path d="M618 222 L618 178 C618 152, 662 152, 662 178 L662 222 Z" />
+            {/* Second Tier Balcony Cornice */}
+            <rect x="590" y="94" width="100" height="6" />
+            <line x1="605" y1="102" x2="605" y2="135" strokeWidth="1" />
+            <line x1="675" y1="102" x2="675" y2="135" strokeWidth="1" />
+            <path d="M625 135 L625 110 C625 102, 655 102, 655 110 L655 135 Z" fill="none" strokeWidth="1" />
 
             {/* Circular Clock Face Section */}
-            <rect x="740" y="60" width="80" height="35" rx="2" />
-            <circle cx="780" cy="77" r="12" strokeWidth="1.2" fill={isDark ? '#1A221F' : '#FFFFFF'} />
-            <line x1="780" y1="77" x2="780" y2="70" strokeWidth="1.3" />
-            <line x1="780" y1="77" x2="785" y2="77" strokeWidth="1.3" />
+            <rect x="600" y="60" width="80" height="34" rx="2" />
+            <circle cx="640" cy="77" r="13" strokeWidth="1.4" fill={isDark ? '#1A221F' : '#FFFFFF'} />
+            <circle cx="640" cy="77" r="10" strokeWidth="0.8" fill="none" strokeDasharray="2 2" />
+            <line x1="640" y1="77" x2="640" y2="69" strokeWidth="1.3" />
+            <line x1="640" y1="77" x2="646" y2="77" strokeWidth="1.3" />
+
+            {/* Belfry Triple Arched Openings */}
+            <rect x="612" y="38" width="56" height="22" rx="1" />
+            <path d="M618 60 L618 45 C618 42, 626 42, 626 45 L626 60" fill="none" strokeWidth="0.9" />
+            <path d="M634 60 L634 43 C634 40, 646 40, 646 43 L646 60" fill="none" strokeWidth="0.9" />
+            <path d="M654 60 L654 45 C654 42, 662 42, 662 45 L662 60" fill="none" strokeWidth="0.9" />
 
             {/* Classical Tiered Pyramidal Spire Roof */}
-            <path d="M745 60 L780 26 L815 60 Z" />
-            <line x1="780" y1="26" x2="780" y2="14" strokeWidth="1.3" />
-            <circle cx="780" cy="12" r="2.5" fill={strokeColor} />
-
-            {/* MARINA COASTAL HORIZON & LIGHTHOUSE */}
-            <line x1="940" y1="230" x2="1140" y2="230" strokeWidth="1" strokeDasharray="6 3" />
-            {/* Madras Lighthouse Triangular Beacon Tower */}
-            <path d="M980 234 L1000 95 L1015 95 L1035 234 Z" />
-            <rect x="995" y="82" width="25" height="13" rx="2" />
-            <line x1="1007" y1="82" x2="1007" y2="72" strokeWidth="1.2" />
-            {/* Lighthouse Sweeping Beam Lines */}
-            <line x1="1007" y1="72" x2="1120" y2="40" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.6" />
-            <line x1="1007" y1="72" x2="1140" y2="60" strokeWidth="0.8" strokeDasharray="3 3" opacity="0.6" />
+            <path d="M608 38 L640 15 L672 38 Z" />
+            <line x1="640" y1="15" x2="640" y2="5" strokeWidth="1.4" />
+            <circle cx="640" cy="4" r="2.5" fill={strokeColor} />
           </g>
         </>
       );
@@ -570,7 +661,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* CHARMINAR - Qutb Shahi Masterpiece with 4 Minarets */}
             {/* Base Plinth */}
             <rect x="670" y="222" width="260" height="12" />
@@ -637,7 +728,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* SHANIWAR WADA - Fortified Peshwa Stone Citadel */}
             {/* Stately Rampart Foundation */}
             <rect x="640" y="218" width="300" height="16" />
@@ -702,7 +793,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* SIDI SAIYYED MOSQUE - Famous "Tree of Life" Intricate Jali Screen */}
             {/* Sandstone Foundation Wall */}
             <rect x="650" y="218" width="240" height="16" />
@@ -768,7 +859,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* RUMI DARWAZA - 60-Foot Awadhi Nawabi Turkish Gate */}
             {/* Base Plinth */}
             <rect x="660" y="218" width="280" height="16" />
@@ -821,7 +912,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
         </g>
 
         {/* Layer 2: Foreground Landmark Layer */}
-        <g stroke={strokeColor} strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.44' : '0.38'} className="transition-all duration-300">
+        <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
           {/* Universal Monument Gateway & Transit Horizon */}
           <path d="M680 234 L680 130 C680 85, 780 85, 780 130 L780 234 Z" />
           <rect x="670" y="222" width="120" height="12" />
@@ -845,6 +936,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
       aria-label={`${cityId} architectural skyline silhouette`}
     >
       {defs}
+      {draftedGridLayer}
       {atmosphericClouds}
       {renderCityVectors()}
       {groundPlane}

@@ -192,25 +192,30 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           borderColor: bannerStyle.borderColor,
         }}
       >
-        {/* Subtle dark protective radial vignette behind top-left AQI, PM2.5 & PM10 readouts */}
+        {/* Soft dark protective radial scrim behind top-left AQI, PM2.5 & PM10 readouts */}
         <div 
-          className="absolute -top-12 -left-12 w-[28rem] sm:w-[38rem] h-[28rem] sm:h-[38rem] rounded-full pointer-events-none z-0 select-none"
+          className="absolute -top-16 -left-16 w-[34rem] sm:w-[46rem] h-[34rem] sm:h-[46rem] rounded-full pointer-events-none z-0 select-none"
           style={{
             background: isDarkMode
-              ? "radial-gradient(circle at 25% 25%, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0) 75%)"
-              : "radial-gradient(circle at 25% 25%, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.22) 45%, rgba(0, 0, 0, 0) 75%)",
+              ? "radial-gradient(circle at 22% 22%, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.52) 50%, rgba(0, 0, 0, 0) 80%)"
+              : "radial-gradient(circle at 22% 22%, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0) 80%)",
           }}
           aria-hidden="true"
         />
 
-        {/* Full-width Architectural Outlined Skyline Backdrop with Depth */}
+        {/* Ambient atmospheric radial glow illuminating the central architectural landmark */}
         <div 
-          className="absolute inset-x-0 bottom-0 pointer-events-none select-none overflow-hidden h-36 sm:h-48 md:h-56 z-0 transition-opacity duration-300 ease-in-out"
-          aria-hidden="true"
+          className="absolute top-1/2 left-1/2 -translate-x-1/4 -translate-y-1/2 w-[38rem] sm:w-[50rem] h-[22rem] sm:h-[28rem] rounded-full pointer-events-none z-0 select-none transition-all duration-700"
           style={{
-            maskImage: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.2) 85%, rgba(0,0,0,0) 100%)",
-            WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.2) 85%, rgba(0,0,0,0) 100%)",
+            background: `radial-gradient(circle at 50% 45%, ${bannerStyle.accent}33 0%, ${bannerStyle.accent}14 45%, transparent 72%)`,
           }}
+          aria-hidden="true"
+        />
+
+        {/* Full-width Architectural Outlined Skyline & Coordinate Grid Backdrop */}
+        <div 
+          className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0 transition-opacity duration-300 ease-in-out"
+          aria-hidden="true"
         >
           <CitySkylineBackdrop 
             cityId={currentCity.id} 
@@ -334,6 +339,21 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                 </span>
               </div>
 
+              {/* Core PM2.5 and PM10 Metrics Readouts */}
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4 my-2 text-xs sm:text-sm font-mono text-stone-200">
+                <div>
+                  <span className="text-stone-400 font-normal">PM2.5 : </span>
+                  <strong className="text-white font-bold">{currentCity.pm25} µg/m³</strong>
+                </div>
+                <div>
+                  <span className="text-stone-400 font-normal">PM10 : </span>
+                  <strong className="text-white font-bold">{currentCity.pm10} µg/m³</strong>
+                </div>
+                <span className="text-[11px] font-mono text-stone-400">
+                  Dominant: <strong className="text-stone-200 font-semibold">{currentCity.dominantPollutant}</strong>
+                </span>
+              </div>
+
               {/* Continuous Graded Horizontal Rainbow Spectrum Gauge Bar */}
               <div className="w-full max-w-xl mt-3 pt-1">
                 {/* Spectrum Tier Labels */}
@@ -378,6 +398,25 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                   {AQI_SPECTRUM_TICKS.map((tick) => (
                     <span key={tick}>{tick}</span>
                   ))}
+                </div>
+
+                {/* Active Category Range Badge beneath Pin Thumb matching reference design */}
+                <div className="relative w-full h-6 mt-1 overflow-visible">
+                  <div
+                    className="absolute top-0 -translate-x-1/2 transition-all duration-700 pointer-events-none"
+                    style={{ left: `${getSpectrumPercentage(currentCity.currentAQI)}%` }}
+                  >
+                    <span 
+                      className="inline-flex items-center rounded-full px-2.5 py-0.5 text-[10px] sm:text-[11px] font-mono font-bold border backdrop-blur-md shadow-xs whitespace-nowrap"
+                      style={{
+                        backgroundColor: bannerStyle.categoryBg,
+                        borderColor: bannerStyle.categoryBorder,
+                        color: bannerStyle.categoryText,
+                      }}
+                    >
+                      {currentCity.aqiCategory} ({cityAqiStyle.minAqi}–{cityAqiStyle.maxAqi})
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>

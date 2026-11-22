@@ -293,6 +293,8 @@ export function getSharedAQITheme(aqi: number, isDark: boolean = false, category
   return {
     tierKey,
     label: tier.label,
+    minAqi: tier.minAqi,
+    maxAqi: tier.maxAqi,
     summary: tier.summary,
     accent: mode.accent,
     activeAccent: mode.activeAccent,
