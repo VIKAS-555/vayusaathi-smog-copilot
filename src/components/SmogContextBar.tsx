@@ -224,7 +224,20 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   const peakPm25InCurve = Math.max(...currentCity.diurnalCurve.map(p => p.pm25), 10);
   const maxPm25 = Math.max(peakPm25InCurve * 1.15, 60);
 
+  // Current hour of the day for the "Current Hour" marker
+  const currentHour = new Date().getHours();
+  const currentHourStr = `${currentHour.toString().padStart(2, '0')}:00`;
+
+  // Dynamic reference hairlines (100, 200, 300) scaled to peak PM2.5
+  const referenceHairlines = maxPm25 > 250 
+    ? [100, 200, 300] 
+    : maxPm25 > 120 
+    ? [50, 100, 150] 
+    : [25, 50, 75];
+
   const activeHour = hoveredHour !== null ? hoveredHour : selectedHour;
+  const tooltipLeftPct = Math.min(92, Math.max(8, ((activeHour + 0.5) / 24) * 100));
+
   const activePoint = currentCity.diurnalCurve.find(p => p.hour === activeHour) 
     || currentCity.diurnalCurve[0]
     || {
@@ -566,7 +579,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
       )}
 
       {/* 24-Hour Diurnal Smog & Ventilation Curve */}
-      <div className="mt-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-900/50 p-4 sm:p-5">
+      <div className="mt-5 rounded-2xl border border-stone-200 dark:border-[#2B3833] bg-stone-50/70 dark:bg-[#1A221F] p-4 sm:p-5 shadow-xs transition-colors">
         <div className="flex flex-wrap items-center justify-between gap-2.5 mb-3">
           <div>
             <h3 className="text-sm font-bold text-ink dark:text-stone-100 flex items-center gap-1.5">
@@ -580,78 +593,30 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             </p>
           </div>
 
-          {/* Graded Status Badges in Diurnal Legend */}
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <div className="flex items-center gap-1.5 rounded-md border border-sage-300 dark:border-sage-800 bg-sage-50 dark:bg-sage-950/80 px-2.5 py-1 text-sage-800 dark:text-sage-200 font-medium shadow-2xs">
-              <Sun className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />
-              <span>Safe Ventilation ({currentCity.safeVentilationWindows})</span>
+          {/* Streamlined Legend Strip: Highlights Safe Airing Corridor, Trapping Hours, and Current Hour */}
+          <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+            {/* 1. Safe Airing Corridor */}
+            <div className="flex items-center gap-1.5 rounded-full border border-emerald-300 dark:border-emerald-800/80 bg-emerald-50/90 dark:bg-emerald-950/60 px-2.5 py-1 text-emerald-800 dark:text-emerald-200 font-medium shadow-2xs">
+              <span className="h-2.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+              <span>Safe Airing Corridor ({currentCity.safeVentilationWindows})</span>
             </div>
 
-            <div 
-              className="flex items-center gap-1.5 rounded-md border px-2.5 py-1 font-medium shadow-2xs transition-colors"
-              style={{
-                backgroundColor: cityAqiStyle.bg,
-                borderColor: cityAqiStyle.border,
-                color: cityAqiStyle.text,
-              }}
-            >
-              <CityStatusIcon className="h-3.5 w-3.5 shrink-0" />
-              <span>{cityAqiStyle.label} Episode Trapping</span>
+            {/* 2. Trapping Hours */}
+            <div className="flex items-center gap-1.5 rounded-full border border-amber-300/80 dark:border-amber-800/60 bg-amber-50/80 dark:bg-amber-950/40 px-2.5 py-1 text-amber-800 dark:text-amber-300 font-medium shadow-2xs">
+              <span className="h-2.5 w-1.5 rounded-full bg-amber-500/80 dark:bg-amber-400/80 shrink-0" />
+              <span>Trapping Hours</span>
+            </div>
+
+            {/* 3. Current Hour */}
+            <div className="flex items-center gap-1.5 rounded-full border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800/90 px-2.5 py-1 text-ink dark:text-stone-200 font-semibold shadow-2xs">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span>Current Hour ({currentHourStr})</span>
             </div>
           </div>
         </div>
 
-        {/* Visual Color Swatch Key: Explains all 6 AQI tiers + safe airing corridor */}
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[11px] font-mono text-ink-muted dark:text-stone-300 border-t border-stone-200/80 dark:border-stone-800 pt-2 mb-2">
-          <span className="font-semibold text-ink dark:text-stone-100">AQI Scale:</span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.good.dark.accent : AQI_TIERS.good.day.accent }} />
-            <span>Good (0–50)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.moderate.dark.accent : AQI_TIERS.moderate.day.accent }} />
-            <span>Moderate (51–100)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.poor.dark.accent : AQI_TIERS.poor.day.accent }} />
-            <span>Poor (101–200)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.unhealthy.dark.accent : AQI_TIERS.unhealthy.day.accent }} />
-            <span>Unhealthy (201–300)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.severe.dark.accent : AQI_TIERS.severe.day.accent }} />
-            <span>Severe (301–400)</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-2xs shrink-0" style={{ backgroundColor: isDarkMode ? AQI_TIERS.hazardous.dark.accent : AQI_TIERS.hazardous.day.accent }} />
-            <span>Hazardous (401+)</span>
-          </span>
-          <span className="flex items-center gap-1.5 border-l border-stone-300 dark:border-stone-700 pl-2">
-            <span className="h-2.5 w-3 rounded-2xs shrink-0 border border-sage-600 dark:border-sage-400 bg-sage-100 dark:bg-sage-950/60" />
-            <span className="text-sage-700 dark:text-sage-300 font-semibold">Safe Airing Corridor</span>
-          </span>
-        </div>
-
-        {/* Timeline Corridor Highlight Indicator */}
-        <div className="mb-2 flex items-center justify-between text-[11px] font-mono text-ink-muted dark:text-stone-400 border-b border-stone-200 dark:border-stone-800 pb-1.5">
-          <span className="flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-stone-400" />
-            00:00 Midnight
-          </span>
-          <span className="flex items-center gap-1 font-semibold text-sage-700 dark:text-sage-300">
-            <Sun className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400" />
-            <span className="hidden xs:inline">Airing Corridor:</span> {currentCity.safeVentilationWindows}
-          </span>
-          <span className="flex items-center gap-1">
-            23:00 Night
-            <span className="h-1.5 w-1.5 rounded-full bg-stone-400" />
-          </span>
-        </div>
-
         {/* Mobile Quick Hour Stepper: Easy Thumb Scrubbing on Touchscreens */}
-        <div className="flex sm:hidden items-center justify-between bg-stone-100 dark:bg-stone-800 rounded-md p-1.5 mb-2 text-xs font-mono">
+        <div className="flex sm:hidden items-center justify-between bg-stone-100 dark:bg-[#222B27] rounded-lg p-1.5 mb-2 text-xs font-mono border border-stone-200 dark:border-[#2D3A34]">
           <button
             onClick={() => setSelectedHour((prev) => (prev - 1 + 24) % 24)}
             className="flex items-center gap-1 rounded bg-white dark:bg-stone-700 px-2.5 py-1 text-xs font-semibold text-ink dark:text-stone-100 shadow-2xs border border-stone-200 dark:border-stone-600 min-h-[30px]"
@@ -662,7 +627,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           <span className="font-bold text-ink dark:text-stone-100 flex items-center gap-1.5">
             <span>{activePoint.timeLabel}</span>
             <span className="text-[10px] text-ink-muted dark:text-stone-400 font-normal">
-              ({activePoint.pm25} µg/m³)
+              (AQI ~{activePoint.aqi})
             </span>
           </span>
           <button
@@ -674,86 +639,166 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </button>
         </div>
 
-        {/* Diurnal Bar Visualization: All 24 Hours (00 through 23) - Guaranteed 100% Visibility at All Times */}
-        <div className="pt-1 pb-1">
-          <div className="w-full overflow-x-auto no-scrollbar sm:overflow-visible pb-1">
-            <div className="flex items-end gap-1 sm:gap-1.5 h-36 min-w-[540px] sm:min-w-0 sm:w-full">
-              {currentCity.diurnalCurve.map((point) => {
-                const heightPercent = Math.max(26, Math.min(100, Math.round((point.pm25 / maxPm25) * 100)));
-                const isHovered = hoveredHour === point.hour;
-                const isSelected = selectedHour === point.hour;
-                const isActive = isHovered || isSelected;
+        {/* Diurnal Bar Visualization: Sleek, Shorter Capsule Bars with Reference Hairlines & Floating Tooltip */}
+        <div className="pt-8 pb-1">
+          <div className="relative w-full overflow-x-auto no-scrollbar sm:overflow-visible pb-1">
+            {/* Interactive Floating Hour Tooltip */}
+            <div
+              className="absolute -top-7 z-30 pointer-events-none transition-all duration-150 ease-out -translate-x-1/2 flex flex-col items-center select-none"
+              style={{ left: `${tooltipLeftPct}%` }}
+            >
+              <div className="flex items-center gap-1.5 sm:gap-2 rounded-lg border border-stone-300 dark:border-[#2D3A34] bg-white/95 dark:bg-[#1A221F]/95 px-2.5 py-1 text-xs shadow-lg backdrop-blur-md whitespace-nowrap">
+                <span className="font-mono font-bold text-ink dark:text-stone-100">
+                  {activePoint.timeLabel}
+                </span>
+                <span className="h-3 w-px bg-stone-200 dark:bg-stone-700" />
+                <span 
+                  className="font-mono font-bold tabular-nums"
+                  style={{ color: getAQIStyle(activePoint.aqi, isDarkMode).accent }}
+                >
+                  AQI {activePoint.aqi}
+                </span>
+                <span className="h-3 w-px bg-stone-200 dark:bg-stone-700" />
+                <span className={`inline-flex items-center gap-1 font-semibold text-[11px] ${
+                  activePoint.isSafeVentilationWindow 
+                    ? 'text-emerald-700 dark:text-emerald-300' 
+                    : 'text-amber-700 dark:text-amber-300'
+                }`}>
+                  {activePoint.isSafeVentilationWindow ? (
+                    <>
+                      <Sun className="h-3 w-3 text-emerald-500 shrink-0" />
+                      <span>Safe Ventilation Window</span>
+                    </>
+                  ) : (
+                    <>
+                      <CloudFog className="h-3 w-3 text-amber-500 shrink-0" />
+                      <span>Inversion Trapping</span>
+                    </>
+                  )}
+                </span>
+              </div>
+              {/* Tooltip caret pointer */}
+              <div className="w-2 h-2 rotate-45 -mt-1 bg-white dark:bg-[#1A221F] border-r border-b border-stone-300 dark:border-[#2D3A34]" />
+            </div>
 
-                const isWindowStart = point.hour === currentCity.ventilationStartHour;
-                const isWindowEnd = point.hour === currentCity.ventilationEndHour;
-
-                const barStyle = getBarAppearance(point, isActive, isDarkMode);
-                const trackStyle = getTrackAppearance(point.isSafeVentilationWindow, isDarkMode, isWindowStart, isWindowEnd);
-
-                return (
-                  <div
-                    key={point.hour}
-                    onClick={() => setSelectedHour(point.hour)}
-                    onMouseEnter={() => setHoveredHour(point.hour)}
-                    onMouseLeave={() => setHoveredHour(null)}
-                    className="relative flex-1 flex flex-col items-center h-full justify-end cursor-pointer group select-none"
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        setSelectedHour(point.hour);
-                      }
-                    }}
-                    aria-label={`${point.timeLabel}: PM2.5 ${point.pm25} µg/m³, ${point.isSafeVentilationWindow ? 'Safe Ventilation Window' : `Inversion ${point.inversionRisk}`}`}
-                  >
-                    {/* Slot Track Background: Gives every hour (00-23) distinct structural baseline and highlights the ventilation corridor */}
+            {/* Chart Area with Horizontal Reference Hairlines (100, 200, 300) */}
+            <div className="relative h-[84px] sm:h-[90px] min-w-[500px] sm:min-w-0 sm:w-full">
+              {/* Reference Hairlines */}
+              <div className="absolute inset-x-0 top-0 bottom-6 pointer-events-none z-0">
+                {referenceHairlines.map((val) => {
+                  const bottomPct = Math.round((val / maxPm25) * 100);
+                  if (bottomPct < 10 || bottomPct > 90) return null;
+                  return (
                     <div
-                      style={trackStyle}
-                      className={`absolute inset-x-0 top-0 bottom-6 rounded-t transition-colors ${
-                        isActive ? 'ring-1 ring-ink/30 dark:ring-white/40' : ''
-                      }`}
-                    />
+                      key={val}
+                      className="absolute inset-x-0 flex items-center border-b border-dashed border-stone-300/60 dark:border-stone-700/60"
+                      style={{ bottom: `${bottomPct}%` }}
+                    >
+                      <span className="absolute right-0 -top-2.5 font-mono text-[9px] text-stone-400 dark:text-stone-500 select-none bg-stone-50/90 dark:bg-[#1A221F]/90 px-1 rounded">
+                        {val}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
 
-                    {/* Filled Bar: High-contrast vibrant colors that are 100% visible at all times */}
+              {/* 24 Hourly Capsule Slots */}
+              <div className="relative z-10 flex items-end h-full w-full">
+                {currentCity.diurnalCurve.map((point) => {
+                  const heightPercent = Math.max(16, Math.min(100, Math.round((point.pm25 / maxPm25) * 100)));
+                  const isHovered = hoveredHour === point.hour;
+                  const isSelected = selectedHour === point.hour;
+                  const isActive = isHovered || isSelected;
+                  const isCurrent = point.hour === currentHour;
+
+                  const isWindowStart = point.hour === currentCity.ventilationStartHour;
+                  const isWindowEnd = point.hour === currentCity.ventilationEndHour;
+
+                  const barStyle = getBarAppearance(point, isActive, isDarkMode);
+
+                  return (
                     <div
-                      style={{
-                        height: `${heightPercent}%`,
-                        backgroundColor: barStyle.bg,
-                        borderColor: barStyle.border,
+                      key={point.hour}
+                      onClick={() => setSelectedHour(point.hour)}
+                      onMouseEnter={() => setHoveredHour(point.hour)}
+                      onMouseLeave={() => setHoveredHour(null)}
+                      className="relative flex-1 flex flex-col items-center h-full justify-end cursor-pointer group select-none"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          setSelectedHour(point.hour);
+                        }
                       }}
-                      className={`relative z-1 w-full rounded-t border-t border-x transition-all duration-150 ${
-                        isActive
-                          ? 'ring-2 ring-ink dark:ring-white ring-offset-1 scale-y-105 shadow-sm'
-                          : 'opacity-95 hover:opacity-100'
-                      }`}
-                    />
-
-                    {/* Selection Pin Indicator below bar */}
-                    {isSelected && (
-                      <div className="absolute bottom-6 z-2 -mb-1 w-1.5 h-1.5 rotate-45 bg-ink dark:bg-stone-100" />
-                    )}
-
-                    {/* Hour Axis Label: Clearly marked intervals + 23 at the far right boundary */}
-                    <span
-                      className={`mt-1.5 text-[10px] font-mono leading-none transition-colors ${
-                        isActive
-                          ? 'font-bold text-ink dark:text-stone-100 scale-110'
-                          : 'text-ink-muted dark:text-stone-400'
+                      aria-label={`${point.timeLabel}: PM2.5 ${point.pm25} µg/m³, AQI ${point.aqi}, ${
+                        point.isSafeVentilationWindow ? 'Safe Ventilation Window' : `Inversion ${point.inversionRisk}`
                       }`}
                     >
-                      {point.hour === 0 ? '00' :
-                       point.hour === 3 ? '03' :
-                       point.hour === 6 ? '06' :
-                       point.hour === 9 ? '09' :
-                       point.hour === 12 ? '12' :
-                       point.hour === 15 ? '15' :
-                       point.hour === 18 ? '18' :
-                       point.hour === 21 ? '21' :
-                       point.hour === 23 ? '23' : ''}
-                    </span>
-                  </div>
-                );
-              })}
+                      {/* Safe Airing Corridor Column Slot Background */}
+                      {point.isSafeVentilationWindow && (
+                        <div
+                          className={`absolute inset-x-0 top-0 bottom-6 transition-colors pointer-events-none ${
+                            isDarkMode ? 'bg-emerald-500/[0.09]' : 'bg-emerald-500/[0.07]'
+                          } border-t-2 border-emerald-500/60 dark:border-emerald-400/60 ${
+                            isWindowStart ? 'rounded-tl-md border-l border-emerald-500/30' : ''
+                          } ${
+                            isWindowEnd ? 'rounded-tr-md border-r border-emerald-500/30' : ''
+                          }`}
+                        />
+                      )}
+
+                      {/* Capsule Bar: Slender (6px-8px), rounded capsule centered in slot */}
+                      <div className="relative z-10 w-full flex items-end justify-center h-full pb-5">
+                        <div
+                          style={{
+                            height: `${heightPercent}%`,
+                            backgroundColor: point.isSafeVentilationWindow 
+                              ? (isDarkMode ? '#34D399' : '#10B981')
+                              : barStyle.bg,
+                          }}
+                          className={`w-1.5 sm:w-2 rounded-full transition-all duration-200 ${
+                            isActive
+                              ? 'ring-2 ring-ink dark:ring-stone-100 ring-offset-2 ring-offset-stone-50 dark:ring-offset-[#1A221F] scale-110 shadow-md opacity-100'
+                              : point.isSafeVentilationWindow
+                              ? 'opacity-95 hover:opacity-100 hover:scale-105'
+                              : 'opacity-70 hover:opacity-100 hover:scale-105'
+                          } ${isCurrent && !isActive ? 'ring-1 ring-emerald-500/80 ring-offset-1 ring-offset-stone-50 dark:ring-offset-[#1A221F]' : ''}`}
+                        />
+                      </div>
+
+                      {/* Marker Pin / Indicator below bar */}
+                      <div className="h-2 flex items-center justify-center">
+                        {isSelected ? (
+                          <div className="w-1.5 h-1.5 rotate-45 bg-ink dark:bg-stone-100 shadow-2xs" />
+                        ) : isCurrent ? (
+                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                        ) : null}
+                      </div>
+
+                      {/* Hour Axis Label (00, 03, 06, 09, 12, 15, 18, 21, 23) */}
+                      <span
+                        className={`h-3 text-[10px] font-mono leading-none transition-colors ${
+                          isActive
+                            ? 'font-bold text-ink dark:text-stone-100 scale-105'
+                            : isCurrent
+                            ? 'font-semibold text-emerald-600 dark:text-emerald-400'
+                            : 'text-ink-muted dark:text-stone-400'
+                        }`}
+                      >
+                        {point.hour === 0 ? '00' :
+                         point.hour === 3 ? '03' :
+                         point.hour === 6 ? '06' :
+                         point.hour === 9 ? '09' :
+                         point.hour === 12 ? '12' :
+                         point.hour === 15 ? '15' :
+                         point.hour === 18 ? '18' :
+                         point.hour === 21 ? '21' :
+                         point.hour === 23 ? '23' : ''}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
