@@ -105,30 +105,36 @@ export function calculateInhaledDose(
   const passiveCigaretteEquivalentAvoidedDaily = Number((totalUgAvoidedDaily / 220).toFixed(1));
 
   // 2. Commute & Household Emission Reductions (CO2 & PM2.5)
-  // Petrol car: 140g CO2/km, 0.025g PM2.5/km
-  // Metro: 25g CO2/km, 0.002g PM2.5/km
+  // Scaled with local ambient particulate density (high-smog airsheds prevent more toxic mass)
+  const citySeverityMultiplier = Math.max(0.5, cityContext.pm25 / 100);
   let monthlyCo2SavedKg = 0;
   let monthlyPmPreventedG = 0;
 
   const workdaysPerMonth = 22;
   const roundTripKm = profile.dailyCommuteKm;
 
-  if (isCommuteShifted && (profile.commuteMode === 'solo-petrol-car' || profile.commuteMode === 'carpool-cab')) {
+  if (isCommuteShifted && (profile.commuteMode === 'solo-petrol-car' || profile.commuteMode === 'carpool-cab' || profile.commuteMode === 'two-wheeler')) {
     const dailyCo2GramsSaved = roundTripKm * (140 - 25);
-    const dailyPmGramsSaved = roundTripKm * (0.025 - 0.002);
+    const dailyPmGramsSaved = roundTripKm * (0.025 - 0.002) * citySeverityMultiplier;
     monthlyCo2SavedKg += (dailyCo2GramsSaved * workdaysPerMonth) / 1000;
     monthlyPmPreventedG += dailyPmGramsSaved * workdaysPerMonth;
   }
 
   // Energy & waste swaps (LED, heating optimization, waste segregation preventing local burning)
-  if (adoptedActionIds.some(id => id.includes('waste') || id.includes('compost'))) {
+  if (adoptedActionIds.some(id => id.includes('waste') || id.includes('burn') || id.includes('compost'))) {
     monthlyCo2SavedKg += 18.5;
-    monthlyPmPreventedG += 12.0; // prevents open localized burning
+    monthlyPmPreventedG += 12.0 * citySeverityMultiplier; // prevents open localized burning
   }
 
-  if (adoptedActionIds.some(id => id.includes('boiler') || id.includes('solar') || id.includes('appliance'))) {
-    monthlyCo2SavedKg += 28.0;
-    monthlyPmPreventedG += 4.5;
+  // Residential DG generator curbs & genset bans during inversion episodes
+  if (adoptedActionIds.some(id => id.includes('genset') || id.includes('dg') || id.includes('generator'))) {
+    monthlyCo2SavedKg += 35.0;
+    monthlyPmPreventedG += 18.5 * citySeverityMultiplier;
+  }
+
+  if (adoptedActionIds.some(id => id.includes('boiler') || id.includes('solar') || id.includes('appliance') || id.includes('exhaust'))) {
+    monthlyCo2SavedKg += 15.0;
+    monthlyPmPreventedG += 3.5 * citySeverityMultiplier;
   }
 
   // Round values

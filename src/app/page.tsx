@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { CITY_PRESETS } from '@/data/cityPresets';
 import { CitySmogContext, HouseholdProfile, GenAIPlanResponse } from '@/types';
 import { calculateInhaledDose } from '@/lib/environmentMath';
@@ -16,9 +16,45 @@ import { ActionPlanTabs } from '@/components/ActionPlanTabs';
 import { RwaBulletinModal } from '@/components/RwaBulletinModal';
 import { ExplanationModal } from '@/components/ExplanationModal';
 
+// Haversine formula to compute great-circle distance in kilometers
+function getDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
+// Locate nearest station from user's coordinates among our calibrated presets
+function findNearestStation(lat: number, lon: number): CitySmogContext {
+  let closest = CITY_PRESETS[0];
+  let minDistance = Infinity;
+
+  for (const city of CITY_PRESETS) {
+    if (city.latitude !== undefined && city.longitude !== undefined) {
+      const dist = getDistanceKm(lat, lon, city.latitude, city.longitude);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closest = city;
+      }
+    }
+  }
+
+  return closest;
+}
+
 export default function Home() {
   // 1. Initial State Setup
   const [currentCity, setCurrentCity] = useState<CitySmogContext>(CITY_PRESETS[0]); // Delhi NCR
+  const [isLocationMatched, setIsLocationMatched] = useState<boolean>(false);
+  const [matchedCityId, setMatchedCityId] = useState<string | null>(null);
+  const userManualSelectionRef = useRef<boolean>(false);
 
   const [profile, setProfile] = useState<HouseholdProfile>({
     members: [
@@ -156,14 +192,57 @@ export default function Home() {
     fetchLiveStation(CITY_PRESETS[0]);
   }, [fetchLiveStation]);
 
+  // Auto-detect user location on first load with short timeout (silent fallback)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !('geolocation' in navigator)) {
+      return;
+    }
+
+    try {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // If the user has already manually clicked a city or adjusted overrides, do not overwrite
+          if (userManualSelectionRef.current) return;
+
+          const { latitude, longitude } = position.coords;
+          if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+            const nearestCity = findNearestStation(latitude, longitude);
+            if (nearestCity) {
+              setIsLocationMatched(true);
+              setMatchedCityId(nearestCity.id);
+              setCurrentCity(nearestCity);
+              setPlan(generateDeterministicPlan(profile, nearestCity));
+              fetchLiveStation(nearestCity);
+            }
+          }
+        },
+        (error) => {
+          // Silent fallback on permission denied, timeout, or location unavailable
+          console.debug('Geolocation auto-detection skipped or timed out:', error.message);
+        },
+        {
+          enableHighAccuracy: false,
+          timeout: 4500,
+          maximumAge: 600000, // 10 minutes cache
+        }
+      );
+    } catch (err) {
+      console.debug('Geolocation request error:', err);
+    }
+  }, [profile, fetchLiveStation]);
+
   // When city changes: 0ms instant preset switch, then background poll live feed
   const handleSelectCity = (newCity: CitySmogContext) => {
+    userManualSelectionRef.current = true;
+    setIsLocationMatched(false);
     setCurrentCity(newCity);
     setPlan(generateDeterministicPlan(profile, newCity));
     fetchLiveStation(newCity);
   };
 
   const handleCustomCityUpdate = (updated: Partial<CitySmogContext>) => {
+    userManualSelectionRef.current = true;
+    setIsLocationMatched(false);
     setCurrentCity((prev) => {
       const merged: CitySmogContext = { 
         ...prev, 
@@ -208,6 +287,7 @@ export default function Home() {
           onRefreshLive={() => fetchLiveStation(currentCity)}
           isFetchingLive={isFetchingLive}
           isDarkMode={isDarkMode}
+          isLocationMatched={isLocationMatched}
         />
 
         {/* 2. India's Metro Cities Air Quality Index (8 Major Hubs, 100% Synced) */}
@@ -215,12 +295,16 @@ export default function Home() {
           cities={displayCities}
           currentCityId={currentCity.id}
           onSelectCity={handleSelectCity}
+          locationMatchedCityId={isLocationMatched ? matchedCityId : null}
         />
 
         {/* 3. Paired Impact Section: Live Impact Scorecard & Cigarette Equivalence Card */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
           <ImpactScorecard
             impact={impact}
+            currentCity={currentCity}
+            adoptedCount={adoptedActionIds.length}
+            isDarkMode={isDarkMode}
             onOpenExplainer={() => setIsExplainerOpen(true)}
             societyFamilies={profile.societySizeFamilies}
             onUpdateSocietyFamilies={(count) =>

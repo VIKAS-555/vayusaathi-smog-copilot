@@ -7,6 +7,7 @@ interface MetroCitiesGridProps {
   cities: CitySmogContext[];
   currentCityId: string;
   onSelectCity: (city: CitySmogContext) => void;
+  locationMatchedCityId?: string | null;
 }
 
 // 8 Fine-Line Architectural Landmark SVGs crafted precisely for the metro cards
@@ -288,6 +289,7 @@ export const MetroCitiesGrid: React.FC<MetroCitiesGridProps> = ({
   cities,
   currentCityId,
   onSelectCity,
+  locationMatchedCityId,
 }) => {
   const [hoveredCityId, setHoveredCityId] = useState<string | null>(null);
 
@@ -339,6 +341,11 @@ export const MetroCitiesGrid: React.FC<MetroCitiesGridProps> = ({
           const aqiStyle = getAQIStyle(city.currentAQI, true, city.aqiCategory);
           const isHovered = hoveredCityId === city.id;
           const displayName = getDisplayName(city);
+          const isNearYou = !!locationMatchedCityId && (
+            city.id === locationMatchedCityId || 
+            city.id.includes(locationMatchedCityId) ||
+            locationMatchedCityId.includes(city.id)
+          );
 
           return (
             <div
@@ -359,11 +366,18 @@ export const MetroCitiesGrid: React.FC<MetroCitiesGridProps> = ({
 
               {/* Right Side: City Name + Colored AQI + Weather Sub-readouts */}
               <div className="flex-1 pl-3.5 flex flex-col justify-between h-full min-w-0">
-                {/* Top: City Name + Arrow Up Right icon */}
+                {/* Top: City Name + Near You badge + Arrow Up Right icon */}
                 <div className="flex items-center justify-between gap-1">
-                  <h3 className="font-bold text-sm sm:text-base text-stone-100 truncate tracking-tight group-hover:text-white">
-                    {displayName}
-                  </h3>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <h3 className="font-bold text-sm sm:text-base text-stone-100 truncate tracking-tight group-hover:text-white">
+                      {displayName}
+                    </h3>
+                    {isNearYou && (
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400 shrink-0">
+                        Near You
+                      </span>
+                    )}
+                  </div>
                   <div className="p-1 rounded-full bg-white/5 text-stone-400 group-hover:text-white group-hover:bg-white/10 transition-all shrink-0">
                     <ArrowUpRight className="h-3 w-3" />
                   </div>

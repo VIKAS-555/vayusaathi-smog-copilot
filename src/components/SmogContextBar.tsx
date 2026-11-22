@@ -41,6 +41,7 @@ interface SmogContextBarProps {
   onRefreshLive?: () => void;
   isFetchingLive?: boolean;
   isDarkMode?: boolean;
+  isLocationMatched?: boolean;
 }
 
 // Calibrated 6-tier graded bar appearance adhering strictly to CPCB & international AQI scales
@@ -203,6 +204,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   onRefreshLive,
   isFetchingLive = false,
   isDarkMode = false,
+  isLocationMatched = false,
 }) => {
   const [selectedHour, setSelectedHour] = useState<number>(() => {
     const midVent = Math.round((currentCity.ventilationStartHour + currentCity.ventilationEndHour) / 2);
@@ -287,6 +289,12 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                 <span className="font-mono text-[11px] sm:text-xs text-stone-300/80">
                   · {currentCity.state}
                 </span>
+                {isLocationMatched && (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/50 bg-emerald-500/25 px-2 py-0.5 text-[10px] font-semibold text-emerald-300 backdrop-blur-xs shadow-2xs">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
+                    <span>Near You</span>
+                  </span>
+                )}
               </div>
             </div>
 
