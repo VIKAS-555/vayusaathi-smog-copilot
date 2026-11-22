@@ -8,6 +8,7 @@ import { generateDeterministicPlan } from '@/lib/geminiService';
 import { fetchLiveCityData } from '@/lib/liveAirQualityService';
 import { Masthead } from '@/components/Masthead';
 import { SmogContextBar } from '@/components/SmogContextBar';
+import { HistoricAirQualityGraph } from '@/components/HistoricAirQualityGraph';
 import { AirPollutantsForecastSection } from '@/components/AirPollutantsForecastSection';
 import { HouseholdProfiler } from '@/components/HouseholdProfiler';
 import { ImpactScorecard } from '@/components/ImpactScorecard';
@@ -280,7 +281,7 @@ export default function Home() {
 
       {/* Main Workstation Container */}
       <div className="mx-auto max-w-7xl w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* 1. Full-Width Active Station Hero Card & 24h Diurnal Smog Curve */}
+        {/* 1. Full-Width Active Station Hero Card */}
         <SmogContextBar
           currentCity={currentCity}
           onSelectCity={handleSelectCity}
@@ -291,13 +292,19 @@ export default function Home() {
           isLocationMatched={isLocationMatched}
         />
 
-        {/* 2. 7-Day Air Quality Forecast & Air Pollutants Breakdown */}
+        {/* 2. Historic Air Quality Bar Graph */}
+        <HistoricAirQualityGraph
+          currentCity={currentCity}
+          isDarkMode={isDarkMode}
+        />
+
+        {/* 3. 7-Day Air Quality Forecast & Air Pollutants Breakdown */}
         <AirPollutantsForecastSection
           currentCity={currentCity}
           isDarkMode={isDarkMode}
         />
 
-        {/* 3. India's Metro Cities Air Quality Index (8 Major Hubs, 100% Synced) */}
+        {/* 4. India's Metro Cities Air Quality Index (8 Major Hubs, 100% Synced) */}
         <MetroCitiesGrid
           cities={displayCities}
           currentCityId={currentCity.id}
