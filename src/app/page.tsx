@@ -8,6 +8,7 @@ import { generateDeterministicPlan } from '@/lib/geminiService';
 import { fetchLiveCityData } from '@/lib/liveAirQualityService';
 import { Masthead } from '@/components/Masthead';
 import { SmogContextBar } from '@/components/SmogContextBar';
+import { AirPollutantsForecastSection } from '@/components/AirPollutantsForecastSection';
 import { HouseholdProfiler } from '@/components/HouseholdProfiler';
 import { ImpactScorecard } from '@/components/ImpactScorecard';
 import { CigaretteEquivalenceCard } from '@/components/CigaretteEquivalenceCard';
@@ -290,7 +291,13 @@ export default function Home() {
           isLocationMatched={isLocationMatched}
         />
 
-        {/* 2. India's Metro Cities Air Quality Index (8 Major Hubs, 100% Synced) */}
+        {/* 2. 7-Day Air Quality Forecast & Air Pollutants Breakdown */}
+        <AirPollutantsForecastSection
+          currentCity={currentCity}
+          isDarkMode={isDarkMode}
+        />
+
+        {/* 3. India's Metro Cities Air Quality Index (8 Major Hubs, 100% Synced) */}
         <MetroCitiesGrid
           cities={displayCities}
           currentCityId={currentCity.id}

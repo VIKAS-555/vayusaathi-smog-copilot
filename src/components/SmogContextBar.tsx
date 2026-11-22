@@ -412,21 +412,6 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                 </span>
               </div>
 
-              {/* Core PM2.5 and PM10 Metrics Readouts */}
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4 my-2 text-xs sm:text-sm font-mono text-stone-200">
-                <div>
-                  <span className="text-stone-400 font-normal">PM2.5 : </span>
-                  <strong className="text-white font-bold">{currentCity.pm25} µg/m³</strong>
-                </div>
-                <div>
-                  <span className="text-stone-400 font-normal">PM10 : </span>
-                  <strong className="text-white font-bold">{currentCity.pm10} µg/m³</strong>
-                </div>
-                <span className="text-[11px] font-mono text-stone-400">
-                  Dominant: <strong className="text-stone-200 font-semibold">{currentCity.dominantPollutant}</strong>
-                </span>
-              </div>
-
               {/* Continuous Graded Horizontal Rainbow Spectrum Gauge Bar */}
               <div className="w-full max-w-xl mt-3 pt-1">
                 {/* Spectrum Tier Labels */}
