@@ -304,9 +304,9 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
           </div>
 
           {/* Main Hero Grid: Left AQI + Rainbow Spectrum Gauge, Right Frosted Weather Card */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+          <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 lg:gap-8 items-center">
             {/* Left Column: Live AQI readout + continuous rainbow spectrum gauge */}
-            <div className="lg:col-span-7 flex flex-col justify-center">
+            <div className="sm:col-span-7 flex flex-col justify-center">
               {/* Top Row: Live AQI tag + "Air Quality is" + Category Pill */}
               <div className="flex flex-wrap items-center gap-3 text-xs mb-1">
                 <div className="flex items-center gap-1.5 font-bold uppercase tracking-wider text-stone-200">
@@ -329,7 +329,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                       color: bannerStyle.categoryText,
                     }}
                   >
-                    <span>{currentCity.aqiCategory}</span>
+                    <span>{cityAqiStyle.label}</span>
                   </span>
                 </div>
               </div>
@@ -422,7 +422,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                         color: bannerStyle.categoryText,
                       }}
                     >
-                      {currentCity.aqiCategory} ({cityAqiStyle.minAqi}–{cityAqiStyle.maxAqi})
+                      {cityAqiStyle.label} ({cityAqiStyle.minAqi}–{cityAqiStyle.maxAqi})
                     </span>
                   </div>
                 </div>
@@ -430,7 +430,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
             </div>
 
             {/* Right Column: Frosted Glass Weather Card */}
-            <div className="lg:col-span-5 flex justify-end w-full">
+            <div className="sm:col-span-5 flex justify-end w-full">
               <div className="w-full rounded-2xl border border-white/20 bg-white/10 dark:bg-black/30 backdrop-blur-md p-4 sm:p-5 shadow-xl flex flex-col justify-between text-white transition-all">
                 {/* Weather Header: Icon + Temp + Condition + Top-Right Arrow */}
                 <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/15">

@@ -75,13 +75,13 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
 
       {/* 2. Grid Soft Edge Radial Fade Mask */}
       <mask id={gridMaskId}>
-        <radialGradient id={`${gridMaskId}-grad`} cx="55%" cy="45%" r="62%">
+        <radialGradient id={`${gridMaskId}-grad`} cx="52%" cy="45%" r="58%">
           <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
-          <stop offset="55%" stopColor="#FFFFFF" stopOpacity="0.65" />
-          <stop offset="85%" stopColor="#FFFFFF" stopOpacity="0.18" />
+          <stop offset="45%" stopColor="#FFFFFF" stopOpacity="0.70" />
+          <stop offset="75%" stopColor="#FFFFFF" stopOpacity="0.22" />
           <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.0" />
         </radialGradient>
-        <rect width="1200" height="240" fill={`url(#${gridMaskId}-grad)`} />
+        <rect width="1200" height="400" fill={`url(#${gridMaskId}-grad)`} />
       </mask>
 
       {/* Precision Landmark Translucent Fill (35% to 45% opacity) */}
@@ -112,7 +112,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
   const draftedGridLayer = (
     <g className="transition-opacity duration-300 pointer-events-none select-none">
       {/* 36px Coordinate Grid Canvas */}
-      <rect width="1200" height="240" fill={`url(#${gridPatternId})`} mask={`url(#${gridMaskId})`} />
+      <rect width="1200" height="380" fill={`url(#${gridPatternId})`} mask={`url(#${gridMaskId})`} />
     </g>
   );
 
@@ -906,7 +906,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
 
   return (
     <svg
-      viewBox="0 0 1200 240"
+      viewBox="0 0 1200 380"
       preserveAspectRatio="xMidYMax slice"
       className={`${className} transition-all duration-300 pointer-events-none select-none`}
       xmlns="http://www.w3.org/2000/svg"
@@ -915,8 +915,10 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
       {defs}
       {draftedGridLayer}
       {atmosphericClouds}
-      {renderCityVectors()}
-      {groundPlane}
+      <g transform="translate(0, 144)">
+        {renderCityVectors()}
+        {groundPlane}
+      </g>
     </svg>
   );
 };
