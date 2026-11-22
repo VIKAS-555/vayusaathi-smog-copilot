@@ -6,6 +6,23 @@ const nextConfig = {
   ...(isGithubPages ? { output: 'export' } : {}),
   basePath: isGithubPages ? '/vayusaathi-smog-copilot' : '',
   images: { unoptimized: true },
+  ...(!isGithubPages
+    ? {
+        async rewrites() {
+          return [
+            {
+              source: '/vayusaathi-smog-copilot',
+              destination: '/',
+            },
+            {
+              source: '/vayusaathi-smog-copilot/:path*',
+              destination: '/:path*',
+            },
+          ];
+        },
+      }
+    : {}),
 };
 
 module.exports = nextConfig;
+

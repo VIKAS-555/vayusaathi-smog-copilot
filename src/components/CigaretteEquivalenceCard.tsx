@@ -160,155 +160,136 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
 
   return (
     <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-5 sm:p-6 shadow-xs transition-colors">
-      {/* Real CSS @keyframes for continuous soft rising smoke puffs & ember pulse */}
+      {/* Real CSS @keyframes for silky curling smoke wisps & warm breathing ember glow */}
       <style>{`
-        @keyframes smokePuffRise1 {
-          0% {
-            transform: translate(0, 0) scale(0.6);
-            opacity: 0;
-          }
-          15% {
-            opacity: 0.75;
-          }
-          55% {
-            transform: translate(6px, -18px) scale(1.4);
-            opacity: 0.45;
-          }
-          85% {
-            transform: translate(12px, -36px) scale(2.1);
-            opacity: 0.15;
-          }
-          100% {
-            transform: translate(16px, -46px) scale(2.6);
-            opacity: 0;
-          }
-        }
-
-        @keyframes smokePuffRise2 {
-          0% {
-            transform: translate(0, 0) scale(0.5);
-            opacity: 0;
-          }
-          20% {
-            opacity: 0.7;
-          }
-          60% {
-            transform: translate(-5px, -20px) scale(1.5);
-            opacity: 0.4;
-          }
-          85% {
-            transform: translate(-10px, -40px) scale(2.3);
-            opacity: 0.12;
-          }
-          100% {
-            transform: translate(-14px, -52px) scale(2.8);
-            opacity: 0;
-          }
-        }
-
-        @keyframes smokePuffRise3 {
-          0% {
-            transform: translate(0, 0) scale(0.7);
-            opacity: 0;
-          }
-          25% {
-            opacity: 0.65;
-          }
-          65% {
-            transform: translate(8px, -22px) scale(1.6);
-            opacity: 0.35;
-          }
-          100% {
-            transform: translate(14px, -48px) scale(2.5);
-            opacity: 0;
-          }
-        }
-
-        @keyframes smokePuffRise4 {
-          0% {
-            transform: translate(0, 0) scale(0.55);
-            opacity: 0;
-          }
-          18% {
-            opacity: 0.6;
-          }
-          60% {
-            transform: translate(-7px, -24px) scale(1.7);
-            opacity: 0.3;
-          }
-          100% {
-            transform: translate(-16px, -54px) scale(2.9);
-            opacity: 0;
-          }
-        }
-
-        @keyframes smokeFilamentWaft1 {
-          0% {
-            transform: translateY(0) scaleX(1);
-            opacity: 0;
-          }
-          25% {
-            opacity: 0.6;
-          }
-          70% {
-            transform: translateY(-22px) scaleX(1.3) translateX(4px);
-            opacity: 0.25;
-          }
-          100% {
-            transform: translateY(-38px) scaleX(1.6) translateX(8px);
-            opacity: 0;
-          }
-        }
-
-        @keyframes smokeFilamentWaft2 {
-          0% {
-            transform: translateY(0) scaleX(1);
-            opacity: 0;
-          }
-          30% {
-            opacity: 0.55;
-          }
-          75% {
-            transform: translateY(-26px) scaleX(1.4) translateX(-5px);
-            opacity: 0.2;
-          }
-          100% {
-            transform: translateY(-42px) scaleX(1.8) translateX(-9px);
-            opacity: 0;
-          }
-        }
-
-        @keyframes emberPulseGlow {
+        @keyframes warmEmberBreath {
           0%, 100% {
-            opacity: 0.85;
-            filter: drop-shadow(0 0 2px #EF4444);
+            opacity: 0.82;
+            transform: scale(0.96);
+            filter: drop-shadow(0 0 2px #F97316) drop-shadow(0 0 5px #EA580C);
           }
           50% {
             opacity: 1;
-            filter: drop-shadow(0 0 7px #F59E0B);
+            transform: scale(1.04);
+            filter: drop-shadow(0 0 4.5px #F97316) drop-shadow(0 0 9px #EA580C);
           }
         }
 
-        .smoke-puff-1 {
-          animation: smokePuffRise1 3.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+        @keyframes smokeCurlingWisp1 {
+          0% {
+            transform: translate(0, 0) scale(0.6, 0.35) rotate(0deg);
+            opacity: 0;
+          }
+          12% {
+            opacity: 0.85;
+          }
+          35% {
+            transform: translate(3px, -16px) scale(0.9, 0.75) rotate(2.5deg);
+            opacity: 0.7;
+          }
+          65% {
+            transform: translate(-4px, -35px) scale(1.35, 1.25) rotate(-3.5deg);
+            opacity: 0.4;
+          }
+          85% {
+            transform: translate(5px, -52px) scale(1.75, 1.65) rotate(4deg);
+            opacity: 0.15;
+          }
+          100% {
+            transform: translate(8px, -66px) scale(2.1, 2.0) rotate(2deg);
+            opacity: 0;
+          }
         }
-        .smoke-puff-2 {
-          animation: smokePuffRise2 3.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 0.8s;
+
+        @keyframes smokeCurlingWisp2 {
+          0% {
+            transform: translate(0, 0) scale(0.55, 0.3) rotate(0deg);
+            opacity: 0;
+          }
+          15% {
+            opacity: 0.8;
+          }
+          40% {
+            transform: translate(-4px, -18px) scale(0.95, 0.85) rotate(-3deg);
+            opacity: 0.65;
+          }
+          70% {
+            transform: translate(4px, -38px) scale(1.4, 1.35) rotate(4deg);
+            opacity: 0.35;
+          }
+          88% {
+            transform: translate(-3px, -54px) scale(1.8, 1.7) rotate(-2deg);
+            opacity: 0.12;
+          }
+          100% {
+            transform: translate(-6px, -68px) scale(2.15, 2.05) rotate(-4.5deg);
+            opacity: 0;
+          }
         }
-        .smoke-puff-3 {
-          animation: smokePuffRise3 4.0s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 1.6s;
+
+        @keyframes smokeCurlingWisp3 {
+          0% {
+            transform: translate(0, 0) scale(0.6, 0.4) rotate(0deg);
+            opacity: 0;
+          }
+          18% {
+            opacity: 0.75;
+          }
+          45% {
+            transform: translate(2.5px, -20px) scale(1.05, 0.95) rotate(2deg);
+            opacity: 0.55;
+          }
+          75% {
+            transform: translate(-5px, -42px) scale(1.5, 1.45) rotate(-2.5deg);
+            opacity: 0.25;
+          }
+          100% {
+            transform: translate(4px, -62px) scale(1.95, 1.9) rotate(3deg);
+            opacity: 0;
+          }
         }
-        .smoke-puff-4 {
-          animation: smokePuffRise4 3.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite 2.4s;
+
+        @keyframes smokeAmbientPlume {
+          0% {
+            transform: translate(0, 0) scale(0.5, 0.35);
+            opacity: 0;
+          }
+          20% {
+            opacity: 0.45;
+          }
+          55% {
+            transform: translate(2px, -22px) scale(1.3, 1.25);
+            opacity: 0.28;
+          }
+          85% {
+            transform: translate(-3px, -45px) scale(1.9, 1.8);
+            opacity: 0.1;
+          }
+          100% {
+            transform: translate(-5px, -60px) scale(2.3, 2.2);
+            opacity: 0;
+          }
         }
-        .smoke-filament-1 {
-          animation: smokeFilamentWaft1 2.8s ease-out infinite;
+
+        .smoke-wisp-1 {
+          animation: smokeCurlingWisp1 4.6s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+          transform-origin: 135.5px 39px;
         }
-        .smoke-filament-2 {
-          animation: smokeFilamentWaft2 3.4s ease-out infinite 0.9s;
+        .smoke-wisp-2 {
+          animation: smokeCurlingWisp2 5.2s cubic-bezier(0.35, 0, 0.25, 1) infinite 1.3s;
+          transform-origin: 135.5px 39px;
         }
-        .animate-ember-glow {
-          animation: emberPulseGlow 2s ease-in-out infinite;
+        .smoke-wisp-3 {
+          animation: smokeCurlingWisp3 5.8s cubic-bezier(0.35, 0, 0.25, 1) infinite 2.6s;
+          transform-origin: 135.5px 39px;
+        }
+        .smoke-plume-ambient {
+          animation: smokeAmbientPlume 4.4s cubic-bezier(0.35, 0, 0.25, 1) infinite 0.7s;
+          transform-origin: 135.5px 39px;
+        }
+        .animate-warm-ember {
+          animation: warmEmberBreath 2.4s ease-in-out infinite;
+          transform-origin: 135.5px 39px;
         }
       `}</style>
 
@@ -341,85 +322,107 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
               xmlns="http://www.w3.org/2000/svg"
             >
               <defs>
-                {/* Soft blur filter for realistic atmospheric smoke puffs */}
-                <filter id="softSmokeBlur" x="-60%" y="-60%" width="220%" height="220%">
-                  <feGaussianBlur stdDeviation="3" />
+                {/* Multi-tier Gaussian Blur filters for silky organic smoke */}
+                <filter id="silkySmokeBlur" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="2.2" />
                 </filter>
-                <filter id="subtleSmokeBlur" x="-40%" y="-40%" width="180%" height="180%">
-                  <feGaussianBlur stdDeviation="1.5" />
+                <filter id="ambientPlumeBlur" x="-100%" y="-100%" width="300%" height="300%">
+                  <feGaussianBlur stdDeviation="4.2" />
+                </filter>
+                <filter id="filamentSmokeBlur" x="-80%" y="-80%" width="260%" height="260%">
+                  <feGaussianBlur stdDeviation="1.3" />
+                </filter>
+                <filter id="emberGlowFilter" x="-80%" y="-80%" width="260%" height="260%">
+                  <feGaussianBlur stdDeviation="2.5" />
                 </filter>
 
-                {/* Radial gradient for soft organic smoke puffs */}
-                <radialGradient id="smokePuffGrad" cx="45%" cy="45%" r="55%">
-                  <stop offset="0%" stopColor={isDarkMode ? "rgba(241, 245, 249, 0.75)" : "rgba(100, 116, 139, 0.65)"} />
-                  <stop offset="50%" stopColor={isDarkMode ? "rgba(203, 213, 225, 0.4)" : "rgba(148, 163, 184, 0.35)"} />
+                {/* Vertical Opacity Fade Gradient for linear vertical dissolution */}
+                <linearGradient id="verticalSmokeFade" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.95" />
+                  <stop offset="40%" stopColor="#FFFFFF" stopOpacity="0.8" />
+                  <stop offset="70%" stopColor="#FFFFFF" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0" />
+                </linearGradient>
+
+                {/* Fade Mask applied to the entire smoke group */}
+                <mask id="smokeVerticalFadeMask">
+                  <rect x="70" y="-80" width="130" height="130" fill="url(#verticalSmokeFade)" />
+                </mask>
+
+                {/* Gradients for Smoke Ribbon Strokes */}
+                <linearGradient id="smokeRibbonGrad1" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor={isDarkMode ? "rgba(251, 146, 60, 0.45)" : "rgba(249, 115, 22, 0.35)"} />
+                  <stop offset="15%" stopColor={isDarkMode ? "rgba(226, 232, 240, 0.75)" : "rgba(100, 116, 139, 0.65)"} />
+                  <stop offset="60%" stopColor={isDarkMode ? "rgba(203, 213, 225, 0.45)" : "rgba(148, 163, 184, 0.38)"} />
+                  <stop offset="100%" stopColor={isDarkMode ? "rgba(148, 163, 184, 0.05)" : "rgba(203, 213, 225, 0.05)"} />
+                </linearGradient>
+
+                <linearGradient id="smokeRibbonGrad2" x1="0%" y1="100%" x2="0%" y2="0%">
+                  <stop offset="0%" stopColor={isDarkMode ? "rgba(241, 245, 249, 0.8)" : "rgba(100, 116, 139, 0.7)"} />
+                  <stop offset="40%" stopColor={isDarkMode ? "rgba(203, 213, 225, 0.5)" : "rgba(148, 163, 184, 0.4)"} />
                   <stop offset="85%" stopColor={isDarkMode ? "rgba(148, 163, 184, 0.15)" : "rgba(203, 213, 225, 0.12)"} />
                   <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+                </linearGradient>
+
+                {/* Realistic Ember Glow Gradients */}
+                <radialGradient id="emberRadialCore" cx="42%" cy="48%" r="58%">
+                  <stop offset="0%" stopColor="#FEF08A" stopOpacity="1" />
+                  <stop offset="35%" stopColor="#F97316" stopOpacity="1" />
+                  <stop offset="75%" stopColor="#EA580C" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#991B1B" stopOpacity="0.8" />
+                </radialGradient>
+
+                <radialGradient id="emberHaloGlow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="#F97316" stopOpacity="0.75" />
+                  <stop offset="45%" stopColor="#EA580C" stopOpacity="0.35" />
+                  <stop offset="100%" stopColor="#EA580C" stopOpacity="0" />
                 </radialGradient>
               </defs>
 
-              {/* Multiple Soft Smoke Puffs Rising from Glowing Ember Tip (origin at x=135.5, y=39) */}
-              <g className="smoke-puffs" style={{ transformOrigin: '135.5px 39px' }}>
-                {/* Puff 1 */}
-                <circle
-                  cx="135.5"
-                  cy="39"
-                  r="7"
-                  fill="url(#smokePuffGrad)"
-                  filter="url(#softSmokeBlur)"
-                  className="smoke-puff-1"
-                  style={{ transformOrigin: '135.5px 39px' }}
-                />
-                {/* Puff 2 */}
-                <circle
-                  cx="135.5"
-                  cy="39"
-                  r="8.5"
-                  fill="url(#smokePuffGrad)"
-                  filter="url(#softSmokeBlur)"
-                  className="smoke-puff-2"
-                  style={{ transformOrigin: '135.5px 39px' }}
-                />
-                {/* Puff 3 */}
-                <ellipse
-                  cx="135.5"
-                  cy="39"
-                  rx="9"
-                  ry="7"
-                  fill="url(#smokePuffGrad)"
-                  filter="url(#softSmokeBlur)"
-                  className="smoke-puff-3"
-                  style={{ transformOrigin: '135.5px 39px' }}
-                />
-                {/* Puff 4 */}
-                <circle
-                  cx="135.5"
-                  cy="39"
-                  r="10"
-                  fill="url(#smokePuffGrad)"
-                  filter="url(#softSmokeBlur)"
-                  className="smoke-puff-4"
-                  style={{ transformOrigin: '135.5px 39px' }}
+              {/* Continuous Silky Curling Smoke Wisps rising organically from tip (origin x=135.5, y=39) */}
+              <g mask="url(#smokeVerticalFadeMask)" className="smoke-ribbons select-none pointer-events-none">
+                {/* Layer 0: Ambient Plume Contour (Soft Atmospheric Volume) */}
+                <path
+                  d="M135.5 39 C133 30, 139 21, 134 12 C130 3, 139 -6, 134 -17 C130 -28, 138 -39, 134 -52"
+                  fill="none"
+                  stroke="url(#smokeRibbonGrad2)"
+                  strokeWidth="5.5"
+                  strokeLinecap="round"
+                  filter="url(#ambientPlumeBlur)"
+                  className="smoke-plume-ambient"
                 />
 
-                {/* Wispy Rising Smoke Filaments from tip */}
+                {/* Layer 1: Primary Sinuous Curling Ribbon */}
                 <path
-                  d="M135.5 39 C137 28, 133 20, 137 10 C140 2, 134 -6, 136 -16"
+                  d="M135.5 39 C135.5 32, 137.5 26, 135 19 C132 12, 138 5, 134 -3 C130 -12, 138 -22, 133 -34 C129 -44, 136 -54, 132 -64"
                   fill="none"
-                  stroke={isDarkMode ? 'rgba(226, 232, 240, 0.5)' : 'rgba(100, 116, 139, 0.45)'}
-                  strokeWidth="1.8"
+                  stroke="url(#smokeRibbonGrad1)"
+                  strokeWidth="3.2"
                   strokeLinecap="round"
-                  filter="url(#subtleSmokeBlur)"
-                  className="smoke-filament-1"
+                  filter="url(#silkySmokeBlur)"
+                  className="smoke-wisp-1"
                 />
+
+                {/* Layer 2: Secondary Intertwining Counter-Curling Ribbon */}
                 <path
-                  d="M135.5 39 C134 26, 140 18, 135 8 C132 0, 138 -8, 134 -18"
+                  d="M135.5 39 C134 31, 131.5 24, 134 17 C137 10, 132 2, 136 -7 C139 -17, 132 -27, 136 -38 C139 -48, 133 -58, 135 -68"
                   fill="none"
-                  stroke={isDarkMode ? 'rgba(203, 213, 225, 0.4)' : 'rgba(148, 163, 184, 0.35)'}
-                  strokeWidth="1.4"
+                  stroke="url(#smokeRibbonGrad2)"
+                  strokeWidth="2.5"
                   strokeLinecap="round"
-                  filter="url(#subtleSmokeBlur)"
-                  className="smoke-filament-2"
+                  filter="url(#silkySmokeBlur)"
+                  className="smoke-wisp-2"
+                />
+
+                {/* Layer 3: Delicate Sinuous Filament Trail */}
+                <path
+                  d="M135.5 39 C136.5 33, 135 27, 137 20 C139 13, 134 6, 136 -2 C138 -10, 133 -19, 135 -29 C137 -39, 134 -49, 136 -59"
+                  fill="none"
+                  stroke="url(#smokeRibbonGrad1)"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  filter="url(#filamentSmokeBlur)"
+                  className="smoke-wisp-3"
                 />
               </g>
 
@@ -471,24 +474,55 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
               <line x1="96" y1="34" x2="96" y2="44" stroke={isDarkMode ? '#CBD5E1' : '#E2E8F0'} strokeWidth="0.5" />
               <line x1="118" y1="34" x2="118" y2="44" stroke={isDarkMode ? '#CBD5E1' : '#E2E8F0'} strokeWidth="0.5" />
 
-              {/* 3. Ash Cap & Burning Red/Orange Ember Tip */}
+              {/* 3. Ash Cap with Textured Organic Edge & Burning Ember Tip */}
+              {/* Charred paper burn ring at seam x=129.5 - 130.5 */}
               <path 
-                d="M130 33 L136 34 C137 35, 137 43, 136 44 L130 45 Z" 
-                fill="#475569" 
+                d="M129.5 33 C130.2 36, 129.8 40, 130 45" 
+                stroke="#78350F" 
+                strokeWidth="0.9" 
+                strokeDasharray="1.5 1" 
+                opacity="0.85" 
               />
-              {/* Glowing Fiery Ember Core */}
+
+              {/* Textured Ash Cap Body */}
+              <path 
+                d="M130 33 L134.5 33.3 C135.8 34.5, 136.2 36, 135.5 37.5 C136.5 39, 136.2 41, 135.2 42.5 C135.8 43.8, 134.5 44.8, 130 45 Z" 
+                fill="#374151" 
+                stroke="#1F2937" 
+                strokeWidth="0.5" 
+              />
+
+              {/* Ash Edge Speckles & Texture */}
+              <circle cx="131.8" cy="35" r="0.75" fill="#9CA3AF" opacity="0.9" />
+              <circle cx="133.5" cy="42" r="0.7" fill="#6B7280" opacity="0.9" />
+              <circle cx="131.2" cy="38.5" r="0.6" fill="#D1D5DB" opacity="0.85" />
+              <circle cx="133.2" cy="36.5" r="0.5" fill="#111827" opacity="0.7" />
+              <circle cx="132.8" cy="40.5" r="0.55" fill="#4B5563" opacity="0.8" />
+
+              {/* Soft Warm Radial Ember Halo (Pulsing Glow) */}
               <circle 
                 cx="135.5" 
                 cy="39" 
-                r="3.2" 
-                fill="#EF4444" 
-                className="animate-ember-glow" 
+                r="6.5" 
+                fill="url(#emberHaloGlow)" 
+                filter="url(#emberGlowFilter)" 
+                className="animate-warm-ember" 
               />
+
+              {/* Burning Ember Tip Body with Warm Orange/Vermilion Gradient */}
+              <path 
+                d="M134 35.5 C135.6 35, 137.6 36.6, 137 39 C137.6 41.4, 135.6 43, 134 42.5 C135.2 41, 135.3 37, 134 35.5 Z" 
+                fill="url(#emberRadialCore)" 
+                className="animate-warm-ember" 
+              />
+
+              {/* Hot Incandescent Filament Spark at Center of Ember */}
               <circle 
-                cx="135.5" 
-                cy="39" 
-                r="1.6" 
-                fill="#F59E0B" 
+                cx="135.8" 
+                cy="38.9" 
+                r="1.2" 
+                fill="#FFFBEB" 
+                className="animate-warm-ember" 
               />
             </svg>
           </div>
