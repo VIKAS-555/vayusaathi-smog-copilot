@@ -345,7 +345,7 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-stone-300 bg-stone-50 py-4 text-center text-xs text-ink-muted">
+      <footer className="border-t border-stone-300 dark:border-[#2B3833] bg-stone-50 dark:bg-[#161D1A] py-4 text-center text-xs text-ink-muted dark:text-stone-400">
         <div className="mx-auto max-w-7xl px-4 flex flex-wrap items-center justify-between gap-2">
           <span>
             <strong>BreathLine</strong> · Winter Air &amp; Routine Guide · Household Exposure Co-Pilot

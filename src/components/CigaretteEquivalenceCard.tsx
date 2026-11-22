@@ -159,7 +159,7 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
   };
 
   return (
-    <div className="rounded-2xl border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-5 sm:p-6 shadow-xs transition-colors">
+    <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-5 sm:p-6 shadow-xs transition-colors">
       {/* Real CSS @keyframes for continuous soft rising smoke puffs & ember pulse */}
       <style>{`
         @keyframes smokePuffRise1 {
@@ -313,7 +313,7 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
       `}</style>
 
       {/* 1. TOP HERO ROW: Left Stacked Number & Label -> Animated SVG Cigarette -> Right Weekly & Monthly */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-5 border-b border-stone-200 dark:border-stone-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 pb-5 border-b border-stone-200 dark:border-[#2B3833]">
         
         {/* Left: Stacked Number & "Cigarettes per day" + SVG Cigarette right next to it */}
         <div className="flex items-center gap-4 sm:gap-6 flex-wrap sm:flex-nowrap">
@@ -497,7 +497,7 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
         {/* Right: Weekly (× 7) and Monthly (× 30) Aggregates */}
         <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
           {/* Weekly Tile */}
-          <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 px-3.5 py-2.5 flex flex-col items-center min-w-[90px] shadow-2xs">
+          <div className="rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] px-3.5 py-2.5 flex flex-col items-center min-w-[90px] shadow-2xs">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
               Weekly (× 7)
             </span>
@@ -510,7 +510,7 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
           </div>
 
           {/* Monthly Tile */}
-          <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 px-3.5 py-2.5 flex flex-col items-center min-w-[95px] shadow-2xs">
+          <div className="rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] px-3.5 py-2.5 flex flex-col items-center min-w-[95px] shadow-2xs">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-ink-muted dark:text-stone-400">
               Monthly (× 30)
             </span>
@@ -589,11 +589,11 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
           {actionTiles.map((tile) => (
             <div
               key={tile.id}
-              className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/70 dark:bg-stone-800/50 p-3 sm:p-3.5 flex flex-col justify-between shadow-2xs hover:border-stone-300 dark:hover:border-stone-700 transition-all"
+              className="rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/70 dark:bg-[#222B27] p-3 sm:p-3.5 flex flex-col justify-between shadow-2xs hover:border-stone-400 dark:hover:border-[#3E4F47] dark:hover:bg-[#28332E] transition-all"
             >
               <div>
                 <div className="flex items-center justify-between gap-1.5 mb-2">
-                  <div className="p-1.5 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 text-ink dark:text-stone-200 shadow-2xs">
+                  <div className="p-1.5 rounded-lg bg-white dark:bg-[#1A221F] border border-stone-200 dark:border-[#2B3833] text-ink dark:text-stone-200 shadow-2xs">
                     {tile.icon}
                   </div>
                   <span
@@ -609,7 +609,7 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
                 </div>
               </div>
 
-              <div className="text-[11px] text-ink-muted dark:text-stone-400 font-medium mt-2 pt-2 border-t border-stone-200/80 dark:border-stone-700/80 leading-snug">
+              <div className="text-[11px] text-ink-muted dark:text-stone-400 font-medium mt-2 pt-2 border-t border-stone-200/80 dark:border-[#2D3A34] leading-snug">
                 {tile.tip}
               </div>
             </div>

@@ -37,12 +37,12 @@ export const Masthead: React.FC<MastheadProps> = ({
       : ShieldAlert;
 
   return (
-    <header className="border-b border-stone-300 dark:border-stone-800 bg-stone-50 dark:bg-stone-900/90 px-3.5 py-3 sm:px-6 lg:px-8">
+    <header className="border-b border-stone-300 dark:border-[#2B3833] bg-stone-50 dark:bg-[#161D1A] px-3.5 py-3 sm:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         {/* Brand & Editorial Title + Mobile Quick Status Row */}
         <div className="flex items-center justify-between w-full sm:w-auto">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="flex h-10 w-12 sm:h-11 sm:w-14 items-center justify-center rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 shadow-xs p-1 sm:p-1.5 overflow-hidden shrink-0">
+            <div className="flex h-10 w-12 sm:h-11 sm:w-14 items-center justify-center rounded border border-stone-300 dark:border-[#2D3A34] bg-white dark:bg-[#1A221F] shadow-xs p-1 sm:p-1.5 overflow-hidden shrink-0">
               <BreathLineMark className="h-full w-full text-ink dark:text-stone-100 transition-colors duration-200" />
             </div>
             <div>
@@ -51,7 +51,7 @@ export const Masthead: React.FC<MastheadProps> = ({
                   <span>Breath</span>
                   <span className="font-light">Line</span>
                 </h1>
-                <span className="rounded bg-stone-200 dark:bg-stone-800 px-1.5 py-0.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-stone-400">
+                <span className="rounded bg-stone-200 dark:bg-[#222B27] px-1.5 py-0.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-stone-400">
                   v1.0 Civic Pilot
                 </span>
               </div>
@@ -111,7 +111,7 @@ export const Masthead: React.FC<MastheadProps> = ({
           <div className="grid grid-cols-3 sm:flex sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
             <button
               onClick={onOpenExplainer}
-              className="flex items-center justify-center gap-1 sm:gap-1.5 rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 px-2 sm:px-3 py-2 sm:py-1.5 text-xs font-medium text-ink dark:text-stone-200 hover:bg-stone-100 transition-colors shadow-2xs min-h-[38px] text-center"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 rounded border border-stone-300 dark:border-[#2D3A34] bg-white dark:bg-[#222B27] px-2 sm:px-3 py-2 sm:py-1.5 text-xs font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-[#28332E] transition-colors shadow-2xs min-h-[38px] text-center"
             >
               <FileText className="h-3.5 w-3.5 text-ink-muted shrink-0 hidden xs:inline" />
               <span className="truncate">Math Engine</span>
@@ -127,7 +127,7 @@ export const Masthead: React.FC<MastheadProps> = ({
             <button
               onClick={onRefreshPlan}
               disabled={isLoading}
-              className="flex items-center justify-center gap-1 sm:gap-1.5 rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 px-2 sm:px-3 py-2 sm:py-1.5 text-xs font-medium text-ink dark:text-stone-200 hover:bg-stone-100 disabled:opacity-50 transition-colors min-h-[38px] text-center"
+              className="flex items-center justify-center gap-1 sm:gap-1.5 rounded border border-stone-300 dark:border-[#2D3A34] bg-white dark:bg-[#222B27] px-2 sm:px-3 py-2 sm:py-1.5 text-xs font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-[#28332E] disabled:opacity-50 transition-colors min-h-[38px] text-center"
               title="Re-run GenAI reasoning with updated household settings"
             >
               <RefreshCw className={`h-3.5 w-3.5 text-ink-muted shrink-0 ${isLoading ? 'animate-spin' : ''}`} />
@@ -139,7 +139,7 @@ export const Masthead: React.FC<MastheadProps> = ({
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
-              className="hidden sm:flex items-center gap-1.5 rounded border border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 px-3 py-1.5 text-xs font-semibold text-ink dark:text-stone-200 hover:bg-stone-100 transition-colors shadow-xs"
+              className="hidden sm:flex items-center gap-1.5 rounded border border-stone-300 dark:border-[#2D3A34] bg-white dark:bg-[#222B27] px-3 py-1.5 text-xs font-semibold text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-[#28332E] transition-colors shadow-xs"
               title={isDarkMode ? 'Switch to Warm Stone Newsprint' : 'Switch to Charcoal Night Mode'}
               aria-label="Toggle Night/Day Mode"
             >

@@ -318,18 +318,18 @@ export const MetroCitiesGrid: React.FC<MetroCitiesGridProps> = ({
   };
 
   return (
-    <section className="w-full rounded-2xl bg-[#11141A] dark:bg-[#0D1016] border border-[#232B36] p-4 sm:p-5 shadow-xl transition-all">
+    <section className="w-full rounded-2xl bg-white dark:bg-[#1A221F] border border-stone-300 dark:border-[#2B3833] p-4 sm:p-5 shadow-xs transition-colors">
       {/* Header Row */}
-      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 mb-4 pb-3 border-b border-[#232B36]">
+      <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4 mb-4 pb-3 border-b border-stone-200 dark:border-[#2B3833]">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+          <h2 className="text-base sm:text-lg font-bold text-ink dark:text-stone-100 tracking-tight flex items-center gap-2">
             <span>India&apos;s Metro Cities</span>
           </h2>
-          <p className="text-xs font-semibold text-cyan-400 tracking-wide mt-0.5">
+          <p className="text-xs font-semibold text-sage-600 dark:text-sage-400 tracking-wide mt-0.5">
             Air Quality Index
           </p>
         </div>
-        <span className="text-[11px] font-mono text-stone-400">
+        <span className="text-[11px] font-mono text-ink-muted dark:text-stone-400">
           Tap a city card to update active station, live feeds &amp; exposure engine
         </span>
       </div>
@@ -355,12 +355,12 @@ export const MetroCitiesGrid: React.FC<MetroCitiesGridProps> = ({
               onMouseLeave={() => setHoveredCityId(null)}
               className={`group relative flex items-center justify-between rounded-xl p-3.5 sm:p-4 cursor-pointer transition-all duration-200 select-none overflow-hidden ${
                 isActive
-                  ? 'bg-[#1C232E] border-2 border-cyan-500/80 shadow-lg shadow-cyan-950/40 ring-1 ring-cyan-500/40 scale-[1.01]'
-                  : 'bg-[#181D24] border border-[#262E3B] hover:border-stone-500 hover:bg-[#1B212A] hover:shadow-md'
+                  ? 'bg-stone-100 dark:bg-[#26312C] border-2 border-sage-600 dark:border-sage-400 shadow-md ring-1 ring-sage-600/30 dark:ring-sage-400/30 scale-[1.01]'
+                  : 'bg-stone-50 dark:bg-[#222B27] border border-stone-200 dark:border-[#2D3A34] hover:border-stone-400 hover:bg-stone-100 dark:hover:bg-[#28332E] dark:hover:border-[#3E4F47] shadow-2xs'
               }`}
             >
               {/* Left Side: Fine-Line Architectural Landmark Illustration */}
-              <div className="relative shrink-0 w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center text-stone-400 group-hover:text-stone-200 transition-colors">
+              <div className="relative shrink-0 w-16 h-16 sm:w-18 sm:h-18 flex items-center justify-center text-stone-400 dark:text-stone-400 group-hover:text-ink dark:group-hover:text-stone-200 transition-colors">
                 <MetroLandmarkLineArt cityId={city.id} className="w-full h-full" />
               </div>
 
@@ -369,16 +369,16 @@ export const MetroCitiesGrid: React.FC<MetroCitiesGridProps> = ({
                 {/* Top: City Name + Near You badge + Arrow Up Right icon */}
                 <div className="flex items-center justify-between gap-1">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <h3 className="font-bold text-sm sm:text-base text-stone-100 truncate tracking-tight group-hover:text-white">
+                    <h3 className="font-bold text-sm sm:text-base text-ink dark:text-stone-100 truncate tracking-tight group-hover:text-ink-light dark:group-hover:text-white">
                       {displayName}
                     </h3>
                     {isNearYou && (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-500/20 px-1.5 py-0.5 text-[9px] font-bold text-emerald-400 shrink-0">
+                      <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/40 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 dark:text-emerald-400 shrink-0">
                         Near You
                       </span>
                     )}
                   </div>
-                  <div className="p-1 rounded-full bg-white/5 text-stone-400 group-hover:text-white group-hover:bg-white/10 transition-all shrink-0">
+                  <div className="p-1 rounded-full bg-stone-200/60 dark:bg-white/5 text-ink-muted dark:text-stone-400 group-hover:text-ink dark:group-hover:text-white group-hover:bg-stone-200 dark:group-hover:bg-white/10 transition-all shrink-0">
                     <ArrowUpRight className="h-3 w-3" />
                   </div>
                 </div>
@@ -394,27 +394,27 @@ export const MetroCitiesGrid: React.FC<MetroCitiesGridProps> = ({
                 </div>
 
                 {/* Bottom: Temp & Humidity */}
-                <div className="flex items-center gap-3 text-[11px] font-mono text-stone-400">
+                <div className="flex items-center gap-3 text-[11px] font-mono text-ink-muted dark:text-stone-400">
                   <span>
-                    Temp. <strong className="text-stone-300 font-semibold">{Math.round(city.temperatureC)}°C</strong>
+                    Temp. <strong className="text-ink dark:text-stone-300 font-semibold">{Math.round(city.temperatureC)}°C</strong>
                   </span>
                   <span>
-                    Hum. <strong className="text-stone-300 font-semibold">{city.humidityPercent}%</strong>
+                    Hum. <strong className="text-ink dark:text-stone-300 font-semibold">{city.humidityPercent}%</strong>
                   </span>
                 </div>
               </div>
 
               {/* Hover Tooltip / Active Status Pill */}
               {isHovered && !isActive && (
-                <div className="absolute inset-x-0 bottom-0 bg-stone-900/95 border-t border-cyan-500/30 py-1 text-center text-[10px] font-mono text-cyan-300 backdrop-blur-xs tracking-wide">
+                <div className="absolute inset-x-0 bottom-0 bg-stone-100/95 dark:bg-[#161D1A]/95 border-t border-sage-500/30 py-1 text-center text-[10px] font-mono text-sage-700 dark:text-sage-300 backdrop-blur-xs tracking-wide">
                   Visit {displayName} details page ↗
                 </div>
               )}
               {isActive && (
-                <div className="absolute top-1 right-2">
+                <div className="absolute top-1.5 right-2">
                   <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-500" />
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sage-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-sage-600 dark:bg-sage-400" />
                   </span>
                 </div>
               )}

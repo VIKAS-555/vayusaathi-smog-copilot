@@ -248,7 +248,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   const bannerStyle = getAtmosphereBannerStyle(currentCity, isDarkMode);
 
   return (
-    <div className="rounded-lg border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-4 sm:p-5 shadow-xs">
+    <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-4 sm:p-5 shadow-xs transition-colors">
       {/* Atmospheric Station & Weather Hero Banner */}
       <div 
         className="relative overflow-hidden rounded-2xl sm:rounded-3xl border p-4 sm:p-6 transition-all duration-700 ease-in-out shadow-md mb-5"
@@ -518,7 +518,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
 
       {/* Manual Input Slider Panel (When Toggled) */}
       {showCustomInputs && (
-        <div className="mb-5 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/80 p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs shadow-xs">
+        <div className="mb-5 rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50 dark:bg-[#222B27] p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs shadow-xs">
           <div>
             <label className="block font-medium text-ink-muted dark:text-stone-300 mb-1">
               Custom AQI: <span className="font-mono font-bold text-ink dark:text-stone-100">{currentCity.currentAQI}</span>
@@ -852,7 +852,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                 {/* 3 Structured Plain-English Action Guidance Cards */}
                 <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {/* Card 1: Windows & Ventilation */}
-                  <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
+                  <div className="rounded-xl border border-stone-200/80 dark:border-[#2D3A34] bg-stone-50/70 dark:bg-[#222B27] p-2.5 shadow-2xs">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
                       <Wind className="h-3.5 w-3.5 text-sage-600 dark:text-sage-400 shrink-0" />
                       <span>Windows & Airing</span>
@@ -863,7 +863,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                   </div>
 
                   {/* Card 2: Outdoor & Exercise */}
-                  <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5">
+                  <div className="rounded-xl border border-stone-200/80 dark:border-[#2D3A34] bg-stone-50/70 dark:bg-[#222B27] p-2.5 shadow-2xs">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
                       <Activity className="h-3.5 w-3.5 text-terracotta-600 dark:text-terracotta-400 shrink-0" />
                       <span>Outdoor & Exercise</span>
@@ -874,7 +874,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
                   </div>
 
                   {/* Card 3: Atmospheric Inversion Context */}
-                  <div className="rounded border border-stone-200/80 dark:border-stone-700/80 bg-stone-50/70 dark:bg-stone-900/40 p-2.5 sm:col-span-2 lg:col-span-1">
+                  <div className="rounded-xl border border-stone-200/80 dark:border-[#2D3A34] bg-stone-50/70 dark:bg-[#222B27] p-2.5 sm:col-span-2 lg:col-span-1 shadow-2xs">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-ink dark:text-stone-200 mb-1">
                       <ShieldAlert className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400 shrink-0" />
                       <span>Atmospheric Context</span>

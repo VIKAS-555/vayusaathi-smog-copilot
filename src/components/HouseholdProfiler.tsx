@@ -258,8 +258,8 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
   };
 
   return (
-    <div className="rounded-2xl border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-5 sm:p-6 shadow-xs transition-colors">
-      <div className="border-b border-stone-200 dark:border-stone-800 pb-3">
+    <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-5 sm:p-6 shadow-xs transition-colors">
+      <div className="border-b border-stone-200 dark:border-[#2B3833] pb-3">
         <h2 className="text-sm font-bold uppercase tracking-wider text-ink dark:text-stone-100 flex items-center gap-2">
           <Users className="h-4 w-4 text-ink-muted dark:text-stone-400" />
           <span>Household &amp; Lifestyle Profiler</span>
@@ -279,21 +279,21 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
             <button
               type="button"
               onClick={() => addMember('Child')}
-              className="rounded border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
+              className="rounded border border-stone-300 dark:border-[#2D3A34] bg-stone-50 dark:bg-[#222B27] px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-[#28332E] transition-colors"
             >
               + Child
             </button>
             <button
               type="button"
               onClick={() => addMember('Senior')}
-              className="rounded border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
+              className="rounded border border-stone-300 dark:border-[#2D3A34] bg-stone-50 dark:bg-[#222B27] px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-[#28332E] transition-colors"
             >
               + Senior
             </button>
             <button
               type="button"
               onClick={() => addMember('Adult')}
-              className="rounded border border-stone-300 dark:border-stone-600 bg-stone-50 dark:bg-stone-800 px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-700 transition-colors"
+              className="rounded border border-stone-300 dark:border-[#2D3A34] bg-stone-50 dark:bg-[#222B27] px-2 py-0.5 text-[11px] font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-[#28332E] transition-colors"
             >
               + Adult
             </button>
@@ -304,7 +304,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           {profile.members.map((member, idx) => (
             <div
               key={member.id}
-              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-2 text-xs transition-colors hover:border-stone-300 dark:hover:border-stone-600"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 rounded-lg border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] p-2.5 sm:p-2 text-xs transition-colors hover:border-stone-400 dark:hover:border-[#3E4F47]"
             >
               {/* Row 1: Role + Sensitivity Badge */}
               <div className="flex items-center justify-between sm:justify-start gap-2">
@@ -391,7 +391,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
       </div>
 
       {/* 2. DWELLING TYPE: Clean 2x2 Grid of Selectable Cards + Tactile Window-Sealing Toggle Row */}
-      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-[#2B3833]">
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-bold text-ink dark:text-stone-200 flex items-center gap-1.5">
             <Home className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400" />
@@ -414,7 +414,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 className={`text-left rounded-xl p-2.5 sm:p-3 border transition-all flex flex-col justify-between ${
                   isSelected
                     ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-sm'
-                    : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
+                    : 'bg-stone-50/80 dark:bg-[#222B27] text-ink dark:text-stone-200 border-stone-200 dark:border-[#2D3A34] hover:border-stone-400 dark:hover:border-[#3E4F47] dark:hover:bg-[#28332E]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-1.5 mb-1.5">
@@ -422,7 +422,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                     <div className={`p-1 rounded-md ${
                       isSelected
                         ? 'bg-white/20 text-white dark:bg-white/10 dark:text-stone-200 dark:border dark:border-white/20'
-                        : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
+                        : 'bg-white dark:bg-[#1A221F] text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-[#2D3A34]'
                     }`}>
                       {opt.icon}
                     </div>
@@ -458,7 +458,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
         {/* Window Weatherstripping: Tactile Toggle Row */}
         <div 
           onClick={() => onChangeProfile({ ...profile, hasWindowWeatherstripping: !profile.hasWindowWeatherstripping })}
-          className="mt-2.5 flex items-center justify-between rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-3 cursor-pointer hover:border-stone-300 dark:hover:border-stone-600 transition-colors shadow-2xs"
+          className="mt-2.5 flex items-center justify-between rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] p-2.5 sm:p-3 cursor-pointer hover:border-stone-400 dark:hover:border-[#3E4F47] dark:hover:bg-[#28332E] transition-colors shadow-2xs"
           role="switch"
           aria-checked={profile.hasWindowWeatherstripping}
         >
@@ -497,7 +497,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
       </div>
 
       {/* 3. Purification Equipment: Compact 3-Segment Selector */}
-      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-[#2B3833]">
         <label className="block text-xs font-bold text-ink dark:text-stone-200 mb-1.5 flex items-center gap-1.5">
           <Wind className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400" />
           <span>Purification Inventory</span>
@@ -517,7 +517,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 className={`rounded-lg border px-2 py-2 text-center text-xs font-semibold transition-all ${
                   isSelected
                     ? 'border-ink bg-ink text-white dark:bg-[#242926] dark:text-stone-100 dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-xs'
-                    : 'border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 text-ink-muted dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700 hover:text-ink'
+                    : 'border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] text-ink-muted dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-[#28332E] hover:text-ink'
                 }`}
               >
                 {item.label}
@@ -528,7 +528,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
       </div>
 
       {/* 4. DAILY COMMUTE MODE & DISTANCE: Tactile Option Tiles + Dynamic Exposure Note + Distance Presets */}
-      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-[#2B3833]">
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-bold text-ink dark:text-stone-200 flex items-center gap-1.5">
             <Car className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400" />
@@ -554,14 +554,14 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 } ${
                   isSelected
                     ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-sm'
-                    : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
+                    : 'bg-stone-50/80 dark:bg-[#222B27] text-ink dark:text-stone-200 border-stone-200 dark:border-[#2D3A34] hover:border-stone-400 dark:hover:border-[#3E4F47] dark:hover:bg-[#28332E]'
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className={`p-1.5 rounded-lg shrink-0 ${
                     isSelected
                       ? 'bg-white/20 text-white dark:bg-white/10 dark:text-stone-200 dark:border dark:border-white/20'
-                      : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
+                      : 'bg-white dark:bg-[#1A221F] text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-[#2D3A34]'
                   }`}>
                     {opt.icon}
                   </div>
@@ -589,8 +589,8 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
         {(() => {
           const exposure = getCommuteExposureDetails(profile.commuteMode);
           return (
-            <div className="mt-2.5 rounded-xl border border-stone-200/90 dark:border-stone-700/80 bg-white/70 dark:bg-stone-900/60 p-2.5 sm:p-3 flex items-start gap-2.5 transition-all">
-              <div className="mt-0.5 shrink-0 rounded-md p-1 bg-stone-100 dark:bg-stone-800 text-ink-muted dark:text-stone-300">
+            <div className="mt-2.5 rounded-xl border border-stone-200/90 dark:border-[#2D3A34] bg-white/70 dark:bg-[#222B27]/70 p-2.5 sm:p-3 flex items-start gap-2.5 transition-all">
+              <div className="mt-0.5 shrink-0 rounded-md p-1 bg-stone-100 dark:bg-[#1A221F] text-ink-muted dark:text-stone-300">
                 <Info className="h-3.5 w-3.5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -611,7 +611,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
         })()}
 
         {/* Round-Trip Commute Distance with Quick Presets, Steppers & Slider */}
-        <div className="mt-3 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50/80 dark:bg-stone-800/60 p-2.5 sm:p-3">
+        <div className="mt-3 rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] p-2.5 sm:p-3">
           <div className="flex items-center justify-between text-xs mb-2">
             <span className="text-ink-muted dark:text-stone-400 font-medium">Round-trip distance:</span>
             <div className="flex items-center gap-2">
@@ -619,7 +619,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 type="button"
                 onClick={() => onChangeProfile({ ...profile, dailyCommuteKm: Math.max(0, profile.dailyCommuteKm - 5) })}
                 disabled={profile.dailyCommuteKm <= 0}
-                className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+                className="h-6 w-6 rounded bg-white dark:bg-[#1A221F] border border-stone-300 dark:border-[#2D3A34] text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-[#28332E] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
                 title="Decrease 5 km"
               >
                 -5
@@ -631,7 +631,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 type="button"
                 onClick={() => onChangeProfile({ ...profile, dailyCommuteKm: Math.min(80, profile.dailyCommuteKm + 5) })}
                 disabled={profile.dailyCommuteKm >= 80}
-                className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+                className="h-6 w-6 rounded bg-white dark:bg-[#1A221F] border border-stone-300 dark:border-[#2D3A34] text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-[#28332E] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
                 title="Increase 5 km"
               >
                 +5
@@ -651,7 +651,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
           />
 
           {/* Quick Distance Preset Pills */}
-          <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-2 border-t border-stone-200/70 dark:border-stone-700/70">
+          <div className="flex flex-wrap items-center gap-1.5 mt-2.5 pt-2 border-t border-stone-200/70 dark:border-[#2D3A34]">
             <span className="text-[10px] font-mono text-ink-muted dark:text-stone-400 mr-1">Presets:</span>
             {DISTANCE_PRESETS.map((p) => {
               const isActive = profile.dailyCommuteKm === p.km;
@@ -663,7 +663,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                   className={`text-[10.5px] px-2 py-0.5 rounded-lg border transition-all font-mono ${
                     isActive
                       ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 font-bold shadow-2xs'
-                      : 'bg-white dark:bg-stone-900/90 text-ink-muted dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:border-stone-400 dark:hover:border-stone-500 font-medium'
+                      : 'bg-white dark:bg-[#1A221F] text-ink-muted dark:text-stone-300 border-stone-200 dark:border-[#2D3A34] hover:border-stone-400 dark:hover:border-[#3E4F47] font-medium'
                   }`}
                 >
                   {p.label} <span className="text-[9px] opacity-75">({p.tag})</span>
@@ -684,7 +684,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
       </div>
 
       {/* 5. OUTDOOR WORKOUT / STROLL HABIT: Visual Time-Window Cards with Risk Tags */}
-      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-[#2B3833]">
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs font-bold text-ink dark:text-stone-200">
             Outdoor Workout / Stroll Habit
@@ -706,14 +706,14 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
                 className={`text-left rounded-xl p-2.5 sm:p-3 border transition-all flex items-center justify-between ${
                   isSelected
                     ? 'bg-ink text-white dark:bg-[#242926] dark:text-stone-100 border-ink dark:border-[#E6E2D6] dark:ring-1 dark:ring-[#E6E2D6]/40 shadow-sm'
-                    : 'bg-stone-50/80 dark:bg-stone-800/60 text-ink dark:text-stone-200 border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
+                    : 'bg-stone-50/80 dark:bg-[#222B27] text-ink dark:text-stone-200 border-stone-200 dark:border-[#2D3A34] hover:border-stone-400 dark:hover:border-[#3E4F47] dark:hover:bg-[#28332E]'
                 }`}
               >
                 <div className="flex items-center gap-2">
                   <div className={`p-1.5 rounded-lg ${
                     isSelected
                       ? 'bg-white/20 text-white dark:bg-white/10 dark:text-stone-200 dark:border dark:border-white/20'
-                      : 'bg-white dark:bg-stone-900 text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-stone-700'
+                      : 'bg-white dark:bg-[#1A221F] text-ink-muted dark:text-stone-400 border border-stone-200 dark:border-[#2D3A34]'
                   }`}>
                     {opt.icon}
                   </div>
@@ -747,7 +747,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
       </div>
 
       {/* 6. Apartment Complex / Society Multiplier */}
-      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-800">
+      <div className="mt-5 pt-4 border-t border-stone-200 dark:border-[#2B3833]">
         <div className="flex items-center justify-between text-xs mb-2">
           <span className="font-bold text-ink dark:text-stone-200">Apartment Complex Size</span>
           <div className="flex items-center gap-2">
@@ -755,7 +755,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
               type="button"
               onClick={() => onChangeProfile({ ...profile, societySizeFamilies: Math.max(10, profile.societySizeFamilies - 10) })}
               disabled={profile.societySizeFamilies <= 10}
-              className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+              className="h-6 w-6 rounded bg-white dark:bg-[#1A221F] border border-stone-300 dark:border-[#2D3A34] text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-[#28332E] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
               title="Decrease 10 families"
             >
               -10
@@ -767,7 +767,7 @@ export const HouseholdProfiler: React.FC<HouseholdProfilerProps> = ({
               type="button"
               onClick={() => onChangeProfile({ ...profile, societySizeFamilies: Math.min(300, profile.societySizeFamilies + 10) })}
               disabled={profile.societySizeFamilies >= 300}
-              className="h-6 w-6 rounded bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-600 text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
+              className="h-6 w-6 rounded bg-white dark:bg-[#1A221F] border border-stone-300 dark:border-[#2D3A34] text-ink dark:text-stone-200 flex items-center justify-center hover:bg-stone-100 dark:hover:bg-[#28332E] disabled:opacity-30 disabled:cursor-not-allowed text-xs font-bold shadow-2xs"
               title="Increase 10 families"
             >
               +10

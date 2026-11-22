@@ -43,9 +43,9 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
   const sustainableAdoptedCount = adoptedActionIds.filter(id => id.startsWith('sustainable-')).length;
 
   return (
-    <div className="rounded-lg border border-stone-300 bg-white p-5 shadow-xs">
+    <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-5 sm:p-6 shadow-xs transition-colors">
       {/* Editorial Diagnosis Callout */}
-      <div className="rounded border border-stone-200 bg-stone-50/90 p-4 mb-5">
+      <div className="rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/90 dark:bg-[#222B27] p-4 mb-5 shadow-2xs">
         <div className="flex items-start gap-3">
           <div className="rounded bg-stone-200 p-1.5 text-ink shrink-0 mt-0.5">
             <Sparkles className="h-4 w-4" />
@@ -277,10 +277,10 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
               return (
                 <div
                   key={hack.id}
-                  className={`rounded-lg border p-4 transition-all ${
+                  className={`rounded-xl border p-4 transition-all ${
                     isAdopted
-                      ? 'border-sage-400 bg-sage-50/40 shadow-xs'
-                      : 'border-stone-200 bg-white hover:border-stone-300'
+                      ? 'border-sage-400 bg-sage-50/40 dark:bg-sage-950/30 dark:border-sage-800 shadow-xs'
+                      : 'border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] hover:border-stone-400 dark:hover:border-[#3E4F47] shadow-2xs'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -393,10 +393,10 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
               return (
                 <div
                   key={action.id}
-                  className={`rounded-lg border p-4 transition-all ${
+                  className={`rounded-xl border p-4 transition-all ${
                     isAdopted
-                      ? 'border-sage-400 bg-sage-50/40 shadow-xs'
-                      : 'border-stone-200 bg-white hover:border-stone-300'
+                      ? 'border-sage-400 bg-sage-50/40 dark:bg-sage-950/30 dark:border-sage-800 shadow-xs'
+                      : 'border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] hover:border-stone-400 dark:hover:border-[#3E4F47] shadow-2xs'
                   }`}
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -485,7 +485,7 @@ export const ActionPlanTabs: React.FC<ActionPlanTabsProps> = ({
           </div>
 
           {/* Apartment Society Resolution Checklist */}
-          <div className="mt-6 rounded border border-stone-200 bg-stone-50 p-4">
+          <div className="mt-6 rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50 dark:bg-[#222B27] p-4 shadow-2xs">
             <h4 className="text-xs font-bold uppercase tracking-wider text-ink flex items-center gap-1.5 mb-2">
               <Building className="h-4 w-4 text-ink-muted" />
               <span>Recommended Society / RWA Resolutions for Smog Season</span>

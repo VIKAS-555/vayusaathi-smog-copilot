@@ -26,9 +26,9 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
   const unmanagedCigs = Number(((impact.baselineDailyInhaledDoseUg || 1) / 220).toFixed(1));
 
   return (
-    <div className="rounded-2xl border border-stone-300 dark:border-stone-800 bg-white dark:bg-stone-900/90 p-5 sm:p-6 shadow-xs transition-colors flex flex-col justify-between">
+    <div className="rounded-2xl border border-stone-300 dark:border-[#2B3833] bg-white dark:bg-[#1A221F] p-5 sm:p-6 shadow-xs transition-colors flex flex-col justify-between">
       <div>
-        <div className="flex items-center justify-between border-b border-stone-200 dark:border-stone-800 pb-3">
+        <div className="flex items-center justify-between border-b border-stone-200 dark:border-[#2B3833] pb-3">
           <div className="flex items-center gap-2 min-w-0">
             <ShieldCheck className="h-4 w-4 text-sage-600 dark:text-sage-400 shrink-0" />
             <h2 className="text-sm font-bold uppercase tracking-wider text-ink dark:text-stone-100 truncate">
@@ -89,7 +89,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
           </div>
 
           {/* Berkeley Earth Relatable Equivalence */}
-          <div className="mt-3 rounded-lg bg-white/90 dark:bg-stone-900/90 p-2.5 border border-sage-200 dark:border-stone-800 text-xs flex items-center gap-2.5 transition-colors">
+          <div className="mt-3 rounded-lg bg-stone-50/90 dark:bg-[#222B27] p-2.5 border border-sage-200 dark:border-[#2D3A34] text-xs flex items-center gap-2.5 transition-colors">
             <div className="rounded-full bg-sage-100 dark:bg-sage-900/80 p-1.5 text-sage-700 dark:text-sage-300 shrink-0">
               <HeartPulse className="h-4 w-4" />
             </div>
@@ -124,12 +124,12 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
         </div>
 
         {/* Household Climate & Emission Reductions */}
-        <div className="mt-4 pt-3 border-t border-stone-200 dark:border-stone-800">
+        <div className="mt-4 pt-3 border-t border-stone-200 dark:border-[#2B3833]">
           <span className="text-xs font-bold uppercase tracking-wider text-ink dark:text-stone-200 block mb-2">
             Household Monthly Footprint Avoided
           </span>
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-2.5">
+            <div className="rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] p-2.5 shadow-2xs">
               <span className="text-[11px] font-medium text-ink-muted dark:text-stone-400 flex items-center gap-1">
                 <Leaf className="h-3 w-3 text-sage-600 dark:text-sage-400" />
                 <span>CO₂ Emissions</span>
@@ -142,7 +142,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
               </div>
             </div>
 
-            <div className="rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-2.5">
+            <div className="rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] p-2.5 shadow-2xs">
               <span className="text-[11px] font-medium text-ink-muted dark:text-stone-400 flex items-center gap-1">
                 <Sparkles className="h-3 w-3 text-sage-600 dark:text-sage-400" />
                 <span>Toxic Particulates</span>
@@ -159,7 +159,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
       </div>
 
       {/* Community Multiplier (Standout Feature) */}
-      <div className="mt-4 rounded-xl border border-stone-200 dark:border-stone-800 bg-stone-50/80 dark:bg-stone-800/60 p-3.5">
+      <div className="mt-4 rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50/80 dark:bg-[#222B27] p-3.5 shadow-2xs">
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold text-ink dark:text-stone-200 flex items-center gap-1.5">
             <Building2 className="h-3.5 w-3.5 text-ink-muted dark:text-stone-400" />
@@ -183,7 +183,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
         />
 
         <div className="mt-2.5 grid grid-cols-2 gap-2 text-xs">
-          <div className="rounded-lg bg-white dark:bg-stone-900/90 p-2 border border-stone-200 dark:border-stone-700">
+          <div className="rounded-lg bg-white dark:bg-[#1E2824] p-2 border border-stone-200 dark:border-[#2D3A34]">
             <span className="text-[10px] text-ink-muted dark:text-stone-400 block uppercase font-medium">
               Complex CO₂ Saved
             </span>
@@ -192,7 +192,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
             </span>
           </div>
 
-          <div className="rounded-lg bg-white dark:bg-stone-900/90 p-2 border border-stone-200 dark:border-stone-700">
+          <div className="rounded-lg bg-white dark:bg-[#1E2824] p-2 border border-stone-200 dark:border-[#2D3A34]">
             <span className="text-[10px] text-ink-muted dark:text-stone-400 block uppercase font-medium">
               Complex PM Prevented
             </span>
