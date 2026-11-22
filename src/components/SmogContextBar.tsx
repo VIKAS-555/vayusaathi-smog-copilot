@@ -41,6 +41,7 @@ interface SmogContextBarProps {
   onSelectCity: (city: CitySmogContext) => void;
   onCustomUpdate?: (updated: Partial<CitySmogContext>) => void;
   onRefreshLive?: () => void;
+  onOpenOverrides?: () => void;
   isFetchingLive?: boolean;
   isDarkMode?: boolean;
   isLocationMatched?: boolean;
@@ -168,6 +169,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
   onSelectCity,
   onCustomUpdate,
   onRefreshLive,
+  onOpenOverrides,
   isFetchingLive = false,
   isDarkMode = false,
   isLocationMatched = false,
@@ -263,7 +265,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
               )}
 
               <button
-                onClick={() => setShowCustomInputs(!showCustomInputs)}
+                onClick={onOpenOverrides || (() => setShowCustomInputs(!showCustomInputs))}
                 className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white/80 hover:text-white backdrop-blur-xs border border-white/10 transition-all shadow-2xs"
                 title="Manual Telemetry Overrides"
                 aria-label="Overrides"
@@ -492,9 +494,9 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         </div>
       </div>
 
-      {/* Manual Input Slider Panel (When Toggled) */}
-      {showCustomInputs && (
-        <div className="mb-5 rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50 dark:bg-[#222B27] p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs shadow-xs">
+      {/* Manual Input Slider Panel (Fallback if modal not attached) */}
+      {!onOpenOverrides && showCustomInputs && (
+        <div className="mt-4 rounded-xl border border-stone-200 dark:border-[#2D3A34] bg-stone-50 dark:bg-[#222B27] p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs shadow-xs">
           <div>
             <label className="block font-medium text-ink-muted dark:text-stone-300 mb-1">
               Custom AQI: <span className="font-mono font-bold text-ink dark:text-stone-100">{currentCity.currentAQI}</span>

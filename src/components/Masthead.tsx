@@ -1,6 +1,6 @@
 import React from 'react';
 import { BreathLineMark } from './BreathLineMark';
-import { ShieldAlert, CheckCircle2, AlertTriangle, RefreshCw, FileText, Sun, Moon } from 'lucide-react';
+import { ShieldAlert, CheckCircle2, AlertTriangle, RefreshCw, FileText, Sun, Moon, Sparkles } from 'lucide-react';
 import { getAQIStyle } from '../lib/aqiScale';
 
 interface MastheadProps {
@@ -11,6 +11,8 @@ interface MastheadProps {
   isLoading: boolean;
   onOpenExplainer: () => void;
   onOpenRwaModal: () => void;
+  onOpenPlan?: () => void;
+  adoptedCount?: number;
   isDarkMode?: boolean;
   onToggleTheme?: () => void;
 }
@@ -23,6 +25,8 @@ export const Masthead: React.FC<MastheadProps> = ({
   isLoading,
   onOpenExplainer,
   onOpenRwaModal,
+  onOpenPlan,
+  adoptedCount,
   isDarkMode = false,
   onToggleTheme,
 }) => {
@@ -98,7 +102,18 @@ export const Masthead: React.FC<MastheadProps> = ({
           </div>
 
           {/* Action buttons grid */}
-          <div className="grid grid-cols-3 sm:flex sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+          <div className="grid grid-cols-2 xs:grid-cols-4 sm:flex sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
+            {onOpenPlan && (
+              <button
+                onClick={onOpenPlan}
+                className="flex items-center justify-center gap-1 sm:gap-1.5 rounded border border-amber-600/40 bg-amber-500/10 dark:bg-amber-500/15 px-2 sm:px-3 py-2 sm:py-1.5 text-xs font-semibold text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 transition-colors shadow-2xs min-h-[38px] text-center"
+                title="View Tailored AI Action Plan & Daily Routine"
+              >
+                <Sparkles className="h-3.5 w-3.5 shrink-0 hidden xs:inline" />
+                <span className="truncate">AI Plan {adoptedCount !== undefined ? `(${adoptedCount})` : ''}</span>
+              </button>
+            )}
+
             <button
               onClick={onOpenExplainer}
               className="flex items-center justify-center gap-1 sm:gap-1.5 rounded border border-stone-300 dark:border-[#2D3A34] bg-white dark:bg-[#222B27] px-2 sm:px-3 py-2 sm:py-1.5 text-xs font-medium text-ink dark:text-stone-200 hover:bg-stone-100 dark:hover:bg-[#28332E] transition-colors shadow-2xs min-h-[38px] text-center"
