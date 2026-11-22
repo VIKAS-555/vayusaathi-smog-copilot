@@ -42,23 +42,13 @@ export const Masthead: React.FC<MastheadProps> = ({
         {/* Brand & Editorial Title + Mobile Quick Status Row */}
         <div className="flex items-center justify-between w-full sm:w-auto">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="flex h-10 w-12 sm:h-11 sm:w-14 items-center justify-center rounded border border-stone-300 dark:border-[#2D3A34] bg-white dark:bg-[#1A221F] shadow-xs p-1 sm:p-1.5 overflow-hidden shrink-0">
+            <div className="flex h-9 w-12 sm:h-10 sm:w-14 items-center justify-center rounded border border-stone-300 dark:border-[#2D3A34] bg-white dark:bg-[#1A221F] shadow-xs p-1 sm:p-1.5 overflow-hidden shrink-0">
               <BreathLineMark className="h-full w-full text-ink dark:text-stone-100 transition-colors duration-200" />
             </div>
-            <div>
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <h1 className="text-lg sm:text-xl font-bold tracking-tight text-ink dark:text-stone-100 font-sans flex items-center">
-                  <span>Breath</span>
-                  <span className="font-light">Line</span>
-                </h1>
-                <span className="rounded bg-stone-200 dark:bg-[#222B27] px-1.5 py-0.5 text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-ink-muted dark:text-stone-400">
-                  v1.0 Civic Pilot
-                </span>
-              </div>
-              <p className="text-[11px] sm:text-xs text-ink-muted dark:text-stone-400 font-medium">
-                Winter Air &amp; Routine Guide · Household Co-Pilot
-              </p>
-            </div>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-ink dark:text-stone-100 font-sans flex items-center leading-none">
+              <span>Breath</span>
+              <span className="font-light">Line</span>
+            </h1>
           </div>
 
           {/* Quick Badges visible on mobile top-right */}
