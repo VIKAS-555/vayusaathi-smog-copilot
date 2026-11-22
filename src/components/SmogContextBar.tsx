@@ -431,7 +431,7 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
 
             {/* Right Column: Frosted Glass Weather Card */}
             <div className="sm:col-span-5 flex justify-end w-full">
-              <div className="w-full rounded-2xl border border-white/20 bg-white/10 dark:bg-black/30 backdrop-blur-md p-4 sm:p-5 shadow-xl flex flex-col justify-between text-white transition-all">
+              <div className="w-full max-w-sm sm:max-w-[340px] ml-auto rounded-2xl border border-white/20 bg-white/10 dark:bg-black/30 backdrop-blur-md p-4 sm:p-5 shadow-xl flex flex-col justify-between text-white transition-all">
                 {/* Weather Header: Icon + Temp + Condition + Top-Right Arrow */}
                 <div className="flex items-center justify-between gap-3 pb-3 border-b border-white/15">
                   <div className="flex items-center gap-3">

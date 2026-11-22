@@ -133,14 +133,14 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer (opacity: 0.12) */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Rashtrapati Bhavan Dome and North/South Blocks */}
-            <path d="M440 234 L440 165 L460 165 L460 152 C460 128 560 128 560 152 L560 165 L580 165 L580 234 Z" />
-            <circle cx="510" cy="138" r="18" />
-            <line x1="510" y1="120" x2="510" y2="110" />
+            <path d="M320 234 L320 165 L340 165 L340 152 C340 128 440 128 440 152 L440 165 L460 165 L460 234 Z" />
+            <circle cx="390" cy="138" r="18" />
+            <line x1="390" y1="120" x2="390" y2="110" />
             {/* Distant Qutub Minar Silhouette */}
-            <path d="M340 234 L348 95 L354 95 L362 234 Z" />
-            <line x1="346" y1="130" x2="356" y2="130" />
-            <line x1="344" y1="165" x2="358" y2="165" />
-            <line x1="342" y1="198" x2="360" y2="198" />
+            <path d="M240 234 L248 95 L254 95 L262 234 Z" />
+            <line x1="246" y1="130" x2="256" y2="130" />
+            <line x1="244" y1="165" x2="258" y2="165" />
+            <line x1="242" y1="198" x2="260" y2="198" />
             {/* Distant Red Fort rampart battlements */}
             <path d="M1040 234 L1040 170 L1055 170 L1055 155 L1075 155 L1075 170 L1110 170 L1110 150 L1130 150 L1130 170 L1160 170 L1160 234 Z" />
             {/* Distant Horizon Grid Lines */}
@@ -149,7 +149,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer (strokeWidth="1.4", opacity: 0.40) */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-180, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* Rajpath Stone Parapet & Balustrade Walls */}
             <path d="M560 234 L560 216 L680 216 L680 234 Z" />
             <path d="M960 234 L960 216 L1080 216 L1080 234 Z" />
@@ -208,18 +208,18 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Golf Course Road & Horizon Center Glass Towers */}
-            <rect x="520" y="80" width="60" height="154" />
-            <rect x="600" y="60" width="70" height="174" />
+            <rect x="340" y="80" width="60" height="154" />
+            <rect x="420" y="60" width="70" height="174" />
             <rect x="990" y="70" width="80" height="164" />
             <rect x="1090" y="90" width="60" height="144" />
             {/* Communication Spires */}
-            <line x1="550" y1="80" x2="550" y2="50" />
-            <line x1="635" y1="60" x2="635" y2="35" />
+            <line x1="370" y1="80" x2="370" y2="50" />
+            <line x1="455" y1="60" x2="455" y2="35" />
             <line x1="1030" y1="70" x2="1030" y2="40" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-185, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* Cyber Hub Chamfered Modern Glass Tower 1 */}
             <path d="M680 234 L680 62 L740 38 L770 55 L770 234 Z" />
             {/* Curtain wall grid lines */}
@@ -275,16 +275,16 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Sector High-Rise Towers & Okhla trees */}
-            <rect x="500" y="90" width="55" height="144" />
-            <rect x="580" y="70" width="65" height="164" />
+            <rect x="340" y="90" width="55" height="144" />
+            <rect x="420" y="70" width="65" height="164" />
             <rect x="980" y="80" width="75" height="154" />
             <rect x="1080" y="100" width="55" height="134" />
             {/* Okhla Sanctuary Soft Horizon Contours */}
-            <path d="M460 234 Q490 205 520 234 Q550 210 580 234" />
+            <path d="M300 234 Q330 205 360 234 Q390 210 420 234" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-185, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* Supernova Spira Iconic Landmark Tower */}
             <path d="M680 234 L710 40 L730 40 L760 234 Z" />
             <line x1="720" y1="40" x2="720" y2="18" strokeWidth="1.2" />
@@ -328,15 +328,15 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Bangalore Palace Tudor towers & High Court */}
-            <path d="M480 234 L480 160 L500 140 L520 160 L520 234 Z" />
-            <path d="M540 234 L540 150 L560 130 L580 150 L580 234 Z" />
+            <path d="M320 234 L320 160 L340 140 L360 160 L360 234 Z" />
+            <path d="M380 234 L380 150 L400 130 L420 150 L420 234 Z" />
             <rect x="990" y="85" width="60" height="149" />
             <rect x="1070" y="105" width="70" height="129" />
             <line x1="1020" y1="85" x2="1020" y2="50" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-180, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* VIDHANA SOUDHA - Neo-Dravidian Architectural Facade */}
             {/* Grand Stepped Foundation & Entrance Staircase */}
             <path d="M640 234 L660 216 L980 216 L1000 234 Z" />
@@ -390,18 +390,18 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Bandra-Worli Sea Link Cable Towers */}
-            <path d="M460 234 L490 110 L505 110 L535 234 Z" />
-            <line x1="497" y1="120" x2="430" y2="234" />
-            <line x1="497" y1="140" x2="450" y2="234" />
-            <line x1="497" y1="120" x2="570" y2="234" />
-            <line x1="497" y1="140" x2="550" y2="234" />
+            <path d="M320 234 L350 110 L365 110 L395 234 Z" />
+            <line x1="357" y1="120" x2="290" y2="234" />
+            <line x1="357" y1="140" x2="310" y2="234" />
+            <line x1="357" y1="120" x2="430" y2="234" />
+            <line x1="357" y1="140" x2="410" y2="234" />
             {/* Nariman Point & Marine Drive Art Deco Towers */}
             <rect x="990" y="65" width="55" height="169" />
             <rect x="1065" y="85" width="65" height="149" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-160, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* GATEWAY OF INDIA - Indo-Saracenic Basalt Triumphal Gateway */}
             {/* Base Plinth on the Apollo Bunder Seafront */}
             <path d="M680 234 L692 220 L908 220 L920 234 Z" />
@@ -458,16 +458,16 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Vidyasagar Setu Cable-Stayed Towers */}
-            <path d="M480 234 L500 120 L515 120 L535 234 Z" />
-            <line x1="507" y1="130" x2="450" y2="234" />
-            <line x1="507" y1="130" x2="565" y2="234" />
+            <path d="M320 234 L340 120 L355 120 L375 234 Z" />
+            <line x1="347" y1="130" x2="290" y2="234" />
+            <line x1="347" y1="130" x2="405" y2="234" />
             {/* Distant St. Paul's Cathedral Gothic Spire */}
-            <path d="M580 234 L595 100 L610 234 Z" />
-            <line x1="595" y1="100" x2="595" y2="75" />
+            <path d="M420 234 L435 100 L450 234 Z" />
+            <line x1="435" y1="100" x2="435" y2="75" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-110, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* VICTORIA MEMORIAL - White Marble Classical Monument */}
             {/* Stepped Podium Base */}
             <rect x="620" y="218" width="220" height="16" />
@@ -630,7 +630,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Golconda Fort hilltop ramparts & battlement walls */}
-            <path d="M480 234 L520 170 L550 170 L570 190 L610 190 L630 234 Z" />
+            <path d="M320 234 L360 170 L390 170 L410 190 L450 190 L470 234 Z" />
             {/* HITEC City Cyber Towers Spiral */}
             <rect x="990" y="80" width="60" height="154" />
             <line x1="1020" y1="80" x2="1020" y2="50" />
@@ -638,7 +638,7 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-160, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* CHARMINAR - Qutb Shahi Masterpiece with 4 Minarets */}
             {/* Base Plinth */}
             <rect x="670" y="222" width="260" height="12" />
@@ -698,14 +698,14 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Sinhagad Fort Hilltop Ridge Contour */}
-            <path d="M460 234 Q540 160 620 200 Q700 170 760 234" />
+            <path d="M300 234 Q380 160 460 200 Q540 170 600 234" />
             {/* Modern Pune IT Skyline Blocks */}
             <rect x="990" y="90" width="65" height="144" />
             <rect x="1075" y="110" width="55" height="124" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-150, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* SHANIWAR WADA - Fortified Peshwa Stone Citadel */}
             {/* Stately Rampart Foundation */}
             <rect x="640" y="218" width="300" height="16" />
@@ -762,15 +762,15 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Sarkhej Roza Stone Pavilions & Domes */}
-            <path d="M480 234 L480 170 C480 150, 520 150, 520 170 L520 234 Z" />
-            <path d="M530 234 L530 160 C530 140, 580 140, 580 160 L580 234 Z" />
+            <path d="M320 234 L320 170 C320 150, 360 150, 360 170 L360 234 Z" />
+            <path d="M370 234 L370 160 C370 140, 420 140, 420 160 L420 234 Z" />
             {/* Modern Sabarmati Skyline */}
             <rect x="990" y="85" width="60" height="149" />
             <rect x="1070" y="105" width="65" height="129" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-130, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* SIDI SAIYYED MOSQUE - Famous "Tree of Life" Intricate Jali Screen */}
             {/* Sandstone Foundation Wall */}
             <rect x="650" y="218" width="240" height="16" />
@@ -827,16 +827,16 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
           {/* Layer 1: Background Horizon Layer */}
           <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
             {/* Distant Asfi Mosque Twin Minarets and Bara Imambara Domes */}
-            <path d="M480 234 L490 120 L505 120 L515 234 Z" />
-            <path d="M525 234 L525 170 C525 150, 565 150, 565 170 L565 234 Z" />
-            <path d="M575 234 L585 120 L600 120 L610 234 Z" />
+            <path d="M320 234 L330 120 L345 120 L355 234 Z" />
+            <path d="M365 234 L365 170 C365 150, 405 150, 405 170 L405 234 Z" />
+            <path d="M415 234 L425 120 L440 120 L450 234 Z" />
             {/* Husainabad Victorian Clock Tower */}
             <rect x="990" y="60" width="40" height="174" />
             <path d="M990 60 L1010 32 L1030 60 Z" />
           </g>
 
           {/* Layer 2: Foreground Landmark Layer */}
-          <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+          <g transform="translate(-160, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
             {/* RUMI DARWAZA - 60-Foot Awadhi Nawabi Turkish Gate */}
             {/* Base Plinth */}
             <rect x="660" y="218" width="280" height="16" />
@@ -881,15 +881,15 @@ export const CitySkylineBackdrop: React.FC<CitySkylineBackdropProps> = ({
       <>
         {/* Layer 1: Background Horizon Layer */}
         <g stroke={strokeColor} strokeWidth="0.8" fill={strokeColor} opacity="0.12" className="transition-all duration-300">
-          <rect x="480" y="90" width="60" height="144" />
-          <rect x="560" y="70" width="70" height="164" />
+          <rect x="320" y="90" width="60" height="144" />
+          <rect x="400" y="70" width="70" height="164" />
           <rect x="990" y="80" width="65" height="154" />
           <rect x="1075" y="100" width="60" height="134" />
-          <line x1="595" y1="70" x2="595" y2="40" />
+          <line x1="435" y1="70" x2="435" y2="40" />
         </g>
 
         {/* Layer 2: Foreground Landmark Layer */}
-        <g stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
+        <g transform="translate(-150, 0)" stroke={strokeColor} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill={`url(#${gradLandmarkId})`} opacity={isDark ? '0.55' : '0.50'} className="transition-all duration-300">
           {/* Universal Monument Gateway & Transit Horizon */}
           <path d="M680 234 L680 130 C680 85, 780 85, 780 130 L780 234 Z" />
           <rect x="670" y="222" width="120" height="12" />
