@@ -587,39 +587,42 @@ export const CigaretteEquivalenceCard: React.FC<CigaretteEquivalenceCardProps> =
           </div>
         </div>
 
-        {/* Credibility Reference Note & Disclaimer */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-ink-muted dark:text-stone-400 font-mono pt-1">
-          <span>
-            Source: <strong className="font-semibold text-ink dark:text-stone-300">Berkeley Earth</strong> (22 µg/m³ 24h PM2.5 ≈ 1 cigarette/day)
-          </span>
-          <span className="italic text-[10px]">
-            Based on 24-hour continuous PM2.5 exposure and EPA/WHO standardized daily inhalation volume.
+        {/* Credibility Reference Note & Disclaimer - Single Clean Line with Generous Spacing */}
+        <div className="py-2.5 my-2 border-t border-stone-200/70 dark:border-[#2D3A34] flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-ink-muted dark:text-stone-400 font-mono">
+          <div className="flex items-center gap-1.5">
+            <span>Source:</span>
+            <strong className="font-semibold text-ink dark:text-stone-200">Berkeley Earth</strong>
+            <span className="text-stone-300 dark:text-stone-600">·</span>
+            <span>22 µg/m³ 24h PM2.5 ≈ 1 cigarette / day</span>
+          </div>
+          <span className="text-[10px] text-stone-400 dark:text-stone-500 italic">
+            Standardized 24-hour daily inhalation volume
           </span>
         </div>
       </div>
 
-      {/* 3. SOLUTIONS FOR CURRENT AQI: 4 Action Tiles (Air Purifier, Car Filter, N95 Mask, Stay Indoor) */}
-      <div className="mt-4 pt-4 border-t border-stone-200 dark:border-stone-800">
+      {/* 3. SOLUTIONS FOR CURRENT AQI: Clean 2x2 Grid with Generous Width */}
+      <div className="mt-4 pt-3 border-t border-stone-200 dark:border-stone-800">
         <div className="flex items-center justify-between gap-2 mb-3">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-bold uppercase tracking-wider text-ink dark:text-stone-100">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-xs font-bold uppercase tracking-wider text-ink dark:text-stone-100 whitespace-nowrap">
               Solutions for Current AQI
             </span>
-            <span className="text-[11px] font-mono text-ink-muted dark:text-stone-400">
-              · Calibrated to AQI {currentCity.currentAQI} ({currentCity.aqiCategory})
+            <span className="font-mono text-xs font-bold text-ink-muted dark:text-stone-400 whitespace-nowrap">
+              · {currentCity.currentAQI} {currentCity.aqiCategory.toUpperCase()}
             </span>
           </div>
 
-          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-ink-muted dark:text-stone-400">
+          <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-mono text-ink-muted dark:text-stone-400 whitespace-nowrap shrink-0">
             <span>Protocol:</span>
-            <strong className="text-ink dark:text-stone-200">
-              {currentCity.currentAQI > 200 ? 'Active Smog Defense' : currentCity.currentAQI > 100 ? 'Precautionary Shield' : 'Healthy Ventilation'}
+            <strong className="text-ink dark:text-stone-200 font-semibold">
+              {currentCity.currentAQI > 200 ? 'Active Defense' : currentCity.currentAQI > 100 ? 'Precautionary' : 'Safe Ventilation'}
             </strong>
           </span>
         </div>
 
-        {/* 4 Responsive Tiles */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+        {/* Clean 2x2 Responsive Grid */}
+        <div className="grid grid-cols-2 gap-3">
           {actionTiles.map((tile) => (
             <div
               key={tile.id}

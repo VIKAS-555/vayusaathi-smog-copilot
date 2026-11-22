@@ -51,7 +51,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
         </div>
 
         {/* Primary Exposure Drop Banner */}
-        <div className="mt-4 rounded-xl border border-sage-200 dark:border-sage-800/80 bg-sage-50/70 dark:bg-sage-950/40 p-4 transition-colors">
+        <div className="mt-4 rounded-xl border border-sage-200 dark:border-[#2D3A34] bg-sage-50/70 dark:bg-[#222B27] p-4 transition-colors">
           <div className="flex items-baseline justify-between flex-wrap gap-1">
             <span className="text-xs font-semibold uppercase tracking-wider text-sage-800 dark:text-sage-300">
               Personal Exposure Drop
@@ -73,7 +73,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
           </div>
 
           {/* Inhaled Dose Comparison */}
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs border-t border-sage-200/80 dark:border-sage-800/70 pt-2.5">
+          <div className="mt-3 grid grid-cols-2 gap-2 text-xs border-t border-sage-200/80 dark:border-[#2D3A34] pt-2.5">
             <div>
               <span className="text-ink-muted dark:text-stone-400 block text-[11px]">Unmanaged Inhaled Dose:</span>
               <span className="font-mono font-bold text-terracotta-700 dark:text-rose-400 tabular-nums text-sm">
@@ -89,7 +89,7 @@ export const ImpactScorecard: React.FC<ImpactScorecardProps> = ({
           </div>
 
           {/* Berkeley Earth Relatable Equivalence */}
-          <div className="mt-3 rounded-lg bg-stone-50/90 dark:bg-[#222B27] p-2.5 border border-sage-200 dark:border-[#2D3A34] text-xs flex items-center gap-2.5 transition-colors">
+          <div className="mt-3 rounded-lg bg-stone-50/90 dark:bg-[#1A221F] p-2.5 border border-sage-200 dark:border-[#2D3A34] text-xs flex items-center gap-2.5 transition-colors">
             <div className="rounded-full bg-sage-100 dark:bg-sage-900/80 p-1.5 text-sage-700 dark:text-sage-300 shrink-0">
               <HeartPulse className="h-4 w-4" />
             </div>
