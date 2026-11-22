@@ -30,7 +30,8 @@ import {
   RefreshCw,
   Radio,
   ExternalLink,
-  ArrowUpRight
+  ArrowUpRight,
+  MapPin
 } from 'lucide-react';
 
 interface SmogContextBarProps {
@@ -274,28 +275,18 @@ export const SmogContextBar: React.FC<SmogContextBarProps> = ({
         <div className="relative z-10 flex flex-col gap-4 sm:gap-5">
           {/* Top Control Bar: Station Switcher Chips + Provenance Badge + Action Buttons */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-black/10 dark:border-white/10">
-            {/* Station Selection Chips Strip */}
-            <div className="flex items-center gap-2 w-full lg:w-auto min-w-0 flex-1">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-ink-muted dark:text-stone-300 shrink-0">
-                City:
-              </span>
-              <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none py-1 px-0.5 max-w-full touch-pan-x">
-                {CITY_PRESETS.map((preset) => {
-                  const isActive = preset.id === currentCity.id;
-                  return (
-                    <button
-                      key={preset.id}
-                      onClick={() => onSelectCity(preset)}
-                      className={`rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap transition-all shrink-0 min-h-[32px] flex items-center ${
-                        isActive
-                          ? "bg-ink text-white dark:bg-stone-100 dark:text-stone-900 shadow-sm scale-102"
-                          : "bg-white/80 dark:bg-stone-800/80 text-ink-muted dark:text-stone-300 hover:bg-white dark:hover:bg-stone-700 hover:text-ink border border-black/10 dark:border-white/10 backdrop-blur-xs"
-                      }`}
-                    >
-                      {preset.name.split(" (")[0]}
-                    </button>
-                  );
-                })}
+            {/* Active Station Identity Header */}
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="flex items-center justify-center h-8 w-8 rounded-xl bg-white/10 border border-white/20 text-white shrink-0 shadow-2xs">
+                <MapPin className="h-4 w-4 text-emerald-400" />
+              </div>
+              <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2 truncate">
+                <h3 className="text-sm sm:text-base font-bold text-white tracking-tight truncate">
+                  {currentCity.name}
+                </h3>
+                <span className="font-mono text-[11px] sm:text-xs text-stone-300/80">
+                  · {currentCity.state}
+                </span>
               </div>
             </div>
 

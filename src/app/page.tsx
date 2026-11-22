@@ -97,6 +97,11 @@ export default function Home() {
     return calculateInhaledDose(profile, currentCity, adoptedActionIds);
   }, [profile, currentCity, adoptedActionIds]);
 
+  // Synchronize active city live telemetry / overrides with the Metro Cities grid
+  const displayCities = useMemo(() => {
+    return CITY_PRESETS.map((c) => (c.id === currentCity.id ? currentCity : c));
+  }, [currentCity]);
+
   // 6. Action Toggle Handler
   const handleToggleAction = (actionId: string) => {
     setAdoptedActionIds((prev) =>
@@ -193,57 +198,55 @@ export default function Home() {
         onToggleTheme={handleToggleTheme}
       />
 
-      {/* Main Two-Column Workstation Container */}
+      {/* Main Workstation Container */}
       <div className="mx-auto max-w-7xl w-full flex-1 p-4 sm:p-6 lg:p-8 space-y-6">
-        {/* India's Metro Cities Air Quality Index (8 Major Hubs) */}
+        {/* 1. Full-Width Active Station Hero Card & 24h Diurnal Smog Curve */}
+        <SmogContextBar
+          currentCity={currentCity}
+          onSelectCity={handleSelectCity}
+          onCustomUpdate={handleCustomCityUpdate}
+          onRefreshLive={() => fetchLiveStation(currentCity)}
+          isFetchingLive={isFetchingLive}
+          isDarkMode={isDarkMode}
+        />
+
+        {/* 2. India's Metro Cities Air Quality Index (8 Major Hubs, 100% Synced) */}
         <MetroCitiesGrid
-          cities={CITY_PRESETS}
+          cities={displayCities}
           currentCityId={currentCity.id}
           onSelectCity={handleSelectCity}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
-          {/* LEFT COLUMN: Sticky Household Profiler & Live Impact Scorecard (5 cols on lg) */}
-          <aside className="lg:col-span-5 space-y-6 lg:sticky lg:top-4">
-            {/* Live Impact Scorecard */}
-            <ImpactScorecard
-              impact={impact}
-              onOpenExplainer={() => setIsExplainerOpen(true)}
-              societyFamilies={profile.societySizeFamilies}
-              onUpdateSocietyFamilies={(count) =>
-                setProfile((prev) => ({ ...prev, societySizeFamilies: count }))
-              }
-            />
+        {/* 3. Paired Impact Section: Live Impact Scorecard & Cigarette Equivalence Card */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+          <ImpactScorecard
+            impact={impact}
+            onOpenExplainer={() => setIsExplainerOpen(true)}
+            societyFamilies={profile.societySizeFamilies}
+            onUpdateSocietyFamilies={(count) =>
+              setProfile((prev) => ({ ...prev, societySizeFamilies: count }))
+            }
+          />
+          <CigaretteEquivalenceCard
+            currentCity={currentCity}
+            impact={impact}
+            adoptedActionCount={adoptedActionIds.length}
+            isDarkMode={isDarkMode}
+          />
+        </div>
 
-            {/* Household & Lifestyle Profiler */}
+        {/* 4. Action Workstation: Household & Lifestyle Profiler (Left) + GenAI Action Engine (Right) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* LEFT COLUMN: Household & Lifestyle Profiler (5 cols on lg) */}
+          <aside className="lg:col-span-5 space-y-6">
             <HouseholdProfiler
               profile={profile}
               onChangeProfile={handleProfileChange}
             />
           </aside>
 
-          {/* RIGHT COLUMN: Smog Context Bar, 24h Curve, & 3-Tab Action Plan (7 cols on lg) */}
+          {/* RIGHT COLUMN: GenAI Tailored Action Engine (7 cols on lg) */}
           <section className="lg:col-span-7 space-y-6">
-            {/* Hyper-Local Smog & Inversion Context Bar with 24h Curve */}
-            <SmogContextBar
-              currentCity={currentCity}
-              onSelectCity={handleSelectCity}
-              onCustomUpdate={handleCustomCityUpdate}
-              onRefreshLive={() => fetchLiveStation(currentCity)}
-              isFetchingLive={isFetchingLive}
-              isDarkMode={isDarkMode}
-            />
-
-            {/* Dedicated Cigarette Equivalence & Quick Protection Card */}
-            <CigaretteEquivalenceCard
-              currentCity={currentCity}
-              impact={impact}
-              adoptedActionCount={adoptedActionIds.length}
-              isDarkMode={isDarkMode}
-            />
-
-            {/* GenAI Tailored Action Engine (3 Focused Tabs) */}
             <ActionPlanTabs
               routineSchedule={plan.routineSchedule}
               iaqHacks={plan.iaqHacks}
@@ -254,7 +257,6 @@ export default function Home() {
               summaryVerdict={plan.summaryVerdict}
             />
           </section>
-
         </div>
       </div>
 
